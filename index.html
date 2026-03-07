@@ -334,6 +334,11 @@
       border: 1.5px solid var(--border);
     }
 
+    /* Stretch last card to full width when total count is odd */
+    .tool-card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+
     .tool-card {
       background: var(--bg);
       padding: 2.5rem;
