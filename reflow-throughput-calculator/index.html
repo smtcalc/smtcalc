@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflow Throughput Calculator &mdash; SMTCalc</title>
+<meta name="description" content="Free reflow oven throughput calculator. Check if your oven can keep up with your SMT line, or size a new oven for your target production rate.">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0a0a0a;
+    --bg2:     #111111;
+    --bg3:     #1a1a1a;
+    --bg4:     #222222;
+    --accent:  #f5a623;
+    --green:   #2ecc71;
+    --yellow:  #f5a623;
+    --red:     #e8320a;
+    --text:    #f0ede8;
+    --muted:   #888;
+    --border:  #2a2a2a;
+    --border2: #333;
+    --mono:    'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .tool-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* HERO */
+  .tool-hero {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tool-hero-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .tool-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .tool-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px; height: 2px;
+    background: var(--accent);
+  }
+  .tool-hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+  .tool-hero p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  /* WRAP */
+  .tool-wrap {
+    max-width: 980px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  /* GUIDE BANNER */
+  .guide-inner {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .guide-inner p { font-size: 0.85rem; color: #999; }
+  .guide-inner strong { color: var(--text); }
+  .guide-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(245,166,35,0.3);
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .guide-btn:hover { background: rgba(245,166,35,0.08); }
+
+  /* MODE TOGGLE */
+  .mode-toggle {
+    display: flex;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .mode-toggle button {
+    flex: 1;
+    background: var(--bg3);
+    border: none;
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .mode-toggle button .mode-sub {
+    display: block;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: #555;
+    margin-top: 0.15rem;
+  }
+  .mode-toggle button.active {
+    background: var(--bg4);
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+  }
+  .mode-toggle button.active .mode-sub { color: #888; }
+
+  /* PANELS */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .panel {
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+  .sc-full {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    margin-bottom: 1.5px;
+  }
+  .panel-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel-label::before {
+    content: '';
+    display: block;
+    width: 16px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* FIELDS */
+  .field { margin-bottom: 1.1rem; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .input-wrap { position: relative; }
+  .input-wrap input[type=number] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    padding: 0.65rem 3.5rem 0.65rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .input-wrap input[type=number]::-webkit-outer-spin-button,
+  .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .input-wrap input[type=number]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(245,166,35,0.15);
+  }
+  .input-wrap input[type=number].optional {
+    border-style: dashed;
+    color: #aaa;
+  }
+  .input-wrap input[type=number].optional:focus {
+    border-style: solid;
+    color: var(--text);
+  }
+  .input-unit {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--muted);
+    pointer-events: none;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.3;
+  }
+  .field-note {
+    font-size: 0.75rem;
+    color: #555;
+    line-height: 1.5;
+    margin-top: 0.4rem;
+  }
+  .optional-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: 0.5rem;
+  }
+
+  /* UNIT TOGGLE */
+  .unit-toggle {
+    display: flex;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+  .unit-toggle button {
+    background: var(--bg3);
+    border: none;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .unit-toggle button.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* RESULTS GRID */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .result-box {
+    background: var(--bg3);
+    padding: 1.1rem 1.25rem;
+  }
+  .result-box.primary {
+    background: var(--bg4);
+    border-top: 2px solid var(--accent);
+  }
+  .result-box.wide {
+    grid-column: span 2;
+  }
+  .result-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .result-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--text);
+  }
+  .result-box.primary .result-value { color: var(--accent); }
+  .result-sub {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: #555;
+    margin-top: 0.2rem;
+  }
+
+  /* STATUS */
+  .status-block {
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .status-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.6rem;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .status-indicator {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .status-indicator.ok     { color: var(--green); }
+  .status-indicator.warn   { color: var(--yellow); }
+  .status-indicator.bad    { color: var(--red); }
+  .status-indicator.idle   { color: #444; }
+  .status-margin {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .status-msg {
+    padding: 0.85rem 1.25rem;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #666;
+    line-height: 1.65;
+    border-left: 3px solid var(--border2);
+  }
+  .status-msg.ok   { border-left-color: var(--green);  color: #aaa; }
+  .status-msg.warn { border-left-color: var(--yellow); color: #aaa; }
+  .status-msg.bad  { border-left-color: var(--red);    color: #aaa; }
+
+  /* SPEED COMPARE BAR */
+  .speed-compare {
+    padding: 1rem 1.25rem 1.25rem;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+  .speed-compare-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .speed-bars { display: flex; flex-direction: column; gap: 0.6rem; }
+  .speed-bar-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 70px;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .speed-bar-name {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .speed-bar-track {
+    height: 6px;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    position: relative;
+  }
+  .speed-bar-fill {
+    height: 100%;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+  }
+  .speed-bar-fill.process { background: var(--green); }
+  .speed-bar-fill.required { background: var(--accent); }
+  .speed-bar-fill.conflict { background: var(--red); }
+  .speed-bar-val {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* REFERENCE TABLE */
+  .ref-table-wrap { overflow-x: auto; margin-top: 1rem; }
+  .ref-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1.5px;
+  }
+  .ref-table thead th {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 0.75rem;
+    background: var(--bg3);
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table thead th:first-child { text-align: left; }
+  .ref-table tbody td {
+    background: var(--bg3);
+    padding: 0.6rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #888;
+    text-align: right;
+    transition: background 0.2s;
+  }
+  .ref-table tbody td:first-child {
+    text-align: left;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 500;
+  }
+  .ref-table tbody tr.match td { background: rgba(46,204,113,0.07); }
+  .ref-table tbody tr.match td:first-child { color: var(--green); }
+  .ref-table-note {
+    font-size: 0.72rem;
+    color: #444;
+    font-family: var(--mono);
+    margin-top: 0.6rem;
+    line-height: 1.55;
+  }
+
+  /* PRINT BAR */
+  .print-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .print-bar label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .print-bar input[type=text] {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+  }
+  .print-bar input[type=text]:focus { border-color: var(--accent); }
+  .print-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SECTION HIDE */
+  .mode-section { display: none; }
+  .mode-section.active { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .tool-wrap { padding: 0 1rem; }
+    .panel-grid { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    .result-box.wide { grid-column: span 1; }
+    .speed-bar-row { grid-template-columns: 100px 1fr 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Reflow Throughput</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Reflow / Thermal Process</div>
+    <h1>Reflow Throughput<br>Calculator</h1>
+    <p>Check whether your reflow oven can keep up with your SMT line, or calculate the minimum heated tunnel length needed for a target production rate.</p>
+  </div>
+</div>
+
+<div class="tool-wrap">
+
+  <!-- GUIDE BANNER -->
+  <div class="guide-inner">
+    <p><strong>New to this calculator?</strong> Read the guide covering tunnel length, dwell time, load factor, and how to interpret the constraint check.</p>
+    <a href="#" target="_blank" class="guide-btn" id="guideBtn" style="opacity:0.4;pointer-events:none;">Read the Guide &#8594;</a>
+  </div>
+
+  <!-- UNIT TOGGLE -->
+  <div class="unit-toggle" id="unitToggle">
+    <button class="active" id="btnMm" onclick="setUnit('mm')">mm</button>
+    <button id="btnIn" onclick="setUnit('in')">inches</button>
+  </div>
+
+  <!-- MODE TOGGLE -->
+  <div class="mode-toggle" id="modeToggle">
+    <button class="active" id="modeA" onclick="setMode('A')">
+      Mode A &mdash; Check My Oven
+      <span class="mode-sub">I have an oven. Will it keep up with my line?</span>
+    </button>
+    <button id="modeB" onclick="setMode('B')">
+      Mode B &mdash; Size an Oven
+      <span class="mode-sub">I have a throughput target. What heated length do I need?</span>
+    </button>
+  </div>
+
+  <!-- ===================== MODE A ===================== -->
+  <div class="mode-section active" id="sectionA">
+
+    <div class="panel-grid">
+      <!-- OVEN PARAMETERS -->
+      <div class="panel">
+        <div class="panel-label">Oven Parameters</div>
+
+        <div class="field">
+          <label>Heated Tunnel Length <span class="optional-label"></span></label>
+          <div class="input-wrap">
+            <input type="number" id="A_tunnelLen" value="2500" min="100" step="50" oninput="calcA()">
+            <span class="input-unit" id="A_tunnelLen_unit">mm</span>
+          </div>
+          <div class="field-note">Heated zone length only. Not overall machine length. Check your oven datasheet.</div>
+        </div>
+
+        <div class="field">
+          <label>Required Dwell Time in Heated Zone</label>
+          <div class="input-wrap">
+            <input type="number" id="A_dwell" value="270" min="30" max="600" step="5" oninput="calcA()">
+            <span class="input-unit">sec</span>
+          </div>
+          <div class="field-note">Typical SAC305 profile requires about 240&ndash;300 s total in the heated zone. Check your paste datasheet.</div>
+        </div>
+
+        <div class="field">
+          <label>Load Factor</label>
+          <div class="input-wrap">
+            <input type="number" id="A_loadFactor" value="90" min="50" max="99" step="1" oninput="calcA()">
+            <span class="input-unit">%</span>
+          </div>
+          <div class="field-note">Ratio of board length to board pitch on the belt. 90% = ~10% gap between boards. Use 85&ndash;92% for most lines.</div>
+        </div>
+      </div>
+
+      <!-- BOARD + LINE PARAMETERS -->
+      <div class="panel">
+        <div class="panel-label">Board &amp; Line Parameters</div>
+
+        <div class="field">
+          <label>Board Length (direction of travel)</label>
+          <div class="input-wrap">
+            <input type="number" id="A_boardLen" value="200" min="10" step="5" oninput="calcA()">
+            <span class="input-unit" id="A_boardLen_unit">mm</span>
+          </div>
+          <div class="field-note">Measure in the direction of conveyor travel. For panels, use the full panel dimension.</div>
+        </div>
+
+        <div class="field">
+          <label>
+            P&amp;P Cycle Time
+            <span class="optional-label">&mdash; optional</span>
+          </label>
+          <div class="input-wrap">
+            <input type="number" id="A_cycleTime" value="" min="1" step="1" placeholder="e.g. 40" oninput="calcA()" class="optional">
+            <span class="input-unit">sec</span>
+          </div>
+          <div class="field-note">Cycle time of your slowest placement machine. Leave blank to skip the bottleneck check.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS A -->
+    <div class="sc-full" id="resultsA">
+      <div class="panel-label">Results</div>
+
+      <div class="results-grid" id="A_grid">
+        <div class="result-box primary">
+          <div class="result-label">Max Process Speed</div>
+          <div class="result-value" id="A_processSpeed">--</div>
+          <div class="result-sub" id="A_processSpeed_sub">mm / min</div>
+        </div>
+        <div class="result-box primary">
+          <div class="result-label">Throughput</div>
+          <div class="result-value" id="A_throughput">--</div>
+          <div class="result-sub">boards / hour</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Time in Heated Zone</div>
+          <div class="result-value" id="A_timeInZone">--</div>
+          <div class="result-sub">seconds</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Required Belt Speed</div>
+          <div class="result-value" id="A_reqSpeed">--</div>
+          <div class="result-sub" id="A_reqSpeed_sub">mm / min</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Board Spacing on Belt</div>
+          <div class="result-value" id="A_spacing">--</div>
+          <div class="result-sub" id="A_spacing_sub">mm between boards</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Speed Headroom</div>
+          <div class="result-value" id="A_headroom">--</div>
+          <div class="result-sub">process vs. required</div>
+        </div>
+      </div>
+
+      <!-- STATUS BLOCK -->
+      <div class="status-block" id="A_statusBlock">
+        <div class="status-header">
+          <div class="status-indicator idle" id="A_statusIndicator">Waiting for input</div>
+          <div class="status-margin" id="A_statusMargin"></div>
+        </div>
+        <div class="status-msg" id="A_statusMsg">Enter oven and board parameters above to evaluate.</div>
+        <div class="speed-compare" id="A_speedCompare" style="display:none">
+          <div class="speed-compare-label">Belt Speed Comparison</div>
+          <div class="speed-bars">
+            <div class="speed-bar-row">
+              <div class="speed-bar-name">Process speed</div>
+              <div class="speed-bar-track"><div class="speed-bar-fill process" id="A_bar_process" style="width:0%"></div></div>
+              <div class="speed-bar-val" id="A_bar_process_val">--</div>
+            </div>
+            <div class="speed-bar-row">
+              <div class="speed-bar-name">Required speed</div>
+              <div class="speed-bar-track"><div class="speed-bar-fill required" id="A_bar_required" style="width:0%"></div></div>
+              <div class="speed-bar-val" id="A_bar_required_val">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="print-bar">
+        <label>Report Title</label>
+        <input type="text" id="A_reportTitle" placeholder="e.g. Line 2 reflow check">
+        <button class="print-btn" onclick="printReportA()">&#8679; Print Report</button>
+      </div>
+    </div>
+
+  </div><!-- end mode A -->
+
+  <!-- ===================== MODE B ===================== -->
+  <div class="mode-section" id="sectionB">
+
+    <div class="panel-grid">
+      <div class="panel">
+        <div class="panel-label">Target Production Parameters</div>
+
+        <div class="field">
+          <label>Target Throughput</label>
+          <div class="input-wrap">
+            <input type="number" id="B_throughput" value="180" min="1" step="10" oninput="calcB()">
+            <span class="input-unit">boards / h</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Board Length (direction of travel)</label>
+          <div class="input-wrap">
+            <input type="number" id="B_boardLen" value="200" min="10" step="5" oninput="calcB()">
+            <span class="input-unit" id="B_boardLen_unit">mm</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Load Factor</label>
+          <div class="input-wrap">
+            <input type="number" id="B_loadFactor" value="90" min="50" max="99" step="1" oninput="calcB()">
+            <span class="input-unit">%</span>
+          </div>
+          <div class="field-note">Proportion of board length to belt pitch. 90% is a good default for most products.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Profile Requirements</div>
+
+        <div class="field">
+          <label>Required Dwell Time in Heated Zone</label>
+          <div class="input-wrap">
+            <input type="number" id="B_dwell" value="270" min="30" max="600" step="5" oninput="calcB()">
+            <span class="input-unit">sec</span>
+          </div>
+          <div class="field-note">From paste datasheet or validated reflow profile. SAC305 typically 240&ndash;300 s.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS B -->
+    <div class="sc-full" id="resultsB">
+      <div class="panel-label">Results</div>
+
+      <div class="results-grid">
+        <div class="result-box primary">
+          <div class="result-label">Min. Heated Tunnel Length</div>
+          <div class="result-value" id="B_tunnelMm">--</div>
+          <div class="result-sub" id="B_tunnelMm_sub">mm heated length</div>
+        </div>
+        <div class="result-box primary">
+          <div class="result-label">Min. Heated Length (alt.)</div>
+          <div class="result-value" id="B_tunnelAlt">--</div>
+          <div class="result-sub" id="B_tunnelAlt_sub">inches / feet</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Required Belt Speed</div>
+          <div class="result-value" id="B_beltSpeed">--</div>
+          <div class="result-sub" id="B_beltSpeed_sub">mm / min</div>
+        </div>
+      </div>
+
+      <!-- REFERENCE TABLE -->
+      <div class="panel-label" style="margin-top:0.5rem">Typical Oven Class Reference</div>
+      <div class="ref-table-wrap">
+        <table class="ref-table" id="B_refTable">
+          <thead>
+            <tr>
+              <th style="text-align:left">Oven Class</th>
+              <th>Zones</th>
+              <th>Typical Heated Length</th>
+              <th>Max Process Speed</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="B_refBody"></tbody>
+        </table>
+      </div>
+      <div class="ref-table-note">Reference data from Indium Corporation. Heated lengths are typical mid-range values. Always verify against the specific oven model datasheet. Overall oven length exceeds heated tunnel length by 0.5&ndash;1.5 m for cooling section and load/unload.</div>
+
+      <div class="print-bar">
+        <label>Report Title</label>
+        <input type="text" id="B_reportTitle" placeholder="e.g. New line oven selection">
+        <button class="print-btn" onclick="printReportB()">&#8679; Print Report</button>
+      </div>
+    </div>
+
+  </div><!-- end mode B -->
+
+</div><!-- tool-wrap -->
+
+<script>
+// =========================================================
+//  STATE
+// =========================================================
+var currentMode = 'A';
+var currentUnit = 'mm';
+
+// Oven class reference data: [label, zones, heated_mm]
+var OVEN_CLASSES = [
+  {label: '5-Zone',  zones: 5,  htl_mm: 1800},
+  {label: '7-Zone',  zones: 7,  htl_mm: 2500},
+  {label: '10-Zone', zones: 10, htl_mm: 3600}
+];
+
+// =========================================================
+//  UNIT / MODE SWITCHING
+// =========================================================
+function setUnit(u) {
+  currentUnit = u;
+  document.getElementById('btnMm').className = u === 'mm' ? 'active' : '';
+  document.getElementById('btnIn').className = u === 'in' ? 'active' : '';
+  updateUnitLabels();
+  calcA();
+  calcB();
+}
+
+function updateUnitLabels() {
+  var lbl = currentUnit === 'mm' ? 'mm' : 'in';
+  var speedLbl = currentUnit === 'mm' ? 'mm/min' : 'in/min';
+  setTxt('A_tunnelLen_unit', lbl);
+  setTxt('A_boardLen_unit',  lbl);
+  setTxt('A_processSpeed_sub', speedLbl);
+  setTxt('A_reqSpeed_sub',     speedLbl);
+  setTxt('A_spacing_sub',      lbl + ' between boards');
+  setTxt('B_boardLen_unit',    lbl);
+  setTxt('B_beltSpeed_sub',    speedLbl);
+}
+
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('modeA').className    = m === 'A' ? 'active' : '';
+  document.getElementById('modeB').className    = m === 'B' ? 'active' : '';
+  document.getElementById('sectionA').className = m === 'A' ? 'mode-section active' : 'mode-section';
+  document.getElementById('sectionB').className = m === 'B' ? 'mode-section active' : 'mode-section';
+}
+
+// =========================================================
+//  HELPERS
+// =========================================================
+function setTxt(id, v) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = v;
+}
+
+function fmtN(n, d) {
+  if (!isFinite(n) || isNaN(n)) return '--';
+  d = (d === undefined) ? 0 : d;
+  return n.toLocaleString('fi-FI', {minimumFractionDigits: d, maximumFractionDigits: d});
+}
+
+function getVal(id) {
+  var v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) ? null : v;
+}
+
+// Convert display unit value to mm for calculations
+function toMm(v) {
+  return currentUnit === 'in' ? v * 25.4 : v;
+}
+// Convert mm result to display unit
+function fromMm(v) {
+  return currentUnit === 'in' ? v / 25.4 : v;
+}
+function fromMmSpeed(v) {
+  // speed in mm/min -> display unit/min
+  return currentUnit === 'in' ? v / 25.4 : v;
+}
+
+// =========================================================
+//  MODE A CALCULATION
+// =========================================================
+function calcA() {
+  var tunnelRaw  = getVal('A_tunnelLen');
+  var dwell      = getVal('A_dwell');
+  var loadPct    = getVal('A_loadFactor');
+  var boardRaw   = getVal('A_boardLen');
+  var cycleTime  = getVal('A_cycleTime'); // optional, seconds
+
+  if (tunnelRaw === null || dwell === null || loadPct === null || boardRaw === null) return;
+  if (dwell <= 0 || loadPct <= 0 || boardRaw <= 0 || tunnelRaw <= 0) return;
+
+  var tunnelMm = toMm(tunnelRaw);
+  var boardMm  = toMm(boardRaw);
+  var lf       = loadPct / 100;
+
+  // Process speed: max the oven can run and still deliver required dwell
+  // processSpeed [mm/min] = tunnelMm / dwell [s] * 60
+  var processSpeedMm = (tunnelMm / dwell) * 60;
+
+  // Throughput from process speed and load factor
+  // boardPitch = boardMm / lf
+  var boardPitch = boardMm / lf;
+  var throughput = (processSpeedMm / boardPitch) * 60; // boards/hour
+
+  // Time in heated zone at this belt speed (should equal dwell by definition)
+  var timeInZone = (tunnelMm / processSpeedMm) * 60; // seconds
+
+  // Required belt speed from upstream cycle time (if given)
+  var reqSpeedMm = null;
+  var spacing    = null;
+  var headroom   = null;
+
+  if (cycleTime !== null && cycleTime > 0) {
+    // Required speed: one board must exit every cycleTime seconds
+    // belt must travel boardMm in cycleTime seconds (plus gap already baked into pitch)
+    // Actually: to process one board per cycleTime seconds,
+    // belt speed = boardPitch / cycleTime * 60 [mm/min]
+    reqSpeedMm = (boardPitch / cycleTime) * 60;
+    spacing    = processSpeedMm * (cycleTime / 60) - boardMm; // mm gap at process speed
+    headroom   = processSpeedMm / reqSpeedMm;
+  } else {
+    // Without cycle time: spacing at process speed
+    spacing = boardPitch - boardMm;
+  }
+
+  // Display values
+  var dispProcessSpeed = fromMmSpeed(processSpeedMm);
+  var dispReqSpeed     = reqSpeedMm !== null ? fromMmSpeed(reqSpeedMm) : null;
+  var dispSpacing      = fromMm(spacing !== null ? spacing : boardPitch - boardMm);
+
+  setTxt('A_processSpeed', fmtN(dispProcessSpeed, 1));
+  setTxt('A_throughput',   fmtN(throughput, 0));
+  setTxt('A_timeInZone',   fmtN(timeInZone, 0));
+  setTxt('A_reqSpeed',     dispReqSpeed !== null ? fmtN(dispReqSpeed, 1) : '--');
+  setTxt('A_spacing',      fmtN(dispSpacing, 1));
+
+  if (headroom !== null) {
+    setTxt('A_headroom', fmtN((headroom - 1) * 100, 1) + '%');
+  } else {
+    setTxt('A_headroom', '--');
+    document.getElementById('A_headroom').parentElement.querySelector('.result-sub').textContent = 'set P&P cycle time to enable';
+  }
+
+  // STATUS
+  var si  = document.getElementById('A_statusIndicator');
+  var sm  = document.getElementById('A_statusMsg');
+  var smg = document.getElementById('A_statusMargin');
+  var sc  = document.getElementById('A_speedCompare');
+
+  si.className = 'status-indicator';
+  sm.className = 'status-msg';
+
+  if (cycleTime === null || cycleTime <= 0) {
+    si.className += ' idle';
+    si.textContent = 'No P&P cycle time entered';
+    smg.textContent = '';
+    sm.textContent = 'Throughput and process speed calculated. Enter a P&P cycle time above to check whether the oven can keep up with your placement machine.';
+    sc.style.display = 'none';
+  } else {
+    var marginPct = (headroom - 1) * 100;
+    sc.style.display = 'block';
+
+    // Speed bars - scale to max of the two
+    var maxSpd = Math.max(processSpeedMm, reqSpeedMm);
+    var pBarW  = Math.round((processSpeedMm / maxSpd) * 100);
+    var rBarW  = Math.round((reqSpeedMm     / maxSpd) * 100);
+    var pFill  = document.getElementById('A_bar_process');
+    var rFill  = document.getElementById('A_bar_required');
+    var pVal   = document.getElementById('A_bar_process_val');
+    var rVal   = document.getElementById('A_bar_required_val');
+
+    pFill.style.width = pBarW + '%';
+    rFill.style.width = rBarW + '%';
+    pVal.textContent  = fmtN(fromMmSpeed(processSpeedMm), 1) + (currentUnit === 'in' ? ' in/min' : ' mm/min');
+    rVal.textContent  = fmtN(fromMmSpeed(reqSpeedMm),     1) + (currentUnit === 'in' ? ' in/min' : ' mm/min');
+
+    if (processSpeedMm >= reqSpeedMm) {
+      pFill.className = 'speed-bar-fill process';
+      rFill.className = 'speed-bar-fill required';
+    } else {
+      pFill.className = 'speed-bar-fill conflict';
+      rFill.className = 'speed-bar-fill conflict';
+    }
+
+    if (marginPct >= 10) {
+      si.className += ' ok';
+      si.textContent = 'Oven can keep up';
+      sm.className += ' ok';
+      smg.textContent = '+' + fmtN(marginPct, 1) + '% headroom';
+      sm.textContent = '[OK] Process speed (' + fmtN(fromMmSpeed(processSpeedMm), 1) + ') exceeds required speed (' + fmtN(fromMmSpeed(reqSpeedMm), 1) + ') by ' + fmtN(marginPct, 1) + '%. The oven is not the bottleneck. Board spacing on the belt at process speed: ' + fmtN(dispSpacing, 1) + ' ' + (currentUnit === 'in' ? 'in' : 'mm') + '.';
+    } else if (marginPct >= 0) {
+      si.className += ' warn';
+      si.textContent = 'Marginal — tight headroom';
+      sm.className += ' warn';
+      smg.textContent = '+' + fmtN(marginPct, 1) + '% margin';
+      sm.textContent = '[!] Process speed is only ' + fmtN(marginPct, 1) + '% above what the line requires. Any profile adjustment that demands a lower belt speed will make the oven the bottleneck. Consider verifying with a longer dwell margin or evaluating a longer-tunnel oven model.';
+    } else {
+      si.className += ' bad';
+      si.textContent = 'Oven is the bottleneck';
+      sm.className += ' bad';
+      smg.textContent = fmtN(Math.abs(marginPct), 1) + '% short';
+      sm.textContent = '[!!] The oven cannot keep up. Process speed (' + fmtN(fromMmSpeed(processSpeedMm), 1) + ') is below the required speed (' + fmtN(fromMmSpeed(reqSpeedMm), 1) + '). At the current belt speed the dwell time will be ' + fmtN((tunnelMm / reqSpeedMm) * 60, 0) + ' s instead of ' + fmtN(dwell, 0) + ' s. Options: longer tunnel oven, shorter dwell profile, or reduce line throughput target.';
+    }
+  }
+}
+
+// =========================================================
+//  MODE B CALCULATION
+// =========================================================
+function calcB() {
+  var targetBph  = getVal('B_throughput');
+  var boardRaw   = getVal('B_boardLen');
+  var loadPct    = getVal('B_loadFactor');
+  var dwell      = getVal('B_dwell');
+
+  if (targetBph === null || boardRaw === null || loadPct === null || dwell === null) return;
+  if (targetBph <= 0 || boardRaw <= 0 || loadPct <= 0 || dwell <= 0) return;
+
+  var boardMm = toMm(boardRaw);
+  var lf      = loadPct / 100;
+  var boardPitch = boardMm / lf;
+
+  // Required belt speed [mm/min]
+  var reqSpeedMm = (targetBph / 60) * boardPitch;
+
+  // Min heated tunnel length [mm]
+  var minTunnelMm = reqSpeedMm * (dwell / 60);
+
+  // Display
+  var dispTunnelMm  = fromMm(minTunnelMm);
+  var dispTunnelIn  = minTunnelMm / 25.4;
+  var dispTunnelFt  = dispTunnelIn / 12;
+  var dispBeltSpeed = fromMmSpeed(reqSpeedMm);
+
+  setTxt('B_tunnelMm',  fmtN(dispTunnelMm, 0));
+  setTxt('B_tunnelMm_sub', currentUnit === 'in' ? 'in heated length' : 'mm heated length');
+
+  // Alt unit: always show the OTHER unit from primary
+  if (currentUnit === 'mm') {
+    setTxt('B_tunnelAlt',     fmtN(dispTunnelFt, 2) + ' ft');
+    setTxt('B_tunnelAlt_sub', fmtN(dispTunnelIn, 1) + ' inches');
+  } else {
+    setTxt('B_tunnelAlt',     fmtN(minTunnelMm, 0) + ' mm');
+    setTxt('B_tunnelAlt_sub', fmtN(dispTunnelFt, 2) + ' feet');
+  }
+
+  setTxt('B_beltSpeed', fmtN(dispBeltSpeed, 1));
+  setTxt('B_beltSpeed_sub', currentUnit === 'in' ? 'in/min' : 'mm/min');
+
+  // Reference table
+  var tbody = document.getElementById('B_refBody');
+  tbody.innerHTML = '';
+  OVEN_CLASSES.forEach(function(oc) {
+    var ocProcessSpeed = (oc.htl_mm / dwell) * 60; // mm/min
+    var ocThroughput   = (ocProcessSpeed / boardPitch) * 60;
+    var fits           = oc.htl_mm >= minTunnelMm;
+    var tr = document.createElement('tr');
+    if (fits) tr.className = 'match';
+
+    var htlDisp  = currentUnit === 'in' ? fmtN(oc.htl_mm / 25.4, 0) + ' in' : fmtN(oc.htl_mm, 0) + ' mm';
+    var spdDisp  = currentUnit === 'in' ? fmtN(ocProcessSpeed / 25.4, 1) + ' in/min' : fmtN(ocProcessSpeed, 1) + ' mm/min';
+    var statusTxt = fits ? 'Sufficient' : 'Too short';
+
+    tr.innerHTML =
+      '<td>' + oc.label + '</td>' +
+      '<td>' + oc.zones + '</td>' +
+      '<td>' + htlDisp  + '</td>' +
+      '<td>' + spdDisp  + '</td>' +
+      '<td style="color:' + (fits ? 'var(--green)' : 'var(--red)') + ';font-family:var(--mono);font-size:0.7rem">' + statusTxt + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// =========================================================
+//  PRINT REPORT A
+// =========================================================
+function printReportA() {
+  var title = document.getElementById('A_reportTitle').value.trim();
+  var now   = new Date();
+  var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
+
+  function g(id) { var el = document.getElementById(id); return el ? el.textContent : '--'; }
+
+  var siEl = document.getElementById('A_statusIndicator');
+  var statusTxt = siEl ? siEl.textContent : '';
+  var statusCls = siEl ? siEl.className : '';
+  var statusColor = '#2ecc71';
+  if (statusCls.indexOf('warn') !== -1) statusColor = '#f5a623';
+  if (statusCls.indexOf('bad')  !== -1) statusColor = '#e8320a';
+  if (statusCls.indexOf('idle') !== -1) statusColor = '#555';
+  var msgTxt = document.getElementById('A_statusMsg') ? document.getElementById('A_statusMsg').textContent : '';
+
+  var unitLbl  = currentUnit === 'in' ? 'in' : 'mm';
+  var speedLbl = currentUnit === 'in' ? 'in/min' : 'mm/min';
+
+  var params = [
+    {l: 'Heated Tunnel Length', v: document.getElementById('A_tunnelLen').value + ' ' + unitLbl},
+    {l: 'Required Dwell Time',  v: document.getElementById('A_dwell').value + ' s'},
+    {l: 'Board Length',         v: document.getElementById('A_boardLen').value + ' ' + unitLbl},
+    {l: 'Load Factor',          v: document.getElementById('A_loadFactor').value + '%'},
+    {l: 'P&P Cycle Time',       v: (document.getElementById('A_cycleTime').value || 'not entered') + (document.getElementById('A_cycleTime').value ? ' s' : '')}
+  ];
+
+  var results = [
+    {l: 'Max Process Speed',    v: g('A_processSpeed') + ' ' + speedLbl, primary: true},
+    {l: 'Throughput',           v: g('A_throughput') + ' boards/h',       primary: true},
+    {l: 'Time in Heated Zone',  v: g('A_timeInZone') + ' s',              primary: false},
+    {l: 'Required Belt Speed',  v: g('A_reqSpeed') + ' ' + speedLbl,      primary: false},
+    {l: 'Board Spacing',        v: g('A_spacing') + ' ' + unitLbl,        primary: false},
+    {l: 'Speed Headroom',       v: g('A_headroom'),                        primary: false}
+  ];
+
+  var paramsHtml = params.map(function(p) {
+    return '<div class="pm-row"><span class="pm-label">' + p.l + '</span><span class="pm-val">' + p.v + '</span></div>';
+  }).join('');
+
+  var resultsHtml = results.map(function(r) {
+    return '<div class="pstat' + (r.primary ? ' pprimary' : '') + '">' +
+      '<div class="pstat-label">' + r.l + '</div>' +
+      '<div class="pstat-value' + (r.primary ? ' paccent' : '') + '">' + r.v + '</div></div>';
+  }).join('');
+
+  var html = printBase(title, 'Mode A: Check My Oven', dateStr) +
+    '<div class="section-label">Input Parameters</div><div class="pm-grid">' + paramsHtml + '</div>' +
+    '<div class="section-label" style="margin-top:20px">Results</div><div class="pgrid">' + resultsHtml + '</div>' +
+    '<div class="section-label" style="margin-top:20px">Verdict</div>' +
+    '<div class="status-msg" style="border-left:4px solid ' + statusColor + ';padding:10px 14px;background:#f9f9f9;font-size:12px;color:#444;margin-bottom:16px">' +
+    '<strong style="color:' + statusColor + '">' + statusTxt + '</strong><br>' + msgTxt + '</div>' +
+    '</body></html>';
+
+  openPrint(html, title, 'Reflow Throughput Calculator');
+}
+
+// =========================================================
+//  PRINT REPORT B
+// =========================================================
+function printReportB() {
+  var title = document.getElementById('B_reportTitle').value.trim();
+  var now   = new Date();
+  var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
+
+  function g(id) { var el = document.getElementById(id); return el ? el.textContent : '--'; }
+
+  var unitLbl  = currentUnit === 'in' ? 'in' : 'mm';
+  var speedLbl = currentUnit === 'in' ? 'in/min' : 'mm/min';
+
+  var params = [
+    {l: 'Target Throughput',    v: document.getElementById('B_throughput').value + ' boards/h'},
+    {l: 'Board Length',         v: document.getElementById('B_boardLen').value + ' ' + unitLbl},
+    {l: 'Load Factor',          v: document.getElementById('B_loadFactor').value + '%'},
+    {l: 'Required Dwell Time',  v: document.getElementById('B_dwell').value + ' s'}
+  ];
+
+  var results = [
+    {l: 'Min. Heated Tunnel Length', v: g('B_tunnelMm') + ' ' + (currentUnit === 'in' ? 'in' : 'mm'), primary: true},
+    {l: 'Alt. Unit',                 v: g('B_tunnelAlt'),                                              primary: true},
+    {l: 'Required Belt Speed',       v: g('B_beltSpeed') + ' ' + speedLbl,                            primary: false}
+  ];
+
+  var paramsHtml = params.map(function(p) {
+    return '<div class="pm-row"><span class="pm-label">' + p.l + '</span><span class="pm-val">' + p.v + '</span></div>';
+  }).join('');
+  var resultsHtml = results.map(function(r) {
+    return '<div class="pstat' + (r.primary ? ' pprimary' : '') + '">' +
+      '<div class="pstat-label">' + r.l + '</div>' +
+      '<div class="pstat-value' + (r.primary ? ' paccent' : '') + '">' + r.v + '</div></div>';
+  }).join('');
+
+  // Ref table snapshot
+  var refRows = document.querySelectorAll('#B_refBody tr');
+  var refHtml = '';
+  if (refRows.length > 0) {
+    var rows = '';
+    refRows.forEach(function(tr) {
+      var tds = tr.querySelectorAll('td');
+      var isSuff = tr.className.indexOf('match') !== -1;
+      rows += '<tr style="background:' + (isSuff ? '#f0fff4' : '#fff') + '">' +
+        Array.from(tds).map(function(td) { return '<td>' + td.textContent + '</td>'; }).join('') + '</tr>';
+    });
+    refHtml = '<div class="section-label" style="margin-top:20px">Oven Class Reference</div>' +
+      '<table class="ptable"><thead><tr>' +
+      '<th style="text-align:left">Oven Class</th><th>Zones</th><th>Heated Length</th><th>Max Process Speed</th><th>Status</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<p style="font-size:10px;color:#888;margin-top:6px;font-family:monospace">Reference data from Indium Corporation. Verify against specific oven model datasheet.</p>';
+  }
+
+  var html = printBase(title, 'Mode B: Size an Oven', dateStr) +
+    '<div class="section-label">Input Parameters</div><div class="pm-grid">' + paramsHtml + '</div>' +
+    '<div class="section-label" style="margin-top:20px">Results</div><div class="pgrid">' + resultsHtml + '</div>' +
+    refHtml +
+    '</body></html>';
+
+  openPrint(html, title, 'Reflow Throughput Calculator');
+}
+
+// =========================================================
+//  SHARED PRINT BASE
+// =========================================================
+function printBase(title, mode, dateStr) {
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<title>Reflow Throughput Calculator' + (title ? ' - ' + title : '') + '</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+    '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
+    '.ph { border-bottom: 3px solid #f5a623; padding-bottom: 12px; margin-bottom: 20px; }' +
+    '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
+    '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
+    '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
+    '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #f5a623; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+    '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 8px; }' +
+    '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
+    '.pprimary { border-top: 3px solid #f5a623; }' +
+    '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+    '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 20px; font-weight: 900; color: #222; }' +
+    '.paccent { color: #f5a623; }' +
+    '.pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }' +
+    '.pm-row { display: flex; justify-content: space-between; background: #f9f9f9; padding: 6px 10px; border-bottom: 1px solid #eee; }' +
+    '.pm-label { font-family: "Share Tech Mono", monospace; font-size: 9px; text-transform: uppercase; color: #888; }' +
+    '.pm-val { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #222; font-weight: 700; }' +
+    '.ptable { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 4px; }' +
+    '.ptable thead th { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; border-bottom: 1px solid #eee; padding: 5px 8px; text-align: right; }' +
+    '.ptable thead th:first-child { text-align: left; }' +
+    '.ptable tbody tr { border-bottom: 1px solid #f0f0f0; }' +
+    '.ptable td { padding: 6px 8px; color: #444; text-align: right; font-family: "Share Tech Mono", monospace; font-size: 10px; }' +
+    '.ptable td:first-child { text-align: left; font-family: Barlow, sans-serif; font-weight: 600; color: #222; }' +
+    '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } }' +
+    '</style></head><body>' +
+    '<div class="ph"><div class="ph-tool">Reflow Throughput Calculator &mdash; SMTCalc.com &mdash; ' + mode + '</div>' +
+    (title ? '<div class="ph-title">' + title + '</div>' : '') +
+    '<div class="ph-meta">Printed: ' + dateStr + '</div></div>';
+}
+
+function openPrint(html, title, toolName) {
+  var win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write(html);
+  win.document.close();
+  win.onload = function() { win.focus(); win.print(); };
+}
+
+// =========================================================
+//  INIT
+// =========================================================
+updateUnitLabels();
+calcA();
+calcB();
+</script>
+</body>
+</html>
