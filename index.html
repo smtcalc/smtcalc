@@ -604,7 +604,7 @@
   <div class="stats-bar">
     <div class="stats-inner">
       <div class="stat">
-        <span class="stat-value">3</span>
+        <span class="stat-value" id="tools-count">3</span>
         <span class="stat-label">Tools Available</span>
       </div>
       <div class="stat">
@@ -739,5 +739,9 @@
     </div>
   </footer>
 
+  <script>
+    document.getElementById('tools-count').textContent =
+      document.querySelectorAll('.tool-card').length;
+  </script>
 </body>
 </html>
