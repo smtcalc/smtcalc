@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <a href="https://www.canva.com/design/DAHDRrbe_dA/f0K9eupZUuHtKcE6s6TtyA/view?utm_content=DAHDRrbe_dA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he7cafc826a" target="_blank" class="guide-btn" id="guideBtn">Read the Guide &#8594;</a>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reflow Throughput Calculator &mdash; SMTCalc</title>
@@ -637,7 +637,35 @@
             <input type="number" id="A_dwell" value="270" min="30" max="600" step="5" oninput="calcA()">
             <span class="input-unit">sec</span>
           </div>
-          <div class="field-note">Typical SAC305 profile requires about 240&ndash;300 s total in the heated zone. Check your paste datasheet.</div>
+          <div class="field-note" style="margin-top:0.5rem">
+            <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
+              <!-- Background -->
+              <rect width="320" height="110" fill="#111"/>
+              <!-- Axes -->
+              <line x1="28" y1="8" x2="28" y2="82" stroke="#333" stroke-width="1"/>
+              <line x1="28" y1="82" x2="308" y2="82" stroke="#333" stroke-width="1"/>
+              <!-- Axis labels -->
+              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
+              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
+              <!-- Profile curve: ramp, soak, reflow peak, cooldown -->
+              <!-- Points: start(32,76), end-ramp(100,40), soak-end(140,40), peak(210,14), cooldown(290,72) -->
+              <polyline points="32,76 100,40 140,40 210,14 290,72" fill="none" stroke="#f5a623" stroke-width="2" stroke-linejoin="round"/>
+              <!-- Zone labels -->
+              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">RAMP</text>
+              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
+              <text x="210" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
+              <text x="268" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">COOL</text>
+              <!-- TAL marker: short segment near peak above liquidus line -->
+              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
+              <!-- Dwell bracket: full profile width -->
+              <line x1="32" y1="95" x2="290" y2="95" stroke="#2ecc71" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#2ecc71" stroke-width="1.5"/>
+              <line x1="290" y1="91" x2="290" y2="99" stroke="#2ecc71" stroke-width="1.5"/>
+              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#2ecc71" text-anchor="middle">Dwell time = total profile duration</text>
+            </svg>
+            Use the total profile duration from your paste datasheet, oven entry to exit. For SnPb (Sn63/Sn62) typically 300&ndash;360 s. For SAC305 typically 240&ndash;300 s. TAL (time above liquidus) is only 45&ndash;60 s and is not the correct value here.
+          </div>
         </div>
 
         <div class="field">
@@ -789,7 +817,27 @@
             <input type="number" id="B_dwell" value="270" min="30" max="600" step="5" oninput="calcB()">
             <span class="input-unit">sec</span>
           </div>
-          <div class="field-note">From paste datasheet or validated reflow profile. SAC305 typically 240&ndash;300 s.</div>
+          <div class="field-note" style="margin-top:0.5rem">
+            <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
+              <rect width="320" height="110" fill="#111"/>
+              <line x1="28" y1="8" x2="28" y2="82" stroke="#333" stroke-width="1"/>
+              <line x1="28" y1="82" x2="308" y2="82" stroke="#333" stroke-width="1"/>
+              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
+              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
+              <polyline points="32,76 100,40 140,40 210,14 290,72" fill="none" stroke="#f5a623" stroke-width="2" stroke-linejoin="round"/>
+              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">RAMP</text>
+              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
+              <text x="210" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
+              <text x="268" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">COOL</text>
+              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
+              <line x1="32" y1="95" x2="290" y2="95" stroke="#2ecc71" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#2ecc71" stroke-width="1.5"/>
+              <line x1="290" y1="91" x2="290" y2="99" stroke="#2ecc71" stroke-width="1.5"/>
+              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#2ecc71" text-anchor="middle">Dwell time = total profile duration</text>
+            </svg>
+            Use the total profile duration from your paste datasheet, oven entry to exit. For SnPb (Sn63/Sn62) typically 300&ndash;360 s. For SAC305 typically 240&ndash;300 s. TAL (time above liquidus) is only 45&ndash;60 s and is not the correct value here.
+          </div>
         </div>
       </div>
     </div>
