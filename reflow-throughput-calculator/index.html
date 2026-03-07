@@ -597,7 +597,7 @@
 
   <!-- UNIT TOGGLE -->
   <div class="unit-toggle" id="unitToggle">
-    <button class="active" id="btnMm" onclick="setUnit('mm')">mm</button>
+    <button class="active" id="btnCm" onclick="setUnit('cm')">cm</button>
     <button id="btnIn" onclick="setUnit('in')">inches</button>
   </div>
 
@@ -624,8 +624,8 @@
         <div class="field">
           <label>Heated Tunnel Length <span class="optional-label"></span></label>
           <div class="input-wrap">
-            <input type="number" id="A_tunnelLen" value="2500" min="100" step="50" oninput="calcA()">
-            <span class="input-unit" id="A_tunnelLen_unit">mm</span>
+            <input type="number" id="A_tunnelLen" value="250" min="10" step="5" oninput="calcA()">
+            <span class="input-unit" id="A_tunnelLen_unit">cm</span>
           </div>
           <div class="field-note">Heated zone length only. Not overall machine length. Check your oven datasheet.</div>
         </div>
@@ -656,8 +656,8 @@
         <div class="field">
           <label>Board Length (direction of travel)</label>
           <div class="input-wrap">
-            <input type="number" id="A_boardLen" value="200" min="10" step="5" oninput="calcA()">
-            <span class="input-unit" id="A_boardLen_unit">mm</span>
+            <input type="number" id="A_boardLen" value="20" min="1" step="1" oninput="calcA()">
+            <span class="input-unit" id="A_boardLen_unit">cm</span>
           </div>
           <div class="field-note">Measure in the direction of conveyor travel. For panels, use the full panel dimension.</div>
         </div>
@@ -684,7 +684,7 @@
         <div class="result-box primary">
           <div class="result-label">Max Process Speed</div>
           <div class="result-value" id="A_processSpeed">--</div>
-          <div class="result-sub" id="A_processSpeed_sub">mm / min</div>
+          <div class="result-sub" id="A_processSpeed_sub">cm / min</div>
         </div>
         <div class="result-box primary">
           <div class="result-label">Throughput</div>
@@ -699,12 +699,12 @@
         <div class="result-box">
           <div class="result-label">Required Belt Speed</div>
           <div class="result-value" id="A_reqSpeed">--</div>
-          <div class="result-sub" id="A_reqSpeed_sub">mm / min</div>
+          <div class="result-sub" id="A_reqSpeed_sub">cm / min</div>
         </div>
         <div class="result-box">
           <div class="result-label">Board Spacing on Belt</div>
           <div class="result-value" id="A_spacing">--</div>
-          <div class="result-sub" id="A_spacing_sub">mm between boards</div>
+          <div class="result-sub" id="A_spacing_sub">cm between boards</div>
         </div>
         <div class="result-box">
           <div class="result-label">Speed Headroom</div>
@@ -764,8 +764,8 @@
         <div class="field">
           <label>Board Length (direction of travel)</label>
           <div class="input-wrap">
-            <input type="number" id="B_boardLen" value="200" min="10" step="5" oninput="calcB()">
-            <span class="input-unit" id="B_boardLen_unit">mm</span>
+            <input type="number" id="B_boardLen" value="20" min="1" step="1" oninput="calcB()">
+            <span class="input-unit" id="B_boardLen_unit">cm</span>
           </div>
         </div>
 
@@ -811,7 +811,7 @@
         <div class="result-box">
           <div class="result-label">Required Belt Speed</div>
           <div class="result-value" id="B_beltSpeed">--</div>
-          <div class="result-sub" id="B_beltSpeed_sub">mm / min</div>
+          <div class="result-sub" id="B_beltSpeed_sub">cm / min</div>
         </div>
       </div>
 
@@ -849,7 +849,7 @@
 //  STATE
 // =========================================================
 var currentMode = 'A';
-var currentUnit = 'mm';
+var currentUnit = 'cm';
 
 // Oven class reference data: [label, zones, heated_mm]
 var OVEN_CLASSES = [
@@ -863,7 +863,7 @@ var OVEN_CLASSES = [
 // =========================================================
 function setUnit(u) {
   currentUnit = u;
-  document.getElementById('btnMm').className = u === 'mm' ? 'active' : '';
+  document.getElementById('btnCm').className = u === 'cm' ? 'active' : '';
   document.getElementById('btnIn').className = u === 'in' ? 'active' : '';
   updateUnitLabels();
   calcA();
@@ -871,8 +871,8 @@ function setUnit(u) {
 }
 
 function updateUnitLabels() {
-  var lbl = currentUnit === 'mm' ? 'mm' : 'in';
-  var speedLbl = currentUnit === 'mm' ? 'mm/min' : 'in/min';
+  var lbl      = currentUnit === 'cm' ? 'cm' : 'in';
+  var speedLbl = currentUnit === 'cm' ? 'cm/min' : 'in/min';
   setTxt('A_tunnelLen_unit', lbl);
   setTxt('A_boardLen_unit',  lbl);
   setTxt('A_processSpeed_sub', speedLbl);
@@ -911,15 +911,21 @@ function getVal(id) {
 
 // Convert display unit value to mm for calculations
 function toMm(v) {
-  return currentUnit === 'in' ? v * 25.4 : v;
+  if (currentUnit === 'in') return v * 25.4;
+  if (currentUnit === 'cm') return v * 10;
+  return v;
 }
 // Convert mm result to display unit
 function fromMm(v) {
-  return currentUnit === 'in' ? v / 25.4 : v;
+  if (currentUnit === 'in') return v / 25.4;
+  if (currentUnit === 'cm') return v / 10;
+  return v;
 }
 function fromMmSpeed(v) {
   // speed in mm/min -> display unit/min
-  return currentUnit === 'in' ? v / 25.4 : v;
+  if (currentUnit === 'in') return v / 25.4;
+  if (currentUnit === 'cm') return v / 10;
+  return v;
 }
 
 // =========================================================
@@ -1017,8 +1023,8 @@ function calcA() {
 
     pFill.style.width = pBarW + '%';
     rFill.style.width = rBarW + '%';
-    pVal.textContent  = fmtN(fromMmSpeed(processSpeedMm), 1) + (currentUnit === 'in' ? ' in/min' : ' mm/min');
-    rVal.textContent  = fmtN(fromMmSpeed(reqSpeedMm),     1) + (currentUnit === 'in' ? ' in/min' : ' mm/min');
+    pVal.textContent  = fmtN(fromMmSpeed(processSpeedMm), 1) + (currentUnit === 'in' ? ' in/min' : currentUnit === 'cm' ? ' cm/min' : ' mm/min');
+    rVal.textContent  = fmtN(fromMmSpeed(reqSpeedMm),     1) + (currentUnit === 'in' ? ' in/min' : currentUnit === 'cm' ? ' cm/min' : ' mm/min');
 
     if (processSpeedMm >= reqSpeedMm) {
       pFill.className = 'speed-bar-fill process';
@@ -1033,7 +1039,7 @@ function calcA() {
       si.textContent = 'Oven can keep up';
       sm.className += ' ok';
       smg.textContent = '+' + fmtN(marginPct, 1) + '% headroom';
-      sm.textContent = '[OK] Process speed (' + fmtN(fromMmSpeed(processSpeedMm), 1) + ') exceeds required speed (' + fmtN(fromMmSpeed(reqSpeedMm), 1) + ') by ' + fmtN(marginPct, 1) + '%. The oven is not the bottleneck. Board spacing on the belt at process speed: ' + fmtN(dispSpacing, 1) + ' ' + (currentUnit === 'in' ? 'in' : 'mm') + '.';
+      sm.textContent = '[OK] Process speed (' + fmtN(fromMmSpeed(processSpeedMm), 1) + ') exceeds required speed (' + fmtN(fromMmSpeed(reqSpeedMm), 1) + ') by ' + fmtN(marginPct, 1) + '%. The oven is not the bottleneck. Board spacing on the belt at process speed: ' + fmtN(dispSpacing, 1) + ' ' + (currentUnit === 'in' ? 'in' : 'cm') + '.';
     } else if (marginPct >= 0) {
       si.className += ' warn';
       si.textContent = 'Marginal — tight headroom';
@@ -1078,20 +1084,20 @@ function calcB() {
   var dispTunnelFt  = dispTunnelIn / 12;
   var dispBeltSpeed = fromMmSpeed(reqSpeedMm);
 
-  setTxt('B_tunnelMm',  fmtN(dispTunnelMm, 0));
-  setTxt('B_tunnelMm_sub', currentUnit === 'in' ? 'in heated length' : 'mm heated length');
+  setTxt('B_tunnelMm',  fmtN(dispTunnelMm, currentUnit === 'cm' ? 1 : 0));
+  setTxt('B_tunnelMm_sub', currentUnit === 'in' ? 'in heated length' : 'cm heated length');
 
-  // Alt unit: always show the OTHER unit from primary
-  if (currentUnit === 'mm') {
+  // Alt unit: cm shows ft/in, inches shows cm
+  if (currentUnit === 'cm') {
     setTxt('B_tunnelAlt',     fmtN(dispTunnelFt, 2) + ' ft');
     setTxt('B_tunnelAlt_sub', fmtN(dispTunnelIn, 1) + ' inches');
   } else {
-    setTxt('B_tunnelAlt',     fmtN(minTunnelMm, 0) + ' mm');
+    setTxt('B_tunnelAlt',     fmtN(minTunnelMm / 10, 1) + ' cm');
     setTxt('B_tunnelAlt_sub', fmtN(dispTunnelFt, 2) + ' feet');
   }
 
-  setTxt('B_beltSpeed', fmtN(dispBeltSpeed, 1));
-  setTxt('B_beltSpeed_sub', currentUnit === 'in' ? 'in/min' : 'mm/min');
+  setTxt('B_beltSpeed', fmtN(dispBeltSpeed, currentUnit === 'cm' ? 2 : 1));
+  setTxt('B_beltSpeed_sub', currentUnit === 'in' ? 'in/min' : 'cm/min');
 
   // Reference table
   var tbody = document.getElementById('B_refBody');
@@ -1103,8 +1109,8 @@ function calcB() {
     var tr = document.createElement('tr');
     if (fits) tr.className = 'match';
 
-    var htlDisp  = currentUnit === 'in' ? fmtN(oc.htl_mm / 25.4, 0) + ' in' : fmtN(oc.htl_mm, 0) + ' mm';
-    var spdDisp  = currentUnit === 'in' ? fmtN(ocProcessSpeed / 25.4, 1) + ' in/min' : fmtN(ocProcessSpeed, 1) + ' mm/min';
+    var htlDisp  = currentUnit === 'in' ? fmtN(oc.htl_mm / 25.4, 0) + ' in' : currentUnit === 'cm' ? fmtN(oc.htl_mm / 10, 0) + ' cm' : fmtN(oc.htl_mm, 0) + ' mm';
+    var spdDisp  = currentUnit === 'in' ? fmtN(ocProcessSpeed / 25.4, 1) + ' in/min' : currentUnit === 'cm' ? fmtN(ocProcessSpeed / 10, 1) + ' cm/min' : fmtN(ocProcessSpeed, 1) + ' mm/min';
     var statusTxt = fits ? 'Sufficient' : 'Too short';
 
     tr.innerHTML =
@@ -1136,8 +1142,8 @@ function printReportA() {
   if (statusCls.indexOf('idle') !== -1) statusColor = '#555';
   var msgTxt = document.getElementById('A_statusMsg') ? document.getElementById('A_statusMsg').textContent : '';
 
-  var unitLbl  = currentUnit === 'in' ? 'in' : 'mm';
-  var speedLbl = currentUnit === 'in' ? 'in/min' : 'mm/min';
+  var unitLbl  = currentUnit === 'in' ? 'in' : 'cm';
+  var speedLbl = currentUnit === 'in' ? 'in/min' : 'cm/min';
 
   var params = [
     {l: 'Heated Tunnel Length', v: document.getElementById('A_tunnelLen').value + ' ' + unitLbl},
@@ -1187,8 +1193,8 @@ function printReportB() {
 
   function g(id) { var el = document.getElementById(id); return el ? el.textContent : '--'; }
 
-  var unitLbl  = currentUnit === 'in' ? 'in' : 'mm';
-  var speedLbl = currentUnit === 'in' ? 'in/min' : 'mm/min';
+  var unitLbl  = currentUnit === 'in' ? 'in' : 'cm';
+  var speedLbl = currentUnit === 'in' ? 'in/min' : 'cm/min';
 
   var params = [
     {l: 'Target Throughput',    v: document.getElementById('B_throughput').value + ' boards/h'},
@@ -1198,9 +1204,9 @@ function printReportB() {
   ];
 
   var results = [
-    {l: 'Min. Heated Tunnel Length', v: g('B_tunnelMm') + ' ' + (currentUnit === 'in' ? 'in' : 'mm'), primary: true},
-    {l: 'Alt. Unit',                 v: g('B_tunnelAlt'),                                              primary: true},
-    {l: 'Required Belt Speed',       v: g('B_beltSpeed') + ' ' + speedLbl,                            primary: false}
+    {l: 'Min. Heated Tunnel Length', v: g('B_tunnelMm') + ' ' + (currentUnit === 'in' ? 'in' : 'cm'), primary: true},
+    {l: 'Alt. Unit',                 v: g('B_tunnelAlt'),                                                                             primary: true},
+    {l: 'Required Belt Speed',       v: g('B_beltSpeed') + ' ' + speedLbl,                                                           primary: false}
   ];
 
   var paramsHtml = params.map(function(p) {
