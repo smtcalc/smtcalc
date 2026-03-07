@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSL Bake Calculator -- SMTCalc</title>
+<meta name="description" content="Free MSL bake time calculator for SMT. Calculate required drying time per J-STD-033D for moisture-sensitive components at 125C, 90C, 60C and 40C.">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --bg4: #222222;
+    --accent: #f5a623;
+    --accent2: #e8320a;
+    --green: #2ecc71;
+    --yellow: #f5a623;
+    --red: #e8320a;
+    --blue: #4a9fd4;
+    --text: #f0ede8;
+    --muted: #888;
+    --border: #2a2a2a;
+    --border2: #333;
+    --mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+
+  .tool-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    padding: 0.3rem 0.75rem;
+  }
+
+  .tool-hero {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .tool-hero-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .tool-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px; height: 2px;
+    background: var(--accent);
+  }
+
+  .tool-hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-hero p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  .tool-wrap {
+    max-width: 980px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+
+  .panel-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+
+  .sc-full {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    margin-bottom: 1.5px;
+  }
+
+  .panel {
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+
+  .panel-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel-label::before {
+    content: '';
+    display: block;
+    width: 16px; height: 2px;
+    background: var(--accent);
+  }
+
+  .field { margin-bottom: 1.1rem; }
+
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .field-note {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.35rem;
+    line-height: 1.4;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap input[type=number] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 1rem;
+    padding: 0.6rem 3rem 0.6rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .input-wrap input[type=number]::-webkit-inner-spin-button,
+  .input-wrap input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .input-wrap input[type=number]:focus { border-color: var(--accent); }
+
+  .input-unit {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.6rem 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.5rem;
+  }
+  select:focus { border-color: var(--accent); }
+  select option { background: var(--bg3); }
+
+  /* TOGGLE BUTTONS */
+  .toggle-group {
+    display: flex;
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .toggle-group button {
+    flex: 1;
+    background: var(--bg3);
+    border: none;
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.5rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-align: center;
+  }
+  .toggle-group button.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* CHECKBOX */
+  .check-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.9rem;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    margin-bottom: 1.1rem;
+  }
+  .check-field:hover { border-color: var(--accent); }
+  .check-field input[type=checkbox] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .check-field .check-text {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .check-field .check-sub {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.72rem;
+    color: #666;
+    margin-top: 0.2rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* STATUS BANNER */
+  .status-banner {
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--border2);
+    background: var(--bg3);
+    margin-bottom: 1.5px;
+    display: none;
+  }
+  .status-banner.show { display: block; }
+  .status-banner.ok { border-left-color: var(--green); }
+  .status-banner.warn { border-left-color: var(--yellow); }
+  .status-banner.no-bake { border-left-color: var(--blue); }
+
+  .status-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+  .status-title.ok { color: var(--green); }
+  .status-title.warn { color: var(--yellow); }
+  .status-title.no-bake { color: var(--blue); }
+
+  .status-body {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* RESULTS TABLE */
+  .bake-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1.5px;
+  }
+
+  .bake-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+
+  .bake-table th {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    background: var(--bg2);
+    white-space: nowrap;
+  }
+
+  .bake-table th.temp-col {
+    text-align: center;
+    border-left: 1px solid var(--border);
+  }
+
+  .bake-table th.temp-col.calc {
+    color: var(--blue);
+    border-top: 2px solid var(--blue);
+  }
+
+  .bake-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+
+  .bake-table td.time-val {
+    text-align: center;
+    border-left: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .bake-table td.time-val.calc {
+    color: var(--blue);
+    background: rgba(74,159,212,0.04);
+  }
+
+  .bake-table td.time-val.fastest {
+    color: var(--green);
+  }
+
+  .bake-table tr:last-child td { border-bottom: none; }
+
+  .bake-table tr:hover td { background: var(--bg2); }
+  .bake-table tr:hover td.time-val.calc { background: rgba(74,159,212,0.08); }
+
+  .temp-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .temp-tolerance {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    color: #666;
+    margin-top: 0.1rem;
+  }
+
+  /* INFO PANELS */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+
+  .info-panel {
+    background: var(--bg);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .info-panel-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+
+  .floor-life-display {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .floor-life-sub {
+    font-size: 0.75rem;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  .excess-display {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .excess-ok { color: var(--green); }
+  .excess-warn { color: var(--yellow); }
+  .excess-over72 { color: var(--red); }
+
+  /* ASSUMPTION NOTE */
+  .assumption-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid rgba(74,159,212,0.5);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5px;
+  }
+
+  .assumption-note p {
+    font-size: 0.78rem;
+    color: #777;
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+  }
+  .assumption-note p:last-child { margin-bottom: 0; }
+  .assumption-note strong { color: var(--blue); font-weight: 500; }
+
+  /* FLOOR LIFE TABLE */
+  .fl-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .fl-table td {
+    padding: 0.4rem 0;
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .fl-table td:first-child {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    width: 60px;
+  }
+  .fl-table td:last-child {
+    color: var(--text);
+    padding-left: 0.75rem;
+  }
+  .fl-table tr:last-child td { border-bottom: none; }
+
+  /* PRINT BAR */
+  .print-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.75rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+  .print-bar label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .print-bar input[type=text] {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+  }
+  .print-bar input[type=text]:focus { border-color: var(--accent); }
+  .print-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+  .footer-copy {
+    font-size: 0.78rem;
+    color: #555;
+  }
+  .footer-copy a { color: #666; text-decoration: none; }
+  .footer-copy a:hover { color: var(--accent); }
+
+  /* PLACEHOLDER */
+  .results-placeholder {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #444;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px dashed var(--border2);
+    margin-bottom: 1.5px;
+  }
+
+  @media (max-width: 700px) {
+    .panel-grid, .panel-grid-3, .info-grid { grid-template-columns: 1fr; }
+    .tool-wrap { padding: 0 1rem; }
+    .bake-table th, .bake-table td { padding: 0.6rem 0.65rem; }
+  }
+
+  /* GUIDE BANNER */
+  .guide-inner {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .guide-inner p { font-size: 0.85rem; color: #999; }
+  .guide-inner strong { color: var(--text); }
+  .guide-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(245,166,35,0.3);
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .guide-btn:hover { background: rgba(245,166,35,0.08); }
+
+  /* PRINT */
+  @media print {
+    header, .print-bar, footer { display: none; }
+    body { background: #fff; color: #000; }
+    .tool-hero { background: #f8f8f8; border: none; }
+    .tool-hero::before { display: none; }
+    .panel, .sc-full, .info-panel { background: #fff; border: 1px solid #ddd; }
+    .bake-table { border: 1px solid #ccc; }
+    .bake-table th { background: #f0f0f0; color: #333; }
+    .bake-table td { color: #000; }
+    .bake-table td.calc { color: #1a6fa0; background: #f0f7ff; }
+    .status-banner { border-left-width: 3px; background: #fafafa; }
+    .assumption-note { background: #f5f5f5; border-color: #ccc; }
+    select, .toggle-group, .check-field { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">MSL / Moisture</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Component Handling</div>
+    <h1>MSL Bake Calculator</h1>
+    <p>Calculate required bake time for moisture-sensitive components based on J-STD-033D. Enter the component MSL level, package thickness, and actual floor exposure to get drying times at all standard temperatures plus 60&deg;C for dry cabinet use.</p>
+  </div>
+</div>
+
+<div class="tool-wrap">
+
+  <div class="guide-inner">
+    <p><strong>New to this calculator?</strong> Read the short guide covering MSL levels, why baking matters, how to use all the inputs, and how to read the bake time results.</p>
+    <a href="https://www.canva.com/design/DAHDQD_0hrw/iI2bUYFY0EmE7uInR-joaA/view?utm_content=DAHDQD_0hrw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6e11f40b53" target="_blank" class="guide-btn">Read the Guide &#x2192;</a>
+  </div>
+
+  <!-- INPUTS -->
+  <div class="panel-grid">
+
+    <!-- LEFT: Component -->
+    <div class="panel">
+      <div class="panel-label">Component Parameters</div>
+
+      <div class="field">
+        <label>MSL Level</label>
+        <select id="mslLevel" onchange="calculate()">
+          <option value="1">MSL 1 -- Unlimited floor life</option>
+          <option value="2">MSL 2 -- 1 year</option>
+          <option value="2a">MSL 2a -- 4 weeks</option>
+          <option value="3" selected>MSL 3 -- 168 hours</option>
+          <option value="4">MSL 4 -- 72 hours</option>
+          <option value="5">MSL 5 -- 48 hours</option>
+          <option value="5a">MSL 5a -- 24 hours</option>
+          <option value="6">MSL 6 -- Mandatory bake before use</option>
+        </select>
+        <div class="field-note">Floor life at standard conditions: 30&deg;C / 60% RH per J-STD-033D</div>
+      </div>
+
+      <div class="field">
+        <label>Package Body Thickness</label>
+        <select id="pkgThickness" onchange="calculate()">
+          <option value="lt05">Less than 0.5 mm (ultra-thin)</option>
+          <option value="05to08">0.5 mm to 0.8 mm</option>
+          <option value="08to14" selected>0.8 mm to 1.4 mm</option>
+          <option value="14to20">1.4 mm to 2.0 mm</option>
+          <option value="gt20">Greater than 2.0 mm to 4.5 mm</option>
+        </select>
+        <div class="field-note">Measure the body only -- exclude leads, balls, and pins. Use the thickest dimension if the package is not square.</div>
+      </div>
+
+      <label class="check-field" for="largeBga">
+        <input type="checkbox" id="largeBga" onchange="calculate()">
+        <div class="check-text">
+          Large BGA / Stacked Die Exception
+          <div class="check-sub">Package larger than 17 x 17 mm, or any stacked die package. Overrides thickness-based table -- fixed 96h at 125&deg;C per J-STD-033D Table 4-1 Note 2.</div>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- RIGHT: Exposure -->
+    <div class="panel">
+      <div class="panel-label">Floor Life Exposure</div>
+
+      <div class="field">
+        <label>Actual Time Out of Bag</label>
+        <div class="input-wrap">
+          <input type="number" id="timeOut" value="96" min="0" step="1" oninput="calculate()">
+          <span class="input-unit">hours</span>
+        </div>
+        <div class="field-note">Total cumulative time the component has been exposed to uncontrolled factory atmosphere since the moisture-barrier bag was opened.</div>
+      </div>
+
+      <div class="field">
+        <label>Exposure Condition</label>
+        <select id="exposureRH" onchange="calculate()">
+          <option value="standard" selected>Standard -- up to 30&deg;C / 60% RH</option>
+          <option value="elevated">Elevated -- above 60% RH</option>
+        </select>
+        <div class="field-note">If factory humidity has exceeded 60% RH at any point during exposure, select Elevated. This may require longer bake times per Table 4-1 Note 1.</div>
+      </div>
+
+      <div class="field" style="margin-top:1.5rem;">
+        <label>Excess Exposure Classification</label>
+        <div class="toggle-group" id="excessDisplay">
+          <button id="btnUnder72" style="pointer-events:none;">Under 72h excess</button>
+          <button id="btnOver72" style="pointer-events:none;">Over 72h excess</button>
+        </div>
+        <div class="field-note" id="excessNote">Determined automatically from MSL floor life and time out of bag. The 72-hour threshold governs which column of Table 4-1 applies.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STATUS BANNER -->
+  <div class="status-banner" id="statusBanner">
+    <div class="status-title" id="statusTitle"></div>
+    <div class="status-body" id="statusBody"></div>
+  </div>
+
+  <!-- RESULTS PLACEHOLDER (shown before calculation) -->
+  <div class="results-placeholder" id="resultsPlaceholder">
+    -- Select parameters above to calculate bake times --
+  </div>
+
+  <!-- BAKE TIME TABLE -->
+  <div class="bake-table-wrap" id="bakeTableWrap" style="display:none;">
+    <table class="bake-table">
+      <thead>
+        <tr>
+          <th>Condition</th>
+          <th class="temp-col">
+            <div class="temp-label">125&deg;C</div>
+            <span class="temp-tolerance">+10 / -0&deg;C, &lt;5% RH</span>
+          </th>
+          <th class="temp-col">
+            <div class="temp-label">90&deg;C</div>
+            <span class="temp-tolerance">+8 / -0&deg;C, &lt;5% RH</span>
+          </th>
+          <th class="temp-col calc">
+            <div class="temp-label">60&deg;C</div>
+            <span class="temp-tolerance">calculated, &lt;5% RH</span>
+          </th>
+          <th class="temp-col">
+            <div class="temp-label">40&deg;C</div>
+            <span class="temp-tolerance">+5 / -0&deg;C, &lt;5% RH</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="bakeTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 60C NOTE -->
+  <div class="assumption-note" id="calcNote" style="display:none;">
+    <p><strong>60&deg;C column:</strong> Calculated using the Arrhenius moisture diffusion model from J-STD-033D Appendix B. Diffusivity D = 6.2 &times; exp(-0.445 eV / kT) mm&sup2;/s, where k = 8.617 &times; 10&sup2;&sup5; eV/K. Bake time scales inversely with diffusivity relative to the 125&deg;C anchor value from Table 4-1. This temperature is not a tabled value in J-STD-033D -- results are physics-based interpolation using the same model that generated the standard tables. Suitable for production use; document the derivation method if customer traceability is required.</p>
+    <p>All temperatures require &lt;5% RH. Dry storage cabinets must be verified to maintain this condition at the operating temperature before use.</p>
+  </div>
+
+  <!-- INFO ROW -->
+  <div class="info-grid" id="infoGrid" style="display:none;">
+
+    <div class="info-panel">
+      <div class="info-panel-title">Floor Life Budget</div>
+      <div class="floor-life-display" id="floorLifeVal">--</div>
+      <div class="floor-life-sub" id="floorLifeSub">at 30&deg;C / 60% RH per J-STD-033D Table 5-1</div>
+      <div style="height:1rem;"></div>
+      <table class="fl-table">
+        <tr><td>MSL 1</td><td>Unlimited -- no bake ever required</td></tr>
+        <tr><td>MSL 2</td><td>1 year (8736 hours)</td></tr>
+        <tr><td>MSL 2a</td><td>4 weeks (672 hours)</td></tr>
+        <tr><td>MSL 3</td><td>168 hours (7 days)</td></tr>
+        <tr><td>MSL 4</td><td>72 hours (3 days)</td></tr>
+        <tr><td>MSL 5</td><td>48 hours (2 days)</td></tr>
+        <tr><td>MSL 5a</td><td>24 hours (1 day)</td></tr>
+        <tr><td>MSL 6</td><td>Mandatory bake before each use</td></tr>
+      </table>
+    </div>
+
+    <div class="info-panel">
+      <div class="info-panel-title">Exposure Status</div>
+      <div class="excess-display" id="excessVal">--</div>
+      <div class="floor-life-sub" id="excessSub"></div>
+      <div style="height:1rem;"></div>
+      <div class="floor-life-sub" style="line-height:1.6;">
+        After baking, the floor life clock resets to zero. Components may be re-exposed and re-baked up to the maximum reflow pass limit for the package. Each bake cycle degrades solderability slightly -- minimize unnecessary bakes. If a component has been baked more than the supplier recommendation, verify solderability before use.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ELEVATED RH WARNING -->
+  <div class="assumption-note" id="elevatedNote" style="display:none; border-left-color: rgba(245,166,35,0.6);">
+    <p><strong style="color:var(--yellow);">Elevated humidity exposure noted:</strong> J-STD-033D Table 4-1 Note 1 states that if components have been exposed above 60% RH, the tabled bake times may not be sufficient. Track actual desorption data (weigh the component lot periodically during baking) to confirm dryness rather than relying solely on the timed values.</p>
+  </div>
+
+  <!-- PRINT BAR -->
+  <div class="print-bar">
+    <label>Report Reference</label>
+    <input type="text" id="printRef" placeholder="e.g. Work Order 2026-0312, BGA U23, MSL 3">
+    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+  </div>
+
+</div><!-- end tool-wrap -->
+
+<footer>
+  <div class="footer-copy">
+    &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+    Bake times per IPC/JEDEC J-STD-033D. Always verify against the current revision of the standard.
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// J-STD-033D TABLE 4-1 BAKE DATA
+// Structure: bakeTimes[thickness][mslLevel][exceedance]
+// exceedance: 'over72' | 'under72'
+// Values in hours. null = not required. -1 = not applicable.
+// ============================================================
+
+// Floor life in hours per MSL level
+var FLOOR_LIFE = {
+  '1':  Infinity,
+  '2':  8736,
+  '2a': 672,
+  '3':  168,
+  '4':  72,
+  '5':  48,
+  '5a': 24,
+  '6':  0
+};
+
+// Table 4-1 data [125C, 90C, 40C] for [over72h, under72h]
+// null = bake not required
+var TABLE_4_1 = {
+  // Thickness < 0.5 mm
+  'lt05': {
+    '2':  { over72: [null, null, null],  under72: [null, null, null] },
+    '2a': { over72: [null, null, null],  under72: [null, null, null] },
+    '3':  { over72: [null, null, null],  under72: [null, null, null] },
+    '4':  { over72: [null, null, null],  under72: [null, null, null] },
+    '5':  { over72: [null, null, null],  under72: [null, null, null] },
+    '5a': { over72: [null, null, null],  under72: [null, null, null] }
+  },
+  // Thickness 0.5 to 0.8 mm
+  '05to08': {
+    '2':  { over72: [null, null, null],    under72: [null, null, null] },
+    '2a': { over72: [4, 15, 96],           under72: [3, 13, 72] },
+    '3':  { over72: [4, 15, 96],           under72: [3, 15, 72] },
+    '4':  { over72: [4, 16, 96],           under72: [3, 13, 72] },
+    '5':  { over72: [4, 16, 96],           under72: [3, 15, 72] },
+    '5a': { over72: [4, 16, 96],           under72: [3, 13, 72] }
+  },
+  // Thickness 0.8 to 1.4 mm
+  '08to14': {
+    '2':  { over72: [null, null, null],    under72: [null, null, null] },
+    '2a': { over72: [8, 25, 192],          under72: [6, 20, 168] },
+    '3':  { over72: [8, 25, 192],          under72: [6, 20, 168] },
+    '4':  { over72: [9, 27, 240],          under72: [6, 20, 168] },
+    '5':  { over72: [10, 28, 264],         under72: [6, 20, 168] },
+    '5a': { over72: [11, 30, 288],         under72: [6, 20, 168] }
+  },
+  // Thickness 1.4 to 2.0 mm
+  '14to20': {
+    '2':  { over72: [18, 65, 600],         under72: [15, 48, 480] },
+    '2a': { over72: [21, 72, 696],         under72: [16, 48, 528] },
+    '3':  { over72: [27, 96, 888],         under72: [17, 48, 552] },
+    '4':  { over72: [34, 120, 1128],       under72: [20, 72, 672] },
+    '5':  { over72: [40, 144, 1368],       under72: [25, 96, 840] },
+    '5a': { over72: [48, 192, 1896],       under72: [40, 144, 1344] }
+  },
+  // Thickness 2.0 to 4.5 mm
+  'gt20': {
+    '2':  { over72: [48, 240, 1896],       under72: [48, 168, 1608] },
+    '2a': { over72: [48, 240, 1896],       under72: [48, 168, 1608] },
+    '3':  { over72: [48, 240, 1896],       under72: [48, 192, 1608] },
+    '4':  { over72: [48, 240, 1896],       under72: [48, 240, 1608] },
+    '5':  { over72: [48, 240, 1896],       under72: [48, 240, 1608] },
+    '5a': { over72: [48, 240, 1896],       under72: [48, 240, 1608] }
+  }
+};
+
+// ============================================================
+// ARRHENIUS DIFFUSIVITY MODEL (J-STD-033D Appendix B)
+// D = 6.2 * exp(-0.445 eV / kT)  mm^2/s
+// k (Boltzmann) = 8.617333e-5 eV/K
+// ============================================================
+var k_eV = 8.617333e-5;
+var Ea   = 0.445;
+var D0   = 6.2;
+
+function diffusivity(tempC) {
+  var T = tempC + 273.15;
+  return D0 * Math.exp(-Ea / (k_eV * T));
+}
+
+// Ratio of bake time at target temperature vs reference (125C)
+// time_target = time_125 * D(125) / D(target)
+function bakeTimeAt60(hours125) {
+  if (hours125 === null) return null;
+  var ratio = diffusivity(125) / diffusivity(60);
+  return hours125 * ratio;
+}
+
+// Format hours to readable string
+function fmtHours(h) {
+  if (h === null) return 'Not required';
+  if (h === -1)   return 'N/A';
+  if (h < 0.5)    return '< 1 hour';
+  if (h < 1)      return '1 hour';
+
+  // Round to nearest hour for cleanliness
+  var rounded = Math.ceil(h);
+
+  if (rounded < 48) {
+    return rounded + (rounded === 1 ? ' hour' : ' hours');
+  }
+  var days = rounded / 24;
+  if (rounded % 24 === 0) {
+    return Math.round(days) + ' days';
+  }
+  // mixed days + hours
+  var d = Math.floor(rounded / 24);
+  var r = rounded % 24;
+  return d + 'd ' + r + 'h';
+}
+
+function fmtHours60(h) {
+  if (h === null) return 'Not required';
+  // Round up to next 0.5h for 60C (more precision useful here)
+  var rounded = Math.ceil(h * 2) / 2;
+  if (rounded < 48) {
+    if (rounded === Math.floor(rounded)) {
+      return Math.round(rounded) + (Math.round(rounded) === 1 ? ' hour' : ' hours');
+    }
+    return rounded + ' hours';
+  }
+  var days = rounded / 24;
+  if (Math.abs(days - Math.round(days)) < 0.1) {
+    return Math.round(days) + ' days';
+  }
+  var d = Math.floor(rounded / 24);
+  var r = Math.round((rounded % 24) * 2) / 2;
+  return d + 'd ' + r + 'h';
+}
+
+function floorLifeLabel(msl) {
+  var fl = FLOOR_LIFE[msl];
+  if (!isFinite(fl)) return 'Unlimited';
+  if (fl >= 8000)    return '1 year (8736 h)';
+  if (fl === 672)    return '4 weeks (672 h)';
+  if (fl === 168)    return '168 hours (7 days)';
+  if (fl === 72)     return '72 hours';
+  if (fl === 48)     return '48 hours';
+  if (fl === 24)     return '24 hours';
+  if (fl === 0)      return 'Bake before every use';
+  return fl + ' hours';
+}
+
+// ============================================================
+// MAIN CALCULATE
+// ============================================================
+function calculate() {
+  var msl       = document.getElementById('mslLevel').value;
+  var thick     = document.getElementById('pkgThickness').value;
+  var timeOut   = parseFloat(document.getElementById('timeOut').value) || 0;
+  var largeBga  = document.getElementById('largeBga').checked;
+  var elevRH    = document.getElementById('exposureRH').value === 'elevated';
+
+  var fl        = FLOOR_LIFE[msl];
+  var flLabel   = floorLifeLabel(msl);
+
+  // Update floor life display
+  document.getElementById('floorLifeVal').textContent = flLabel;
+
+  // ---- MSL 1: never bake ----
+  if (msl === '1') {
+    showStatus('no-bake', 'NO BAKE REQUIRED', 'MSL 1 components have unlimited floor life and are not moisture-sensitive. No drying is ever required regardless of exposure time.');
+    hideResults();
+    updateExcessDisplay(null, null, 0);
+    document.getElementById('excessVal').textContent = 'Not applicable';
+    document.getElementById('excessSub').textContent = 'MSL 1 has unlimited floor life.';
+    showInfoGrid();
+    return;
+  }
+
+  // ---- MSL 6: mandatory bake always ----
+  if (msl === '6') {
+    showStatus('warn', 'MANDATORY BAKE REQUIRED', 'MSL 6 components must be baked immediately before every use. Bake time is determined by the component supplier -- consult the supplier datasheet. J-STD-033D does not provide a standard table for MSL 6.');
+    hideResults();
+    updateExcessDisplay(null, null, 0);
+    document.getElementById('excessVal').textContent = 'Always bake';
+    document.getElementById('excessSub').textContent = 'MSL 6: supplier specifies bake conditions.';
+    showInfoGrid();
+    return;
+  }
+
+  // ---- Compute excess exposure ----
+  var excess    = timeOut - fl;
+  var overBudget = excess > 0;
+  var over72h   = excess > 72;
+
+  // Update excess display
+  updateExcessDisplay(excess, overBudget, timeOut);
+
+  // Auto-toggle the 72h indicator
+  document.getElementById('btnUnder72').className = (!over72h && overBudget) ? 'active' : '';
+  document.getElementById('btnOver72').className  = (over72h) ? 'active' : '';
+
+  // ---- No bake needed ----
+  if (!overBudget) {
+    var remaining = fl - timeOut;
+    showStatus('ok', 'WITHIN FLOOR LIFE -- NO BAKE NEEDED',
+      'Component has ' + fmtHours(remaining) + ' of floor life remaining. Return to moisture-barrier bag with fresh desiccant if not used immediately. Monitor remaining floor life before next use.');
+    hideResults();
+    showInfoGrid();
+    hideElevatedNote();
+    return;
+  }
+
+  // ---- Large BGA override ----
+  if (largeBga) {
+    showStatus('warn', 'BAKE REQUIRED -- LARGE BGA / STACKED DIE',
+      'J-STD-033D Table 4-1 Note 2 applies. Fixed bake of 96 hours at 125\u00b0C regardless of package thickness or excess exposure duration. Verify with component supplier for stacked die packages as actual bake time may be longer.');
+    showBgaResults();
+    showInfoGrid();
+    showCalcNote();
+    if (elevRH) showElevatedNote(); else hideElevatedNote();
+    return;
+  }
+
+  // ---- MSL 2 thin package: no bake required ----
+  if ((msl === '2') && (thick === 'lt05' || thick === '05to08' || thick === '08to14')) {
+    showStatus('no-bake', 'BAKE NOT REQUIRED (MSL 2, THIN PACKAGE)',
+      'J-STD-033D Table 4-1 Note 4: baking is not required for MSL 2 devices with package thickness below 1.4 mm, regardless of floor life exceedance. This is due to the moisture diffusion behaviour of thin packages which saturate and dry rapidly.');
+    hideResults();
+    updateExcessDisplay(excess, true, timeOut);
+    showInfoGrid();
+    hideElevatedNote();
+    return;
+  }
+
+  // ---- Standard bake lookup ----
+  var key = over72h ? 'over72' : 'under72';
+  var data = TABLE_4_1[thick] && TABLE_4_1[thick][msl] ? TABLE_4_1[thick][msl][key] : null;
+
+  if (!data) {
+    showStatus('warn', 'BAKE REQUIRED -- CONSULT SUPPLIER',
+      'No standard table entry for this combination. Consult the component supplier for bake conditions.');
+    hideResults();
+    showInfoGrid();
+    return;
+  }
+
+  var h125 = data[0];
+  var h90  = data[1];
+  var h40  = data[2];
+  var h60  = bakeTimeAt60(h125);
+
+  showStatus('warn', 'BAKE REQUIRED',
+    'Floor life exceeded by ' + fmtHours(excess) + '. Component must be baked before use. Select the oven temperature available in your facility. All temperatures require less than 5% RH.');
+
+  showTableResults(h125, h90, h60, h40, over72h);
+  showInfoGrid();
+  showCalcNote();
+  if (elevRH) showElevatedNote(); else hideElevatedNote();
+}
+
+function updateExcessDisplay(excess, overBudget, timeOut) {
+  var el    = document.getElementById('excessVal');
+  var subEl = document.getElementById('excessSub');
+
+  if (excess === null) return;
+
+  if (!overBudget) {
+    el.className = 'excess-display excess-ok';
+    el.textContent = fmtHours(Math.max(0, -excess)) + ' remaining';
+    subEl.textContent = timeOut + 'h exposure -- within floor life budget.';
+  } else {
+    var cls = excess > 72 ? 'excess-over72' : 'excess-warn';
+    el.className = 'excess-display ' + cls;
+    el.textContent = '+' + fmtHours(excess) + ' over budget';
+    var bracket = excess > 72 ? 'Over 72h excess -- worst-case bake column applies.' : 'Under 72h excess -- moderate bake column applies.';
+    subEl.textContent = timeOut + 'h exposure. ' + bracket;
+  }
+}
+
+function showStatus(type, title, body) {
+  var banner = document.getElementById('statusBanner');
+  var t = document.getElementById('statusTitle');
+  var b = document.getElementById('statusBody');
+  banner.className = 'status-banner show ' + type;
+  t.className = 'status-title ' + type;
+  t.textContent = title;
+  b.textContent = body;
+}
+
+function hideResults() {
+  document.getElementById('resultsPlaceholder').style.display = 'none';
+  document.getElementById('bakeTableWrap').style.display = 'none';
+  document.getElementById('calcNote').style.display = 'none';
+}
+
+function showCalcNote() {
+  document.getElementById('calcNote').style.display = 'block';
+}
+
+function showInfoGrid() {
+  document.getElementById('infoGrid').style.display = 'grid';
+}
+
+function showElevatedNote() {
+  document.getElementById('elevatedNote').style.display = 'block';
+}
+
+function hideElevatedNote() {
+  document.getElementById('elevatedNote').style.display = 'none';
+}
+
+function showBgaResults() {
+  var h60 = bakeTimeAt60(96);
+  var body = document.getElementById('bakeTableBody');
+  body.innerHTML = '';
+  var row = '<tr>' +
+    '<td style="color:var(--muted);font-size:0.78rem;">Large BGA / Stacked Die<br><span style="font-size:0.68rem;color:#555;">Table 4-1 Note 2</span></td>' +
+    '<td class="time-val fastest">' + fmtHours(96) + '</td>' +
+    '<td class="time-val" style="color:#777;">--</td>' +
+    '<td class="time-val calc">' + fmtHours60(h60) + '</td>' +
+    '<td class="time-val" style="color:#777;">--</td>' +
+    '</tr>';
+  body.innerHTML = row;
+  document.getElementById('resultsPlaceholder').style.display = 'none';
+  document.getElementById('bakeTableWrap').style.display = 'block';
+}
+
+function showTableResults(h125, h90, h60, h40, over72h) {
+  var body = document.getElementById('bakeTableBody');
+  body.innerHTML = '';
+
+  var excLabel = over72h ? 'Floor life exceeded &gt; 72h' : 'Floor life exceeded &lt; 72h';
+  var excSub   = over72h ? 'Worst-case column -- Table 4-1' : 'Moderate column -- Table 4-1';
+
+  // Find fastest valid time
+  var times = [
+    { v: h125, idx: 0 },
+    { v: h90,  idx: 1 },
+    { v: h60,  idx: 2 },
+    { v: h40,  idx: 3 }
+  ].filter(function(x) { return x.v !== null && x.v > 0; });
+
+  var fastestIdx = -1;
+  if (times.length > 0) {
+    fastestIdx = times.reduce(function(a,b){ return a.v < b.v ? a : b; }).idx;
+  }
+
+  function cls(i, isCalc) {
+    var c = 'time-val';
+    if (isCalc) c += ' calc';
+    if (i === fastestIdx && !isCalc) c += ' fastest';
+    if (i === fastestIdx && isCalc)  c += ' fastest';
+    return c;
+  }
+
+  var row = '<tr>' +
+    '<td style="color:var(--muted);font-size:0.78rem;">' + excLabel + '<br><span style="font-size:0.68rem;color:#555;">' + excSub + '</span></td>' +
+    '<td class="' + cls(0,false) + '">' + fmtHours(h125) + '</td>' +
+    '<td class="' + cls(1,false) + '">' + fmtHours(h90)  + '</td>' +
+    '<td class="' + cls(2,true)  + '">' + fmtHours60(h60) + '</td>' +
+    '<td class="' + cls(3,false) + '">' + fmtHours(h40)  + '</td>' +
+    '</tr>';
+
+  body.innerHTML = row;
+  document.getElementById('resultsPlaceholder').style.display = 'none';
+  document.getElementById('bakeTableWrap').style.display = 'block';
+}
+
+// Init on load
+calculate();
+</script>
+
+</body>
+</html>
