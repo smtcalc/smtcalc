@@ -689,7 +689,1168 @@
 
   <div class="guide-inner">
     <p><strong>New to this calculator?</strong> Read the short guide covering line parameters, OEE, how to add products, and how to interpret the utilization results.</p>
-    <a href="https://www.canva.com/design/DAHDKTmqOYA/VBsm1C9wI7ZIOixJLbzF-A/view?utm_content=DAHDKTmqOYA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb30bc381ae" target="_blank" class="guide-btn">Read the Guide →</a>
+    <a href="<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMT Capacity Calculator — SMTCalc</title>
+<meta name="description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --bg4: #222222;
+    --accent: #f5a623;
+    --accent2: #e8320a;
+    --green: #2ecc71;
+    --yellow: #f5a623;
+    --red: #e8320a;
+    --text: #f0ede8;
+    --muted: #888;
+    --border: #2a2a2a;
+    --border2: #333;
+    --mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+
+  .tool-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    padding: 0.3rem 0.75rem;
+  }
+
+  .tool-hero {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .tool-hero-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .tool-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px; height: 2px;
+    background: var(--accent);
+  }
+
+  .tool-hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-hero p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  /* WRAPPER */
+  .tool-wrap {
+    max-width: 980px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  /* PANELS */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+
+  .sc-full {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    margin-bottom: 1.5px;
+  }
+
+  .panel {
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+
+  .panel-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel-label::before {
+    content: '';
+    display: block;
+    width: 16px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* FIELDS */
+  .field { margin-bottom: 1.1rem; }
+
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap input[type=number] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    padding: 0.65rem 2.5rem 0.65rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .input-wrap input[type=number]::-webkit-outer-spin-button,
+  .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .input-wrap input[type=number]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(245,166,35,0.15);
+  }
+
+  .input-unit {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+  .field-note {
+    font-size: 0.75rem;
+    color: #555;
+    line-height: 1.5;
+    margin-top: 0.4rem;
+  }
+
+  /* SHIFT SELECTOR */
+  .shift-toggle {
+    display: flex;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .shift-toggle button {
+    flex: 1;
+    background: var(--bg3);
+    border: none;
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.65rem 0.4rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.3;
+  }
+  .shift-toggle button.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* ASSUMPTIONS TOGGLE */
+  .assump-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+    user-select: none;
+  }
+
+  .assump-toggle span {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .assump-toggle .chevron {
+    color: var(--muted);
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+  }
+
+  .assump-body {
+    display: none;
+    padding: 0.75rem 0 0.25rem;
+    font-size: 0.78rem;
+    color: #555;
+    line-height: 1.65;
+    border-top: 1px solid var(--border);
+    margin-top: 0.5rem;
+  }
+  .assump-body.open { display: block; }
+  #assumpBtn.open .chevron { transform: rotate(180deg); }
+
+  /* PRODUCT TABLE */
+  .product-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1.5px;
+    margin-bottom: 1rem;
+  }
+
+  .product-table thead th {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 0.6rem;
+    text-align: right;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .product-table thead th:first-child { text-align: left; }
+
+  .product-row td {
+    background: var(--bg3);
+    padding: 0.3rem 0.4rem;
+    vertical-align: middle;
+  }
+
+  .row-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+    width: 28px;
+  }
+
+  .col-name { min-width: 120px; }
+  .col-num-input { width: 90px; }
+  .col-price { width: 80px; }
+  .col-comps { width: 80px; }
+  .col-del { width: 32px; text-align: center; }
+
+  .product-row input[type=text],
+  .product-row input[type=number] {
+    width: 100%;
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .product-row input[type=text]:focus,
+  .product-row input[type=number]:focus { border-color: var(--accent); }
+  .product-row input[type=number]::-webkit-outer-spin-button,
+  .product-row input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .del-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-size: 0.8rem;
+    width: 24px; height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .del-btn:hover { color: var(--red); border-color: var(--red); }
+
+  .add-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--accent);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .add-btn:hover { background: rgba(245,166,35,0.08); border-color: var(--accent); }
+  .add-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .table-note {
+    font-size: 0.72rem;
+    color: #444;
+    line-height: 1.55;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+  }
+
+  /* RESULTS GRID */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .results-grid { grid-template-columns: repeat(2, 1fr); }
+    .panel-grid { grid-template-columns: 1fr; }
+  }
+
+  .result-box {
+    background: var(--bg3);
+    padding: 1.1rem 1.25rem;
+  }
+  .result-box.primary {
+    background: var(--bg4);
+    border-top: 2px solid var(--accent);
+  }
+
+  .result-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .result-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--text);
+  }
+  .result-box.primary .result-value { color: var(--accent); }
+
+  .result-sub {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: #555;
+    margin-top: 0.2rem;
+  }
+
+  /* BREAKDOWN TABLE */
+  .breakdown-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1.5px;
+    margin-bottom: 1rem;
+  }
+
+  .breakdown-table thead th {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 0.75rem;
+    text-align: right;
+    background: var(--bg3);
+  }
+  .breakdown-table thead th:first-child { text-align: left; }
+
+  .breakdown-table tbody td {
+    background: var(--bg3);
+    padding: 0.6rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #aaa;
+    text-align: right;
+  }
+  .breakdown-table tbody td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .breakdown-table tfoot td {
+    background: var(--bg4);
+    padding: 0.6rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: right;
+    border-top: 1px solid var(--border2);
+  }
+  .breakdown-table tfoot td:first-child { text-align: left; }
+
+  .share-cell { min-width: 100px; }
+
+  .share-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .share-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--border2);
+  }
+
+  .share-bar-fg {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s;
+  }
+
+  .share-pct {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* UTILIZATION */
+  .util-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+  }
+
+  .util-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    line-height: 1;
+  }
+  .util-pct.good { color: var(--green); }
+  .util-pct.warn { color: var(--yellow); }
+  .util-pct.over { color: var(--red); }
+
+  .util-label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: #444;
+    margin-bottom: 0.3rem;
+  }
+
+  .bar-track {
+    height: 8px;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+  }
+  .bar-fill.warn { background: var(--yellow); }
+  .bar-fill.over { background: var(--red); }
+
+  .status-msg {
+    background: var(--bg3);
+    border-left: 3px solid var(--border2);
+    padding: 0.85rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  .status-msg.ok   { border-left-color: var(--green); color: #aaa; }
+  .status-msg.warn { border-left-color: var(--yellow); color: #aaa; }
+  .status-msg.over { border-left-color: var(--red); color: #aaa; }
+
+  /* PRINT BAR */
+  .print-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .print-bar label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .print-bar input[type=text] {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+  }
+  .print-bar input[type=text]:focus { border-color: var(--accent); }
+
+  .print-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* GUIDE */
+  .guide-inner {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .guide-inner p { font-size: 0.85rem; color: #999; }
+  .guide-inner strong { color: var(--text); }
+  .guide-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(245,166,35,0.3);
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .guide-btn:hover { background: rgba(245,166,35,0.08); }
+
+  @media (max-width: 640px) {
+    .tool-wrap { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Capacity Calculator</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Production / Planning</div>
+    <h1>SMT Capacity Calculator</h1>
+    <p>Calculate the capacity and utilization of your SMT production line. Factor in line speed, OEE, shift model, and product mix to understand your true production potential.</p>
+  </div>
+</div>
+
+<div class="tool-wrap">
+
+  <div class="guide-inner">
+    <p><strong>New to this calculator?</strong> Read the short guide covering line parameters, OEE, how to add products, and how to interpret the utilization results.</p>
+    <a href="https://www.canva.com/design/DAHDQUqSeWA/q8UkaM7rM6ruEI88sZM1HA/view?utm_content=DAHDQUqSeWA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h28dc3217c9" target="_blank" class="guide-btn">Read the Guide &#8594;</a>
+  </div>
+
+  <!-- LINE PARAMS + SHIFT -->
+  <div class="panel-grid">
+    <div class="panel">
+      <div class="panel-label">Line Parameters</div>
+      <div class="field">
+        <label>Line Speed</label>
+        <div class="input-wrap">
+          <input type="number" id="lineSpeed" value="15000" min="1" step="500" oninput="calculate()">
+          <span class="input-unit">cph</span>
+        </div>
+        <div class="field-note">Placer nameplate capacity in components per hour. Use the slowest machine on the line.</div>
+      </div>
+      <div class="field">
+        <label>OEE Factor</label>
+        <div class="input-wrap">
+          <input type="number" id="oeeFactor" value="65" min="10" max="95" step="5" oninput="calculate()">
+          <span class="input-unit">%</span>
+        </div>
+        <div class="field-note">Overall Equipment Effectiveness. Typical SMT lines run 55–75%. Accounts for availability, performance, and quality losses.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">Shift Model</div>
+      <div class="shift-toggle" id="shiftSel">
+        <button data-hours="8" class="active">1 Shift<br>8 h/day</button>
+        <button data-hours="16">2 Shifts<br>16 h/day</button>
+        <button data-hours="24">3 Shifts<br>24 h/day</button>
+      </div>
+      <div style="height:1rem"></div>
+      <div class="assump-toggle" id="assumpBtn" onclick="toggleAssump()">
+        <span>Calculation Assumptions</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="assump-body" id="assumpBody">
+        Capacity is calculated using 50 working weeks × 5 days/week × selected hours/day.<br><br>
+        Effective line speed = Nameplate speed × OEE factor.<br><br>
+        PCBs/hour per product = Effective speed ÷ components per PCB.<br><br>
+        No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling — not margin analysis.
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT MIX -->
+  <div class="sc-full">
+    <div class="panel-label">Product Mix</div>
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th style="width:28px">#</th>
+          <th style="text-align:left">Product Name</th>
+          <th class="col-num-input r">PCBs / Year</th>
+          <th class="col-price r">Price / PCB (€)</th>
+          <th class="col-comps r">Components / PCB</th>
+          <th class="col-del"></th>
+        </tr>
+      </thead>
+      <tbody id="productBody"></tbody>
+    </table>
+    <button class="add-btn" id="addBtn" onclick="addProduct()">+ Add Product</button>
+    <div class="table-note">No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling — not margin analysis.</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="sc-full" id="resultsPanel">
+    <div class="panel-label">Line Summary</div>
+    <div class="results-grid">
+      <div class="result-box primary">
+        <div class="result-label">Total Revenue / Week</div>
+        <div class="result-value" id="revWeek">—</div>
+        <div class="result-sub">EUR / week</div>
+      </div>
+      <div class="result-box primary">
+        <div class="result-label">Total Revenue / Year</div>
+        <div class="result-value" id="revYear">—</div>
+        <div class="result-sub">EUR / year</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Max Capacity / Year</div>
+        <div class="result-value" id="maxCapacity">—</div>
+        <div class="result-sub">PCBs at current shift</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Total PCBs / Year</div>
+        <div class="result-value" id="totalPcbsYear">—</div>
+        <div class="result-sub">all products combined</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Total PCBs / Week</div>
+        <div class="result-value" id="pcbsPerWeek">—</div>
+        <div class="result-sub">PCBs / week</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Required Run Time / Week</div>
+        <div class="result-value" id="reqRuntime">—</div>
+        <div class="result-sub">hours / week</div>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="panel-label" style="margin-top:0.5rem">Per-Product Breakdown</div>
+    <div style="overflow-x:auto">
+      <table class="breakdown-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Product</th>
+            <th>PCBs / Week</th>
+            <th>Revenue / Week</th>
+            <th>Revenue / Year</th>
+            <th>Run Time / Week</th>
+            <th class="share-cell">Capacity Share</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+        <tfoot id="breakdownFoot"></tfoot>
+      </table>
+    </div>
+
+    <!-- UTILIZATION -->
+    <div class="panel-label" style="margin-top:1.5rem">Line Utilization</div>
+    <div class="util-header">
+      <span class="util-label">Required Utilization / Shift</span>
+      <span class="util-pct" id="utilPct">—</span>
+    </div>
+    <div class="bar-labels">
+      <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="utilBar"></div>
+    </div>
+    <div class="status-msg" id="statusMsg">Enter parameters above to evaluate line capacity.</div>
+
+    <div class="print-bar">
+      <label>Report Title</label>
+      <input type="text" id="reportTitle" placeholder="e.g. Q2 2026 Capacity Plan">
+      <button class="print-btn" onclick="printReport()">⎙ Print Report</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const WEEKS = 50, DAYS = 5;
+  let hpd = 8;
+  let products = [];
+  let nextId = 1;
+
+  document.querySelectorAll('#shiftSel button').forEach(function(b) {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('#shiftSel button').forEach(function(x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      hpd = parseInt(b.dataset.hours);
+      calculate();
+    });
+  });
+
+  function toggleAssump() {
+    document.getElementById('assumpBtn').classList.toggle('open');
+    document.getElementById('assumpBody').classList.toggle('open');
+  }
+
+  function fmt(n, d) {
+    d = d || 0;
+    if (!isFinite(n) || isNaN(n)) return '--';
+    return n.toLocaleString('fi-FI', {minimumFractionDigits: d, maximumFractionDigits: d});
+  }
+
+  function fmtEur(n) {
+    if (!isFinite(n) || isNaN(n)) return '--';
+    if (n >= 1e6) return (n/1e6).toLocaleString('fi-FI', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' M\u20AC';
+    if (n >= 1e5) return (n/1e3).toLocaleString('fi-FI', {minimumFractionDigits:1, maximumFractionDigits:1}) + ' k\u20AC';
+    return n.toLocaleString('fi-FI', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' \u20AC';
+  }
+
+  function snapshotValues() {
+    products.forEach(function(p) {
+      var nameEl  = document.getElementById('pname_'  + p.id);
+      var pcbsEl  = document.getElementById('ppcbs_'  + p.id);
+      var priceEl = document.getElementById('pprice_' + p.id);
+      var compsEl = document.getElementById('pcomps_' + p.id);
+      if (nameEl)  p.savedName  = nameEl.value;
+      if (pcbsEl)  p.savedPcbs  = pcbsEl.value;
+      if (priceEl) p.savedPrice = priceEl.value;
+      if (compsEl) p.savedComps = compsEl.value;
+    });
+  }
+
+  function addProduct(name, pcbs, price, comps) {
+    if (products.length >= 20) return;
+    snapshotValues();
+    var id = nextId++;
+    products.push({
+      id: id,
+      savedName:  name  !== undefined ? name  : '',
+      savedPcbs:  pcbs  !== undefined ? pcbs  : 5000,
+      savedPrice: price !== undefined ? price : 50,
+      savedComps: comps !== undefined ? comps : 100
+    });
+    renderRows();
+    document.getElementById('addBtn').disabled = products.length >= 20;
+    calculate();
+  }
+
+  function removeProduct(id) {
+    snapshotValues();
+    products = products.filter(function(p) { return p.id !== id; });
+    renderRows();
+    document.getElementById('addBtn').disabled = products.length >= 20;
+    calculate();
+  }
+
+  function renderRows() {
+    var tbody = document.getElementById('productBody');
+    tbody.innerHTML = '';
+    products.forEach(function(p, idx) {
+      var tr = document.createElement('tr');
+      tr.className = 'product-row';
+      tr.innerHTML =
+        '<td class="row-num">' + (idx + 1) + '</td>' +
+        '<td class="col-name"><input type="text" id="pname_' + p.id + '" placeholder="Product ' + (idx+1) + '" oninput="calculate()"></td>' +
+        '<td class="col-num-input"><input type="number" id="ppcbs_' + p.id + '" min="1" step="100" oninput="calculate()"></td>' +
+        '<td class="col-price"><input type="number" id="pprice_' + p.id + '" min="0.01" step="1" oninput="calculate()"></td>' +
+        '<td class="col-comps"><input type="number" id="pcomps_' + p.id + '" min="1" step="1" oninput="calculate()"></td>' +
+        '<td class="col-del"><button class="del-btn" onclick="removeProduct(' + p.id + ')" title="Remove">×</button></td>';
+      tbody.appendChild(tr);
+      document.getElementById('pname_'  + p.id).value = p.savedName  !== undefined ? p.savedName  : '';
+      document.getElementById('ppcbs_'  + p.id).value = p.savedPcbs  !== undefined ? p.savedPcbs  : 5000;
+      document.getElementById('pprice_' + p.id).value = p.savedPrice !== undefined ? p.savedPrice : 50;
+      document.getElementById('pcomps_' + p.id).value = p.savedComps !== undefined ? p.savedComps : 100;
+    });
+  }
+
+  function getProductData() {
+    return products.map(function(p) {
+      return {
+        id:    p.id,
+        name:  (document.getElementById('pname_'  + p.id).value.trim() || ('Product ' + p.id)),
+        pcbs:  parseFloat(document.getElementById('ppcbs_'  + p.id).value) || 0,
+        price: parseFloat(document.getElementById('pprice_' + p.id).value) || 0,
+        comps: parseFloat(document.getElementById('pcomps_' + p.id).value) || 1
+      };
+    });
+  }
+
+  function calculate() {
+    var speed  = parseFloat(document.getElementById('lineSpeed').value)  || 0;
+    var oee    = (parseFloat(document.getElementById('oeeFactor').value) || 65) / 100;
+    var hpw    = hpd * DAYS;
+    var effSpd = speed * oee;
+    var data = getProductData();
+    if (data.length === 0) return;
+
+    var totalRuntime = 0, totalRevWeek = 0, totalRevYear = 0, totalPcbsYear = 0, totalPcbsWeek = 0;
+
+    var rows = data.map(function(p) {
+      var pcbph   = p.comps > 0 ? effSpd / p.comps : 0;
+      var pcbpw   = p.pcbs / WEEKS;
+      var runtime = pcbph > 0 ? pcbpw / pcbph : 0;
+      var revWeek = pcbpw * p.price;
+      var revYear = p.pcbs * p.price;
+      totalRuntime  += runtime;
+      totalRevWeek  += revWeek;
+      totalRevYear  += revYear;
+      totalPcbsYear += p.pcbs;
+      totalPcbsWeek += pcbpw;
+      return { name: p.name, pcbpw: pcbpw, revWeek: revWeek, revYear: revYear, runtime: runtime };
+    });
+
+    var util    = hpw > 0 ? totalRuntime / hpw : 0;
+    var utilPct = util * 100;
+    var maxCap  = utilPct > 0 ? (totalPcbsYear / util) * 1 : 0;
+
+    document.getElementById('revWeek').textContent       = fmtEur(totalRevWeek);
+    document.getElementById('revYear').textContent       = fmtEur(totalRevYear);
+    document.getElementById('maxCapacity').textContent   = fmt(maxCap);
+    document.getElementById('totalPcbsYear').textContent = fmt(totalPcbsYear);
+    document.getElementById('pcbsPerWeek').textContent   = fmt(totalPcbsWeek, 1);
+    document.getElementById('reqRuntime').textContent    = fmt(totalRuntime, 1) + ' h';
+
+    var tbody = document.getElementById('breakdownBody');
+    tbody.innerHTML = '';
+    rows.forEach(function(r) {
+      var share = totalRuntime > 0 ? (r.runtime / totalRuntime) * 100 : 0;
+      var barW  = Math.round(share);
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + r.name + '</td>' +
+        '<td>' + fmt(r.pcbpw, 1) + '</td>' +
+        '<td>' + fmtEur(r.revWeek) + '</td>' +
+        '<td>' + fmtEur(r.revYear) + '</td>' +
+        '<td>' + fmt(r.runtime, 2) + ' h</td>' +
+        '<td class="share-cell"><div class="share-bar-wrap">' +
+          '<div class="share-bar-bg"><div class="share-bar-fg" style="width:' + barW + '%"></div></div>' +
+          '<span class="share-pct">' + fmt(share, 1) + '%</span>' +
+        '</div></td>';
+      tbody.appendChild(tr);
+    });
+
+    var tfoot = document.getElementById('breakdownFoot');
+    tfoot.innerHTML = '';
+    var tf = document.createElement('tr');
+    tf.innerHTML =
+      '<td><strong>TOTAL</strong></td>' +
+      '<td>' + fmt(totalPcbsWeek, 1) + '</td>' +
+      '<td><strong>' + fmtEur(totalRevWeek) + '</strong></td>' +
+      '<td><strong>' + fmtEur(totalRevYear) + '</strong></td>' +
+      '<td>' + fmt(totalRuntime, 2) + ' h</td>' +
+      '<td class="share-cell"><div class="share-bar-wrap"><span class="share-pct">100%</span></div></td>';
+    tfoot.appendChild(tf);
+
+    var uEl = document.getElementById('utilPct');
+    var bEl = document.getElementById('utilBar');
+    var mEl = document.getElementById('statusMsg');
+
+    uEl.className = 'util-pct';
+    bEl.className = 'bar-fill';
+    mEl.className = 'status-msg';
+
+    if (utilPct <= 0) {
+      uEl.textContent = '--';
+      bEl.style.width = '0%';
+      mEl.textContent = 'Enter parameters above to evaluate line capacity.';
+      return;
+    }
+
+    uEl.textContent = fmt(utilPct, 1) + '%';
+    bEl.style.width = Math.min(utilPct, 100) + '%';
+
+    if (utilPct > 100) {
+      uEl.classList.add('over'); bEl.classList.add('over'); mEl.classList.add('over');
+      var def = fmt((utilPct - 100) / 100 * hpw, 1);
+      mEl.textContent = '[!!] OVERLOADED — ' + fmt(utilPct, 1) + '% utilization required. You are ' + def + ' h/week short of capacity. Add a shift, increase line speed, reduce volume targets, or improve OEE.';
+    } else if (utilPct > 85) {
+      uEl.classList.add('warn'); bEl.classList.add('warn'); mEl.classList.add('warn');
+      var slack = fmt((100 - utilPct) / 100 * hpw, 1);
+      mEl.textContent = '[!] HIGH LOAD — ' + fmt(utilPct, 1) + '% utilization required. Only ' + slack + ' h/week of slack. Any unplanned downtime or changeover overrun creates schedule risk.';
+    } else {
+      uEl.classList.add('good'); bEl.classList.add('good'); mEl.classList.add('ok');
+      var slack = fmt((100 - utilPct) / 100 * hpw, 1);
+      mEl.textContent = '[OK] FEASIBLE — ' + fmt(utilPct, 1) + '% utilization required. ' + slack + ' h/week of headroom available for changeovers, maintenance, and ramp-up.';
+    }
+  }
+
+  addProduct('Product 1', 10000, 50, 120);
+
+  function printReport() {
+    var title     = document.getElementById('reportTitle').value.trim();
+    var activeBtn = document.querySelector('#shiftSel button.active');
+    var shiftText = activeBtn ? activeBtn.innerText.replace(/\n/g, ' ') : '';
+    var oee       = document.getElementById('oeeFactor').value || '65';
+    var speed     = document.getElementById('lineSpeed').value || '';
+    var now       = new Date();
+    var dateStr   = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
+
+    function g(id) { var el = document.getElementById(id); return el ? el.textContent : '--'; }
+    var stats = [
+      {label: 'Total Revenue / Week',    value: g('revWeek'),       sub: 'EUR / week',          primary: true},
+      {label: 'Total Revenue / Year',    value: g('revYear'),       sub: 'EUR / year',           primary: true},
+      {label: 'Max Capacity / Year',     value: g('maxCapacity'),   sub: 'PCBs at current shift', primary: false},
+      {label: 'Total PCBs / Year',       value: g('totalPcbsYear'), sub: 'all products combined', primary: false},
+      {label: 'Total PCBs / Week',       value: g('pcbsPerWeek'),   sub: 'PCBs / week',           primary: false},
+      {label: 'Required Run Time / Week',value: g('reqRuntime'),    sub: 'hours / week',          primary: false}
+    ];
+
+    var breakdownHtml = '';
+    var tbodyRows = document.querySelectorAll('#breakdownBody tr');
+    var tfootRow  = document.querySelector('#breakdownFoot tr');
+    if (tbodyRows.length > 0) {
+      var bRows = '';
+      tbodyRows.forEach(function(tr) {
+        var cells = tr.querySelectorAll('td');
+        var sharePct = cells[5] ? cells[5].querySelector('.share-pct') : null;
+        bRows += '<tr>' +
+          '<td class="pt-name">'  + (cells[0] ? cells[0].textContent : '') + '</td>' +
+          '<td class="pt-num">'   + (cells[1] ? cells[1].textContent : '') + '</td>' +
+          '<td class="pt-num">'   + (cells[2] ? cells[2].textContent : '') + '</td>' +
+          '<td class="pt-num">'   + (cells[3] ? cells[3].textContent : '') + '</td>' +
+          '<td class="pt-num">'   + (cells[4] ? cells[4].textContent : '') + '</td>' +
+          '<td class="pt-num">'   + (sharePct  ? sharePct.textContent  : '') + '</td>' + '</tr>';
+      });
+      var fc = tfootRow ? tfootRow.querySelectorAll('td') : [];
+      var fSharePct = fc[5] ? fc[5].querySelector('.share-pct') : null;
+      var fRow = tfootRow ? '<tr class="pt-foot">' +
+        '<td class="pt-name">'  + (fc[0] ? fc[0].textContent : '') + '</td>' +
+        '<td class="pt-num">'   + (fc[1] ? fc[1].textContent : '') + '</td>' +
+        '<td class="pt-num">'   + (fc[2] ? fc[2].textContent : '') + '</td>' +
+        '<td class="pt-num">'   + (fc[3] ? fc[3].textContent : '') + '</td>' +
+        '<td class="pt-num">'   + (fc[4] ? fc[4].textContent : '') + '</td>' +
+        '<td class="pt-num">'   + (fSharePct ? fSharePct.textContent : '100%') + '</td>' + '</tr>' : '';
+      breakdownHtml = '<div class="section-label" style="margin-top:20px">Per-Product Breakdown</div>' +
+        '<table class="ptable"><thead><tr>' +
+        '<th class="pt-name">Product</th><th class="pt-num">PCBs / Week</th><th class="pt-num">Revenue / Week</th>' +
+        '<th class="pt-num">Revenue / Year</th><th class="pt-num">Run Time / Week</th><th class="pt-num">Capacity Share</th>' +
+        '</tr></thead><tbody>' + bRows + '</tbody><tfoot>' + fRow + '</tfoot></table>';
+    }
+
+    var utilPct   = g('utilPct');
+    var barFill   = document.getElementById('utilBar');
+    var barWidth  = barFill ? barFill.style.width : '0%';
+    var statusEl  = document.getElementById('statusMsg');
+    var statusTxt = statusEl ? statusEl.textContent : '';
+    var statusCls = statusEl ? statusEl.className : '';
+    var statusColor = '#2ecc71';
+    if (statusCls.indexOf('warn') !== -1) statusColor = '#f5a623';
+    if (statusCls.indexOf('over') !== -1) statusColor = '#e8320a';
+
+    var statsHtml = stats.map(function(s) {
+      return '<div class="pstat' + (s.primary ? ' pprimary' : '') + '">' +
+        '<div class="pstat-label">' + s.label + '</div>' +
+        '<div class="pstat-value' + (s.primary ? ' paccent' : '') + '">' + s.value + '</div>' +
+        '<div class="pstat-sub">' + s.sub + '</div></div>';
+    }).join('');
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+      '<title>SMT Capacity Calculator' + (title ? ' - ' + title : '') + '</title>' +
+      '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+      '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
+      '.ph { border-bottom: 3px solid #f5a623; padding-bottom: 12px; margin-bottom: 20px; }' +
+      '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
+      '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
+      '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
+      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #f5a623; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+      '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }' +
+      '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
+      '.pprimary { border-top: 3px solid #f5a623; }' +
+      '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+      '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
+      '.paccent { color: #f5a623; }' +
+      '.pstat-sub { font-size: 10px; color: #888; margin-top: 2px; }' +
+      '.util-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }' +
+      '.util-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #888; }' +
+      '.util-pct { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
+      '.bar-labels { display: flex; justify-content: space-between; font-family: "Share Tech Mono", monospace; font-size: 9px; color: #888; margin-bottom: 3px; }' +
+      '.bar-track { height: 10px; background: #eee; overflow: hidden; margin-bottom: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.bar-fill { height: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: ' + statusColor + '; }' +
+      '.status-msg { border-left: 4px solid ' + statusColor + '; padding: 10px 14px; background: #f9f9f9; font-size: 12px; color: #444; }' +
+      '.ptable { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 4px; }' +
+      '.ptable thead th { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; border-bottom: 1px solid #eee; padding: 5px 8px; text-align: right; }' +
+      '.ptable thead th.pt-name { text-align: left; }' +
+      '.ptable tbody tr { border-bottom: 1px solid #f0f0f0; }' +
+      '.ptable td { padding: 6px 8px; color: #444; }' +
+      '.pt-name { text-align: left; font-weight: 600; color: #222; }' +
+      '.pt-num  { text-align: right; font-family: "Share Tech Mono", monospace; font-size: 10px; }' +
+      '.pt-foot td { border-top: 2px solid #eee; font-weight: 700; color: #222; padding: 6px 8px; }' +
+      '.pt-foot .pt-num { color: #f5a623; }' +
+      '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
+      '</style></head><body>' +
+      '<div class="ph"><div class="ph-tool">SMT Capacity Calculator — SMTCalc.com</div>' +
+      (title ? '<div class="ph-title">' + title + '</div>' : '') +
+      '<div class="ph-meta">Printed: ' + dateStr + '<br>Line Speed: ' + speed + ' cph  |  OEE: ' + oee + '%  |  Shift: ' + shiftText + '</div></div>' +
+      '<div class="section-label">Total Line Summary</div>' +
+      '<div class="pgrid">' + statsHtml + '</div>' +
+      breakdownHtml +
+      '<div class="section-label" style="margin-top:20px">Utilization</div>' +
+      '<div class="util-head"><span class="util-label">Required Utilization / Shift</span><span class="util-pct">' + utilPct + '</span></div>' +
+      '<div class="bar-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + barWidth + '"></div></div>' +
+      '<div class="status-msg">' + statusTxt + '</div>' +
+      '</body></html>';
+
+    var win = window.open('', '_blank', 'width=800,height=900');
+    win.document.write(html);
+    win.document.close();
+    win.onload = function() { win.focus(); win.print(); };
+  }
+</script>
+</body>
+</html>" target="_blank" class="guide-btn">Read the Guide →</a>
   </div>
 
   <!-- LINE PARAMS + SHIFT -->
