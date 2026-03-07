@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
   <url>
-    <loc>https://www.smtcalc.com/</loc>
+    <loc>https://smtcalc.com/</loc>
     <lastmod>2026-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
   <url>
-    <loc>https://www.smtcalc.com/stencil-coach/</loc>
+    <loc>https://smtcalc.com/stencil-coach/</loc>
     <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
-
   <url>
-    <loc>https://www.smtcalc.com/smt-capacity-calculator/</loc>
+    <loc>https://smtcalc.com/smt-capacity-calculator/</loc>
     <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
-
   <url>
-    <loc>https://www.smtcalc.com/msl-bake-calculator/</loc>
+    <loc>https://smtcalc.com/msl-bake-calculator/</loc>
     <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://smtcalc.com/reflow-throughput-calculator/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
