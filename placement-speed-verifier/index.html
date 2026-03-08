@@ -870,7 +870,7 @@
     var id = nextId++;
     products.push({
       id: id,
-      savedName:   name   !== undefined ? name   : '',
+      savedName:   name   !== undefined ? name   : 'Product ' + (products.length + 1),
       savedBoards: boards !== undefined ? boards : 50,
       savedComps:  comps  !== undefined ? comps  : 200
     });
@@ -1162,8 +1162,8 @@
   }
 
   // Initialize with two example products that match the textbook example
-  addProduct('Product A', 75, 800);
-  addProduct('Product B', 100, 500);
+  addProduct('Product 1', 75, 800);
+  addProduct('Product 2', 100, 500);
   document.getElementById('totalHours').value = 8;
   document.getElementById('nameplateSpeed').value = 40000;
   calculate();
