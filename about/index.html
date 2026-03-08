@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — SMTCalc</title>
+  <meta name="description" content="About SMTCalc — free, practical tools for electronics manufacturing professionals, built by an industry veteran with nearly 30 years of SMT experience." />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --accent: #f5a623;
+      --accent2: #e8320a;
+      --text: #f0ede8;
+      --muted: #888;
+      --border: #2a2a2a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo span { color: var(--accent); }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--text); }
+    nav a.active { color: var(--accent); }
+
+    /* PAGE WRAPPER */
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 120px 2rem 100px;
+    }
+
+    /* PAGE EYEBROW */
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.1s forwards;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 0.93;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.2s forwards;
+    }
+
+    h1 span { color: var(--accent); display: block; }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3rem 0;
+    }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    /* CONTENT BLOCKS */
+    .content-block {
+      opacity: 0;
+      animation: fadeUp 0.5s forwards;
+    }
+
+    .content-block:nth-child(3) { animation-delay: 0.25s; }
+    .content-block:nth-child(5) { animation-delay: 0.35s; }
+    .content-block:nth-child(7) { animation-delay: 0.45s; }
+
+    h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      text-transform: uppercase;
+      line-height: 1.0;
+      letter-spacing: 0.01em;
+      margin-bottom: 1.25rem;
+    }
+
+    .body-text {
+      color: #aaa;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .body-text p { margin-bottom: 1rem; }
+    .body-text p:last-child { margin-bottom: 0; }
+
+    /* CERT LIST */
+    .cert-list {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .cert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+    }
+
+    .cert-item-text {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .cert-item-text span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      margin-top: 3.5rem;
+      transition: color 0.2s, gap 0.2s;
+      display: flex;
+    }
+
+    .back-link:hover { color: var(--accent); gap: 0.75rem; }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .footer-copy a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .page { padding: 100px 1.25rem 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="/" class="logo">SMT<span>Calc</span></a>
+    <nav>
+      <a href="/">Tools</a>
+      <a href="/about/" class="active">About</a>
+    </nav>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main class="page">
+
+    <div class="page-eyebrow">About SMTCalc</div>
+    <h1>Built for the<span>Shop Floor</span></h1>
+
+    <!-- ABOUT THE AUTHOR -->
+    <div class="content-block">
+      <div class="section-label">About the Author</div>
+      <div class="body-text">
+        <p>
+          The author has been working in electronics manufacturing since 1997, with close to 30 years of hands-on experience in SMT process engineering, IPC standards compliance, quality inspection, and PCB cleaning and coating processes. He holds current GEA certifications in Manufacturing Engineering for Electronics Assembly and has maintained IPC-A-610 and J-STD-001 certifications over more than a decade.
+        </p>
+      </div>
+
+      <div class="cert-list">
+        <div class="cert-item">
+          <div class="cert-item-text">
+            Manufacturing Engineering for Electronics Assembly: Stencil Printing
+            <span>GEA — Global Electronics Association &middot; Issued Jul 2025</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-item-text">
+            Manufacturing Engineering for Electronics Assembly: Surface Mount Technology
+            <span>GEA — Global Electronics Association &middot; Issued Jul 2025</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-item-text">
+            Manufacturing Engineering for Electronics Assembly: Introduction
+            <span>GEA — Global Electronics Association &middot; Issued Jul 2025</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-item-text">
+            CIT IPC-A-610 &amp; J-STD-001 — Certified IPC Trainer / Specialist
+            <span>IPC &middot; Held continuously 2014 to 2022</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ABOUT THE SITE -->
+    <div class="content-block">
+      <div class="section-label">About This Site</div>
+      <div class="body-text">
+        <p>
+          SMTCalc started as a personal toolbox, a way to have reliable, standards-based calculators available without hunting through spreadsheets. The tools are built around the same IPC references used daily on the production floor. No vendor relationships, no agenda, just tools that do what they say.
+        </p>
+        <p>
+          All calculations run entirely in your browser. No data is sent anywhere, no account is required, and everything is free to use.
+        </p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- BACK TO TOOLS -->
+    <a href="/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Tools
+    </a>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-copy">
+        &copy; 2026 <a href="/">SMTCalc.com</a> — Free tools for electronics manufacturing professionals.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
