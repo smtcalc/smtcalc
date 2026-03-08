@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMD Resistor Code Calculator -- SMTCalc</title>
+  <meta name="description" content="Decode SMD resistor markings instantly. Supports 3-digit, 4-digit, and EIA-96 codes. Reverse lookup from resistance value to code. Free tool for SMT operators and quality inspectors.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --bg4: #222222;
+      --accent: #f5a623;
+      --accent2: #e8320a;
+      --green: #2ecc71;
+      --yellow: #f5a623;
+      --red: #e8320a;
+      --text: #f0ede8;
+      --muted: #888;
+      --border: #2a2a2a;
+      --border2: #333;
+      --mono: 'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    .tool-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.75rem;
+    }
+
+    /* HERO */
+    .tool-hero {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .tool-hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .tool-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      line-height: 1.0;
+      margin-bottom: 0.75rem;
+    }
+
+    .tool-hero h1 span { color: var(--accent); }
+
+    .tool-hero-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 680px;
+      line-height: 1.65;
+    }
+
+    /* MAIN LAYOUT */
+    .main-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* MODE TABS */
+    .mode-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border2);
+      width: fit-content;
+    }
+
+    .mode-tab {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.5rem;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border-right: 1px solid var(--border2);
+    }
+    .mode-tab:last-child { border-right: none; }
+    .mode-tab.active {
+      background: var(--accent);
+      color: #000;
+    }
+    .mode-tab:not(.active):hover {
+      background: var(--bg3);
+      color: var(--text);
+    }
+
+    /* PANEL */
+    .panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    /* FORM ELEMENTS */
+    .field-group {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"], input[type="number"], select {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      padding: 0.65rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="text"]::placeholder { color: #555; }
+
+    select option { background: var(--bg3); }
+
+    .btn-calc {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.72rem 2rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-calc:hover { background: #e09618; }
+    .btn-calc:active { transform: scale(0.98); }
+
+    /* CODE INPUT STYLING */
+    .code-input-wrap {
+      position: relative;
+    }
+
+    .code-display {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+      align-items: center;
+    }
+
+    .code-char {
+      width: 44px;
+      height: 52px;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 1.3rem;
+      color: var(--accent);
+    }
+
+    /* RESULT */
+    .result-block {
+      display: none;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem 2rem;
+      margin-top: 1.5rem;
+    }
+    .result-block.show { display: block; }
+    .result-block.error-block { border-left-color: var(--red); }
+
+    .result-value {
+      font-family: var(--mono);
+      font-size: 2.4rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .result-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .result-meta {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .meta-item {
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+    }
+
+    .meta-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .error-text {
+      color: var(--red);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+    }
+
+    /* REVERSE LOOKUP */
+    .unit-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+    }
+
+    .unit-group input {
+      border-right: none;
+    }
+
+    .unit-select {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-left: none;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 1rem;
+      padding: 0.65rem 0.75rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* REVERSE RESULTS TABLE */
+    .code-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.9rem;
+    }
+
+    .code-table th {
+      background: var(--bg4);
+      color: var(--muted);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .code-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-table tr:last-child td { border-bottom: none; }
+    .code-table tr:hover td { background: var(--bg4); }
+
+    .code-pill {
+      display: inline-block;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      padding: 0.2rem 0.6rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+
+    /* REFERENCE SECTION */
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .ref-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    .ref-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+    }
+    .ref-table th {
+      color: var(--muted);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .ref-table td {
+      padding: 0.35rem 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+    .ref-table td:first-child { color: var(--accent); }
+
+    .ref-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 0.75rem;
+    }
+
+    /* HOW IT WORKS */
+    .explainer {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-top: 2.5rem;
+    }
+
+    .explainer h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+    }
+
+    .explainer-cols {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .explainer-col h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .explainer-col p {
+      font-size: 0.88rem;
+      color: #aaa;
+      line-height: 1.7;
+    }
+
+    .formula-box {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    /* SECTION DIVIDER */
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* PRINT */
+    @media print {
+      header, .mode-tabs, .btn-calc, .explainer { display: none; }
+      body { background: #fff; color: #000; }
+      .panel, .result-block, .code-table { border-color: #ccc; }
+      .result-value, .code-pill { color: #000; }
+    }
+
+    @media (max-width: 600px) {
+      .field-group { flex-direction: column; align-items: stretch; }
+      .mode-tab { padding: 0.6rem 0.9rem; font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Resistor Code</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="breadcrumb"><a href="/">SMTCalc.com</a> / SMD Resistor Code Calculator</div>
+    <h1>SMD <span>Resistor</span><br>Code Calculator</h1>
+    <p class="tool-hero-sub">
+      Decode surface mount resistor markings instantly. Supports 3-digit, 4-digit, and EIA-96 precision codes.
+      Reverse lookup from resistance value to code. Built for operators, inspectors, and anyone who needs a quick verification on the line.
+    </p>
+  </div>
+</div>
+
+<div class="main-wrap">
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('decode')" id="tab-decode">Decode Code &rarr; Value</button>
+    <button class="mode-tab" onclick="setMode('encode')" id="tab-encode">Encode Value &rarr; Code</button>
+  </div>
+
+  <!-- ===== DECODE MODE ===== -->
+  <div id="mode-decode">
+
+    <div class="panel">
+      <div class="panel-title">Enter Marking Printed on Resistor Body</div>
+
+      <div class="field-group">
+        <div class="field" style="flex: 1; min-width: 220px;">
+          <label for="code-input">Resistor Code</label>
+          <input type="text" id="code-input" placeholder="e.g. 103, 4702, 01A"
+            oninput="onCodeInput()" onkeydown="if(event.key==='Enter') decodeCode()" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="6">
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="btn-calc" onclick="decodeCode()">Decode</button>
+        </div>
+      </div>
+
+      <!-- LIVE CHAR DISPLAY -->
+      <div class="code-display" id="char-display"></div>
+    </div>
+
+    <div class="result-block" id="decode-result"></div>
+
+  </div>
+
+  <!-- ===== ENCODE MODE ===== -->
+  <div id="mode-encode" style="display:none;">
+
+    <div class="panel">
+      <div class="panel-title">Enter Resistance Value</div>
+
+      <div class="field-group">
+        <div class="field" style="flex: 1; min-width: 180px;">
+          <label for="value-input">Resistance</label>
+          <div class="unit-group">
+            <input type="number" id="value-input" placeholder="e.g. 10000" min="0" step="any"
+              onkeydown="if(event.key==='Enter') encodeValue()" style="border-right:none; width:100%;">
+            <select class="unit-select" id="unit-select">
+              <option value="1">&#937;</option>
+              <option value="1000">k&#937;</option>
+              <option value="1000000">M&#937;</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="btn-calc" onclick="encodeValue()">Find Codes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-block" id="encode-result"></div>
+
+  </div>
+
+  <!-- REFERENCE -->
+  <div class="section-label" style="margin-top: 3rem;">Quick Reference</div>
+
+  <div class="reference-grid">
+
+    <div class="ref-card">
+      <div class="ref-title">3-Digit Code</div>
+      <table class="ref-table">
+        <tr><th>Code</th><th>Value</th><th>How It Works</th></tr>
+        <tr><td>100</td><td>10 &#937;</td><td>10 &times; 10^0</td></tr>
+        <tr><td>220</td><td>22 &#937;</td><td>22 &times; 10^0</td></tr>
+        <tr><td>471</td><td>470 &#937;</td><td>47 &times; 10^1</td></tr>
+        <tr><td>103</td><td>10 k&#937;</td><td>10 &times; 10^3</td></tr>
+        <tr><td>474</td><td>470 k&#937;</td><td>47 &times; 10^4</td></tr>
+        <tr><td>105</td><td>1 M&#937;</td><td>10 &times; 10^5</td></tr>
+        <tr><td>0R0</td><td>0 &#937;</td><td>Jumper / zero ohm</td></tr>
+      </table>
+      <p class="ref-note">First two digits = significant digits. Third digit = number of zeros. Tolerance typically 5% or 10%.</p>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-title">4-Digit Code</div>
+      <table class="ref-table">
+        <tr><th>Code</th><th>Value</th><th>How It Works</th></tr>
+        <tr><td>1000</td><td>100 &#937;</td><td>100 &times; 10^0</td></tr>
+        <tr><td>4700</td><td>470 &#937;</td><td>470 &times; 10^0</td></tr>
+        <tr><td>1001</td><td>1 k&#937;</td><td>100 &times; 10^1</td></tr>
+        <tr><td>1002</td><td>10 k&#937;</td><td>100 &times; 10^2</td></tr>
+        <tr><td>4992</td><td>49.9 k&#937;</td><td>499 &times; 10^2</td></tr>
+        <tr><td>1004</td><td>1 M&#937;</td><td>100 &times; 10^4</td></tr>
+        <tr><td>0000</td><td>0 &#937;</td><td>Jumper / zero ohm</td></tr>
+      </table>
+      <p class="ref-note">First three digits = significant digits. Fourth digit = number of zeros. Tolerance typically 1% or better.</p>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-title">EIA-96 Code (1% Precision)</div>
+      <table class="ref-table">
+        <tr><th>Code</th><th>Value</th><th>Note</th></tr>
+        <tr><td>01A</td><td>100 &#937;</td><td>1.00 &times; 10^2</td></tr>
+        <tr><td>01B</td><td>1 k&#937;</td><td>1.00 &times; 10^3</td></tr>
+        <tr><td>68A</td><td>4.87 k&#937;</td><td>4.87 &times; 10^3</td></tr>
+        <tr><td>96D</td><td>9.76 M&#937;</td><td>9.76 &times; 10^6</td></tr>
+      </table>
+      <p class="ref-note">Two-digit number = E96 series index. Letter = multiplier (A=x100, B=x1k, C=x10k, D=x100k, X=x1, Y=x10). Used on 0402 and smaller where 4 digits won't fit.</p>
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="explainer">
+    <h2>How to Read SMD Resistor Codes</h2>
+    <div class="explainer-cols">
+
+      <div class="explainer-col">
+        <h3>3-Digit Code</h3>
+        <p>
+          The standard code for 5% and 10% tolerance resistors.
+          The first two digits are the significant figures of the resistance.
+          The third digit tells you how many zeros to add.
+        </p>
+        <div class="formula-box">
+          R = [D1 D2] x 10^D3
+        </div>
+        <p style="margin-top:0.6rem;">
+          Special case: if the third digit is 9, it is a negative multiplier.
+          Example: 4R7 means 4.7 &#937; -- the R replaces the decimal point.
+          0R0 or 000 means a zero-ohm jumper.
+        </p>
+      </div>
+
+      <div class="explainer-col">
+        <h3>4-Digit Code</h3>
+        <p>
+          Used on 1% tolerance resistors where the extra digit provides better resolution.
+          Same principle as the 3-digit code but with three significant figures.
+          Allows unique codes for every E96 value.
+        </p>
+        <div class="formula-box">
+          R = [D1 D2 D3] x 10^D4
+        </div>
+        <p style="margin-top:0.6rem;">
+          The R-notation also applies: 4R70 means 4.70 &#937;.
+          Prefix 0R or 0000 is a zero-ohm jumper.
+        </p>
+      </div>
+
+      <div class="explainer-col">
+        <h3>EIA-96 Code</h3>
+        <p>
+          The solution for 1% precision on tiny packages like 0402 and 0201 where
+          four printed digits are not readable. The code is a 2-digit number
+          plus a letter.
+        </p>
+        <div class="formula-box">
+          R = E96[nn] x multiplier[L]
+        </div>
+        <p style="margin-top:0.6rem;">
+          The number (01-96) maps to a value in the E96 series table.
+          The letter sets the decade: A=x100, B=x1k, C=x10k, D=x100k.
+          Some manufacturers also use X=x1 and Y=x10 for sub-100-ohm values.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer style="padding: 3rem 2rem; border-top: 1px solid var(--border); margin-top: 2rem;">
+  <div style="max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="font-size: 0.8rem; color: var(--muted);">
+      &copy; 2026 <a href="/" style="color: var(--accent); text-decoration: none;">SMTCalc.com</a>
+      -- Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;" style="color: var(--accent); text-decoration: none;">Contact the author</a>
+    </div>
+    <div style="font-size: 0.75rem; color: #555; font-family: var(--mono);">
+      EIA-96 / IEC 60062
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// EIA-96 TABLE (index 1..96, values in ohms x 100 multiplier)
+// ============================================================
+var E96 = [
+  null, // index 0 unused
+  100,102,105,107,110,113,115,118,121,124,
+  127,130,133,137,140,143,147,150,154,158,
+  162,165,169,174,178,182,187,191,196,200,
+  205,210,215,221,226,232,237,243,249,255,
+  261,267,274,280,287,294,301,309,316,324,
+  332,340,348,357,365,374,383,392,402,412,
+  422,432,442,453,464,475,487,499,511,523,
+  536,549,562,576,590,604,619,634,649,665,
+  681,698,715,732,750,768,787,806,825,845,
+  866,887,909,931,953,976
+];
+
+// EIA-96 letter multipliers
+var EIA96_MULT = {
+  'A': 100,
+  'B': 1000,
+  'C': 10000,
+  'D': 100000,
+  'X': 1,
+  'Y': 10
+};
+
+// E96 values for reverse lookup (100..976 base, need to match)
+// We store the base value * 1000 to avoid floats in comparisons
+
+// ============================================================
+// MODE SWITCH
+// ============================================================
+function setMode(mode) {
+  document.getElementById('mode-decode').style.display = mode === 'decode' ? '' : 'none';
+  document.getElementById('mode-encode').style.display = mode === 'encode' ? '' : 'none';
+  document.getElementById('tab-decode').className = 'mode-tab' + (mode === 'decode' ? ' active' : '');
+  document.getElementById('tab-encode').className = 'mode-tab' + (mode === 'encode' ? ' active' : '');
+  clearResults();
+}
+
+function clearResults() {
+  var r = document.getElementById('decode-result');
+  if (r) { r.className = 'result-block'; r.innerHTML = ''; }
+  var e = document.getElementById('encode-result');
+  if (e) { e.className = 'result-block'; e.innerHTML = ''; }
+}
+
+// ============================================================
+// CHAR DISPLAY
+// ============================================================
+function onCodeInput() {
+  var val = document.getElementById('code-input').value.toUpperCase().trim();
+  var disp = document.getElementById('char-display');
+  if (!val) { disp.innerHTML = ''; return; }
+  var html = '';
+  for (var i = 0; i < val.length; i++) {
+    html += '<div class="code-char">' + escHtml(val[i]) + '</div>';
+  }
+  disp.innerHTML = html;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============================================================
+// FORMAT RESISTANCE VALUE
+// ============================================================
+function formatOhms(ohms) {
+  if (ohms === 0) return '0 &#937;';
+  var absO = Math.abs(ohms);
+  if (absO >= 1e6) {
+    var v = ohms / 1e6;
+    return formatNum(v) + ' M&#937;';
+  } else if (absO >= 1e3) {
+    var v = ohms / 1e3;
+    return formatNum(v) + ' k&#937;';
+  } else {
+    return formatNum(ohms) + ' &#937;';
+  }
+}
+
+function formatNum(n) {
+  // Show up to 4 significant figures, strip trailing zeros
+  var s = parseFloat(n.toPrecision(4)).toString();
+  return s;
+}
+
+// ============================================================
+// DECODE
+// ============================================================
+function decodeCode() {
+  var raw = document.getElementById('code-input').value.trim().toUpperCase();
+  var result = document.getElementById('decode-result');
+
+  if (!raw) {
+    showError(result, 'Enter a resistor code above.');
+    return;
+  }
+
+  var decoded = tryDecode(raw);
+
+  if (decoded.error) {
+    showError(result, decoded.error);
+    return;
+  }
+
+  var html = '<div class="result-value">' + formatOhms(decoded.ohms) + '</div>';
+  html += '<div class="result-label">Resistance</div>';
+  html += '<div class="result-meta">';
+  html += metaItem('Code Type', decoded.type);
+  html += metaItem('Code', decoded.code);
+
+  if (decoded.sig !== undefined) {
+    html += metaItem('Significant Digits', decoded.sig);
+  }
+  if (decoded.mult !== undefined) {
+    html += metaItem('Multiplier', 'x10^' + decoded.multExp);
+  }
+  if (decoded.tolerance) {
+    html += metaItem('Typical Tolerance', decoded.tolerance);
+  }
+  html += '</div>';
+
+  result.innerHTML = html;
+  result.className = 'result-block show';
+}
+
+function tryDecode(code) {
+  // Zero ohm special cases
+  if (code === '0' || code === '00' || code === '000' || code === '0000' || code === '0R0' || code === '0R00') {
+    return { ohms: 0, type: '3-Digit / Jumper', code: code, sig: 0, tolerance: 'N/A (Jumper)' };
+  }
+
+  // R-notation: contains R as decimal point (e.g. 4R7, 1R0, 0R47, 33R0)
+  if (/^[0-9]+R[0-9]+$/i.test(code)) {
+    var parts = code.split(/R/i);
+    var val = parseFloat(parts[0] + '.' + parts[1]);
+    if (isNaN(val)) return { error: 'Cannot parse R-notation: ' + code };
+    var ctype = code.length <= 4 ? '3-Digit (R-notation)' : '4-Digit (R-notation)';
+    return { ohms: val, type: ctype, code: code, tolerance: '1-5%' };
+  }
+
+  // EIA-96: 2 digits + letter (A/B/C/D/X/Y)
+  var eia96match = code.match(/^([0-9]{2})([A-DXYF])$/);
+  if (eia96match) {
+    var idx = parseInt(eia96match[1], 10);
+    var letter = eia96match[2];
+    if (idx < 1 || idx > 96) return { error: 'EIA-96 index must be 01..96. Got: ' + eia96match[1] };
+    if (!EIA96_MULT[letter]) return { error: 'Unknown EIA-96 multiplier letter: ' + letter };
+    var baseVal = E96[idx]; // e.g. 100 means 1.00, stored as integer x100
+    var ohms = (baseVal / 100) * EIA96_MULT[letter];
+    return {
+      ohms: ohms,
+      type: 'EIA-96 (1% Precision)',
+      code: code,
+      sig: 'E96 index ' + idx + ' = ' + (baseVal / 100).toFixed(2),
+      tolerance: '1%'
+    };
+  }
+
+  // 3-digit numeric
+  if (/^[0-9]{3}$/.test(code)) {
+    var d1 = parseInt(code[0], 10);
+    var d2 = parseInt(code[1], 10);
+    var d3 = parseInt(code[2], 10);
+    var sig = d1 * 10 + d2;
+    if (d3 === 9) {
+      // Negative multiplier (rare): value = sig * 0.1
+      return { ohms: sig * 0.1, type: '3-Digit', code: code, sig: sig, multExp: '-1', mult: 0.1, tolerance: '5-10%' };
+    }
+    var ohms = sig * Math.pow(10, d3);
+    return { ohms: ohms, type: '3-Digit', code: code, sig: sig, multExp: d3, mult: Math.pow(10, d3), tolerance: '5-10%' };
+  }
+
+  // 4-digit numeric
+  if (/^[0-9]{4}$/.test(code)) {
+    var d1 = parseInt(code[0], 10);
+    var d2 = parseInt(code[1], 10);
+    var d3 = parseInt(code[2], 10);
+    var d4 = parseInt(code[3], 10);
+    var sig = d1 * 100 + d2 * 10 + d3;
+    if (d4 === 9) {
+      return { ohms: sig * 0.1, type: '4-Digit', code: code, sig: sig, multExp: '-1', mult: 0.1, tolerance: '1%' };
+    }
+    var ohms = sig * Math.pow(10, d4);
+    return { ohms: ohms, type: '4-Digit', code: code, sig: sig, multExp: d4, mult: Math.pow(10, d4), tolerance: '1%' };
+  }
+
+  return { error: 'Unrecognised format. Expected 3-digit (e.g. 103), 4-digit (e.g. 1002), EIA-96 (e.g. 01A), or R-notation (e.g. 4R7).' };
+}
+
+// ============================================================
+// ENCODE (reverse lookup)
+// ============================================================
+function encodeValue() {
+  var rawVal = parseFloat(document.getElementById('value-input').value);
+  var unit = parseFloat(document.getElementById('unit-select').value);
+  var result = document.getElementById('encode-result');
+
+  if (isNaN(rawVal) || rawVal < 0) {
+    showError(result, 'Enter a valid resistance value (0 or positive number).');
+    return;
+  }
+
+  var ohms = rawVal * unit;
+
+  // Zero ohm
+  if (ohms === 0) {
+    var html = '<div class="result-value">0 &#937; -- Jumper / Zero Ohm</div>';
+    html += '<div class="result-meta">';
+    html += metaItem('3-Digit Code', '000 or 0R0');
+    html += metaItem('4-Digit Code', '0000 or 0R00');
+    html += '</div>';
+    result.innerHTML = html;
+    result.className = 'result-block show';
+    return;
+  }
+
+  var codes = buildCodes(ohms);
+
+  if (!codes || codes.length === 0) {
+    showError(result, 'No standard code found for ' + formatOhms(ohms) + '. Value may be outside the standard E-series range (1 &#937; to 9.76 M&#937;).');
+    return;
+  }
+
+  var html = '<div class="result-value">' + formatOhms(ohms) + '</div>';
+  html += '<div class="result-label">Resistance -- Available Codes</div>';
+  html += '<table class="code-table">';
+  html += '<tr><th>Code</th><th>Type</th><th>Tolerance</th><th>Notes</th></tr>';
+  for (var i = 0; i < codes.length; i++) {
+    var c = codes[i];
+    html += '<tr>';
+    html += '<td><span class="code-pill">' + c.code + '</span></td>';
+    html += '<td>' + c.type + '</td>';
+    html += '<td>' + c.tol + '</td>';
+    html += '<td style="color: var(--muted); font-size: 0.8rem;">' + c.note + '</td>';
+    html += '</tr>';
+  }
+  html += '</table>';
+
+  result.innerHTML = html;
+  result.className = 'result-block show';
+}
+
+function buildCodes(ohms) {
+  var codes = [];
+
+  // R-notation (sub-100 ohm, non-integer sig digits)
+  // e.g. 4.7 ohm = 4R7, 0.47 ohm = 0R47
+  if (ohms < 100 && ohms > 0) {
+    var rcode = buildRNotation(ohms, 3);
+    if (rcode) codes.push({ code: rcode, type: '3-Digit R-notation', tol: '1-5%', note: 'R replaces decimal point' });
+    var rcode4 = buildRNotation(ohms, 4);
+    if (rcode4 && rcode4 !== rcode) codes.push({ code: rcode4, type: '4-Digit R-notation', tol: '1%', note: 'R replaces decimal point' });
+  }
+
+  // 3-digit code
+  var c3 = build3Digit(ohms);
+  if (c3) codes.push({ code: c3, type: '3-Digit', tol: '5-10%', note: 'Standard, 2 sig figs' });
+
+  // 4-digit code
+  var c4 = build4Digit(ohms);
+  if (c4) codes.push({ code: c4, type: '4-Digit', tol: '1%', note: '3 sig figs, higher precision' });
+
+  // EIA-96
+  var e96 = buildEIA96(ohms);
+  if (e96) codes.push({ code: e96, type: 'EIA-96', tol: '1%', note: 'Compact code for small packages' });
+
+  return codes;
+}
+
+function build3Digit(ohms) {
+  // Find multiplier such that sig = ohms / 10^exp is between 10 and 99 (integer)
+  if (ohms < 1) return null;
+  if (ohms > 9.9e9) return null;
+
+  for (var exp = 0; exp <= 7; exp++) {
+    var sig = Math.round(ohms / Math.pow(10, exp));
+    if (sig >= 10 && sig <= 99) {
+      var check = sig * Math.pow(10, exp);
+      if (Math.abs(check - ohms) / ohms < 0.005) {
+        return '' + sig + exp;
+      }
+    }
+  }
+  // Also try exp = -1 (sig in 10-99, mult = 0.1) for values like 4.7
+  // handled by R-notation above
+  return null;
+}
+
+function build4Digit(ohms) {
+  if (ohms < 1) return null;
+  if (ohms > 9.99e9) return null;
+
+  for (var exp = 0; exp <= 6; exp++) {
+    var sig = Math.round(ohms / Math.pow(10, exp));
+    if (sig >= 100 && sig <= 999) {
+      var check = sig * Math.pow(10, exp);
+      if (Math.abs(check - ohms) / ohms < 0.002) {
+        return '' + sig + exp;
+      }
+    }
+  }
+  // try exp = -1 (sig in 100-999, value is sig/10)
+  var sig = Math.round(ohms * 10);
+  if (sig >= 100 && sig <= 999) {
+    var check = sig * 0.1;
+    if (Math.abs(check - ohms) / ohms < 0.002) {
+      // encode as sig + '9'
+      return '' + sig + '9';
+    }
+  }
+  return null;
+}
+
+function buildRNotation(ohms, digits) {
+  // Build R-notation for values < 100 ohm
+  // digits = 3 gives XRY format (1 integer + R + 1 decimal)
+  // digits = 4 gives XRYZ format
+  if (digits === 3) {
+    // Try XRY: int part 0-9, decimal 1 digit
+    var intPart = Math.floor(ohms);
+    var decPart = Math.round((ohms - intPart) * 10);
+    if (decPart === 10) { intPart++; decPart = 0; }
+    var check = intPart + decPart / 10;
+    if (Math.abs(check - ohms) / (ohms || 1) < 0.01) {
+      return '' + intPart + 'R' + decPart;
+    }
+  }
+  if (digits === 4) {
+    var intPart = Math.floor(ohms);
+    var decStr = ((ohms - intPart) * 100).toFixed(0).padStart(2, '0');
+    var check = intPart + parseInt(decStr, 10) / 100;
+    if (Math.abs(check - ohms) / (ohms || 1) < 0.005) {
+      return '' + intPart + 'R' + decStr;
+    }
+  }
+  return null;
+}
+
+function buildEIA96(ohms) {
+  // EIA-96 multipliers and their letters
+  var multipliers = [
+    { mult: 1,      letter: 'X' },
+    { mult: 10,     letter: 'Y' },
+    { mult: 100,    letter: 'A' },
+    { mult: 1000,   letter: 'B' },
+    { mult: 10000,  letter: 'C' },
+    { mult: 100000, letter: 'D' }
+  ];
+
+  for (var m = 0; m < multipliers.length; m++) {
+    var mult = multipliers[m].mult;
+    var letter = multipliers[m].letter;
+    var base = ohms / mult; // should be between 1.00 and 9.76
+
+    if (base < 1.0 || base > 9.769) continue;
+
+    // Find nearest E96 index
+    var baseX100 = Math.round(base * 100); // e.g. 4.87 -> 487
+    var bestIdx = -1;
+    var bestDiff = 1e9;
+    for (var i = 1; i <= 96; i++) {
+      var diff = Math.abs(E96[i] - baseX100);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestIdx = i;
+      }
+    }
+
+    if (bestIdx > 0) {
+      var reconstructed = (E96[bestIdx] / 100) * mult;
+      var relErr = Math.abs(reconstructed - ohms) / ohms;
+      if (relErr < 0.006) { // within 0.6% -- E96 1% series
+        var idxStr = bestIdx < 10 ? '0' + bestIdx : '' + bestIdx;
+        return idxStr + letter;
+      }
+    }
+  }
+  return null;
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function metaItem(label, value) {
+  return '<div class="meta-item"><div class="meta-label">' + label + '</div><div class="meta-value">' + value + '</div></div>';
+}
+
+function showError(el, msg) {
+  el.innerHTML = '<span class="error-text">&#9888; ' + msg + '</span>';
+  el.className = 'result-block show error-block';
+}
+
+// ============================================================
+// CONTACT
+// ============================================================
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
+
+</body>
+</html>
