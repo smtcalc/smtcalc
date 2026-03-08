@@ -1009,11 +1009,130 @@
   }
 
   function printReport() {
-    var title = document.getElementById('reportTitle').value || 'Placement Speed Verification Report';
-    var origTitle = document.title;
-    document.title = title;
-    window.print();
-    document.title = origTitle;
+    var title     = document.getElementById('reportTitle').value.trim();
+    var hours     = document.getElementById('totalHours').value    || '--';
+    var nameplate = document.getElementById('nameplateSpeed').value || '';
+    var now       = new Date();
+    var dateStr   = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
+
+    function g(id) { var el = document.getElementById(id); return el ? el.textContent : '--'; }
+
+    var stats = [
+      {label: 'Actual Placement Rate',    value: g('actualCph'),   sub: 'components per hour (CPH)', primary: true},
+      {label: 'Total Components Placed',  value: g('totalComps'),  sub: 'across all products',       primary: false},
+      {label: 'Total Boards Produced',    value: g('totalBoards'), sub: 'all product types',         primary: false},
+      {label: 'Avg. Components / Board',  value: g('avgComps'),    sub: 'weighted average',          primary: false},
+      {label: 'Measurement Period',       value: g('measPeriod'),  sub: 'hours elapsed',             primary: false},
+      {label: 'Nameplate Speed',          value: g('nameplateVal'),sub: 'manufacturer rated CPH',    primary: false}
+    ];
+
+    var statsHtml = stats.map(function(s) {
+      return '<div class="pstat' + (s.primary ? ' pprimary' : '') + '">' +
+        '<div class="pstat-label">' + s.label + '</div>' +
+        '<div class="pstat-value' + (s.primary ? ' paccent' : '') + '">' + s.value + '</div>' +
+        '<div class="pstat-sub">' + s.sub + '</div></div>';
+    }).join('');
+
+    var breakdownHtml = '';
+    var tbodyRows = document.querySelectorAll('#breakdownBody tr');
+    var tfootRow  = document.querySelector('#breakdownFoot tr');
+    if (tbodyRows.length > 0) {
+      var bRows = '';
+      tbodyRows.forEach(function(tr) {
+        var cells = tr.querySelectorAll('td');
+        var sharePct = cells[4] ? cells[4].querySelector('.share-pct') : null;
+        bRows += '<tr>' +
+          '<td class="pt-name">' + (cells[0] ? cells[0].textContent : '') + '</td>' +
+          '<td class="pt-num">'  + (cells[1] ? cells[1].textContent : '') + '</td>' +
+          '<td class="pt-num">'  + (cells[2] ? cells[2].textContent : '') + '</td>' +
+          '<td class="pt-num">'  + (cells[3] ? cells[3].textContent : '') + '</td>' +
+          '<td class="pt-num">'  + (sharePct  ? sharePct.textContent : '') + '</td>' + '</tr>';
+      });
+      var fc = tfootRow ? tfootRow.querySelectorAll('td') : [];
+      var fRow = tfootRow ? '<tr class="pt-foot">' +
+        '<td class="pt-name">' + (fc[0] ? fc[0].textContent : '') + '</td>' +
+        '<td class="pt-num">'  + (fc[1] ? fc[1].textContent : '') + '</td>' +
+        '<td class="pt-num">'  + (fc[2] ? fc[2].textContent : '') + '</td>' +
+        '<td class="pt-num">'  + (fc[3] ? fc[3].textContent : '') + '</td>' +
+        '<td class="pt-num">100%</td>' + '</tr>' : '';
+      breakdownHtml = '<div class="section-label" style="margin-top:20px">Per-Product Breakdown</div>' +
+        '<table class="ptable"><thead><tr>' +
+        '<th class="pt-name">Product</th><th class="pt-num">Boards</th>' +
+        '<th class="pt-num">Comp / Board</th><th class="pt-num">Total Components</th><th class="pt-num">Share of Run</th>' +
+        '</tr></thead><tbody>' + bRows + '</tbody><tfoot>' + fRow + '</tfoot></table>';
+    }
+
+    var derSection  = document.getElementById('deratingSection');
+    var showDerating = derSection && derSection.style.display !== 'none';
+    var deratingHtml = '';
+    if (showDerating) {
+      var derPct    = g('deratingPct');
+      var barEl     = document.getElementById('deratingBar');
+      var barWidth  = barEl ? barEl.style.width : '0%';
+      var statusEl  = document.getElementById('statusMsg');
+      var statusTxt = statusEl ? statusEl.textContent : '';
+      var statusCls = statusEl ? statusEl.className : '';
+      var statusColor = '#2ecc71';
+      if (statusCls.indexOf('warn') !== -1) statusColor = '#f5a623';
+      if (statusCls.indexOf('poor') !== -1) statusColor = '#e8320a';
+      deratingHtml =
+        '<div class="section-label" style="margin-top:20px">Derating vs. Nameplate</div>' +
+        '<div class="util-head"><span class="util-label">Globally Derated Rate</span><span class="util-pct">' + derPct + '</span></div>' +
+        '<div class="bar-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + barWidth + ';background:' + statusColor + '"></div></div>' +
+        '<div class="status-msg" style="border-left-color:' + statusColor + '">' + statusTxt + '</div>';
+    }
+
+    var metaLine = 'Measurement period: ' + hours + ' h';
+    if (nameplate) metaLine += '  |  Nameplate: ' + parseInt(nameplate).toLocaleString('fi-FI') + ' cph';
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+      '<title>Placement Speed Verifier' + (title ? ' - ' + title : '') + '</title>' +
+      '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+      '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
+      '.ph { border-bottom: 3px solid #f5a623; padding-bottom: 12px; margin-bottom: 20px; }' +
+      '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
+      '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
+      '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
+      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #f5a623; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+      '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }' +
+      '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
+      '.pprimary { border-top: 3px solid #f5a623; }' +
+      '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+      '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
+      '.paccent { color: #f5a623; }' +
+      '.pstat-sub { font-size: 10px; color: #888; margin-top: 2px; }' +
+      '.util-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }' +
+      '.util-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #888; }' +
+      '.util-pct { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
+      '.bar-labels { display: flex; justify-content: space-between; font-family: "Share Tech Mono", monospace; font-size: 9px; color: #888; margin-bottom: 3px; }' +
+      '.bar-track { height: 10px; background: #eee; overflow: hidden; margin-bottom: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.bar-fill { height: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.status-msg { border-left: 4px solid #ccc; padding: 10px 14px; background: #f9f9f9; font-size: 12px; color: #444; }' +
+      '.ptable { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 4px; }' +
+      '.ptable thead th { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; border-bottom: 1px solid #eee; padding: 5px 8px; text-align: right; }' +
+      '.ptable thead th.pt-name { text-align: left; }' +
+      '.ptable tbody tr { border-bottom: 1px solid #f0f0f0; }' +
+      '.ptable td { padding: 6px 8px; color: #444; }' +
+      '.pt-name { text-align: left; font-weight: 600; color: #222; }' +
+      '.pt-num  { text-align: right; font-family: "Share Tech Mono", monospace; font-size: 10px; }' +
+      '.pt-foot td { border-top: 2px solid #eee; font-weight: 700; color: #222; padding: 6px 8px; }' +
+      '.pt-foot .pt-num { color: #f5a623; }' +
+      '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
+      '</style></head><body>' +
+      '<div class="ph"><div class="ph-tool">Placement Speed Verifier \u2014 SMTCalc.com</div>' +
+      (title ? '<div class="ph-title">' + title + '</div>' : '') +
+      '<div class="ph-meta">Printed: ' + dateStr + '<br>' + metaLine + '</div></div>' +
+      '<div class="section-label">Result Summary</div>' +
+      '<div class="pgrid">' + statsHtml + '</div>' +
+      breakdownHtml +
+      deratingHtml +
+      '</body></html>';
+
+    var win = window.open('', '_blank', 'width=800,height=900');
+    win.document.write(html);
+    win.document.close();
+    win.onload = function() { win.focus(); win.print(); };
   }
 
   // Initialize with two example products that match the textbook example
