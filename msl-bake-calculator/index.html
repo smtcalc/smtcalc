@@ -567,18 +567,6 @@
   }
   .print-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem;
-    text-align: center;
-  }
-  .footer-copy {
-    font-size: 0.78rem;
-    color: #555;
-  }
-  .footer-copy a { color: #666; text-decoration: none; }
-  .footer-copy a:hover { color: var(--accent); }
 
   /* PLACEHOLDER */
   .results-placeholder {
@@ -630,6 +618,31 @@
   .guide-btn:hover { background: rgba(245,166,35,0.08); }
 
   /* end styles */
+  /* FOOTER */
+  footer {
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .footer-copy a {
+    color: var(--accent);
+    text-decoration: none;
+  }
 </style>
 </head>
 <body>
@@ -823,13 +836,6 @@
   </div>
 
 </div><!-- end tool-wrap -->
-
-<footer>
-  <div class="footer-copy">
-    &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-    Bake times per IPC/JEDEC J-STD-033D. Always verify against the current revision of the standard.
-  </div>
-</footer>
 
 <script>
 // ============================================================
@@ -1358,5 +1364,25 @@ function printReport() {
 }
 </script>
 
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
 </body>
 </html>
