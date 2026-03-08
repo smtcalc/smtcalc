@@ -558,10 +558,12 @@
       .tools-grid .tool-card[style] { grid-column: span 1 !important; }
       .tool-card { padding: 1.75rem 1.5rem; }
       .about-inner { grid-template-columns: 1fr; gap: 3rem; }
-      nav { display: none; }
+      nav { gap: 1rem; }
+      nav a.hide-mobile { display: none; }
       .stats-inner { gap: 2rem; }
       .hero { padding: 100px 1.25rem 60px; }
       .tools-section { padding: 60px 1.25rem; }
+      .hero-accent, .hero-accent2 { display: none; }
     }
   </style>
 </head>
@@ -571,7 +573,7 @@
   <header>
     <a href="/" class="logo">SMT<span>Calc</span></a>
     <nav>
-      <a href="#tools">Tools</a>
+      <a href="#tools" class="hide-mobile">Tools</a>
       <a href="/about/">About</a>
     </nav>
   </header>
@@ -596,7 +598,7 @@
           Browse Tools
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#about" class="btn-secondary">About This Site</a>
+        <a href="/about/" class="btn-secondary">About This Site</a>
       </div>
     </div>
   </section>
