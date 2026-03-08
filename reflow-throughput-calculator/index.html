@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <a href="https://www.canva.com/design/DAHDRrbe_dA/f0K9eupZUuHtKcE6s6TtyA/view?utm_content=DAHDRrbe_dA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he7cafc826a" target="_blank" class="guide-btn" id="guideBtn">Read the Guide &#8594;</a>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reflow Throughput Calculator &mdash; SMTCalc</title>
@@ -853,7 +853,7 @@
           <div class="result-sub" id="B_tunnelMm_sub">mm heated length</div>
         </div>
         <div class="result-box primary">
-          <div class="result-label">Min. Heated Length (alt.)</div>
+          <div class="result-label" id="B_tunnelAlt_label">Min. Heated Length (alt.)</div>
           <div class="result-value" id="B_tunnelAlt">--</div>
           <div class="result-sub" id="B_tunnelAlt_sub">inches / feet</div>
         </div>
@@ -1136,15 +1136,17 @@ function calcB() {
   setTxt('B_tunnelMm',  fmtN(dispTunnelMm, currentUnit === 'cm' ? 1 : 0));
   setTxt('B_tunnelMm_sub', currentUnit === 'in' ? 'in heated length' : 'cm heated length');
 
-  // Alt unit: cm shows ft/in, inches shows cm
+  // Alt unit: same system, different scale
+  // cm mode: show meters and mm; inches mode: show feet and inches
   if (currentUnit === 'cm') {
-    setTxt('B_tunnelAlt',     fmtN(dispTunnelFt, 2) + ' ft');
-    setTxt('B_tunnelAlt_sub', fmtN(dispTunnelIn, 1) + ' inches');
+    setTxt('B_tunnelAlt',       fmtN(minTunnelMm / 1000, 2) + ' m');
+    setTxt('B_tunnelAlt_sub',   fmtN(minTunnelMm, 0) + ' mm');
+    setTxt('B_tunnelAlt_label', 'Min. Heated Length (alt.)');
   } else {
-    setTxt('B_tunnelAlt',     fmtN(minTunnelMm / 10, 1) + ' cm');
-    setTxt('B_tunnelAlt_sub', fmtN(dispTunnelFt, 2) + ' feet');
+    setTxt('B_tunnelAlt',       fmtN(dispTunnelFt, 2) + ' ft');
+    setTxt('B_tunnelAlt_sub',   fmtN(dispTunnelIn, 1) + ' in');
+    setTxt('B_tunnelAlt_label', 'Min. Heated Length (alt.)');
   }
-
   setTxt('B_beltSpeed', fmtN(dispBeltSpeed, currentUnit === 'cm' ? 2 : 1));
   setTxt('B_beltSpeed_sub', currentUnit === 'in' ? 'in/min' : 'cm/min');
 
