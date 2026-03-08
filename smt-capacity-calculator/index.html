@@ -910,9 +910,10 @@
     if (products.length >= 20) return;
     snapshotValues();
     var id = nextId++;
+    var autoName = name !== undefined ? name : 'Product ' + (products.length + 1);
     products.push({
       id: id,
-      savedName:  name  !== undefined ? name  : '',
+      savedName:  autoName,
       savedPcbs:  pcbs  !== undefined ? pcbs  : 5000,
       savedPrice: price !== undefined ? price : 50,
       savedComps: comps !== undefined ? comps : 100
@@ -1063,6 +1064,7 @@
   }
 
   addProduct('Product 1', 10000, 50, 120);
+  addProduct('Product 2', 5000, 50, 100);
 
   function printReport() {
     var title     = document.getElementById('reportTitle').value.trim();
