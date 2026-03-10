@@ -329,7 +329,7 @@
     /* TOOL CARDS */
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5px;
       background: var(--border);
       border: 1.5px solid var(--border);
@@ -804,10 +804,23 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-copy">
-        © 2026 <a href="/">SMTCalc.com</a> — Free tools for electronics manufacturing professionals.
+        &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
       </div>
     </div>
   </footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
 
 </body>
 </html>
