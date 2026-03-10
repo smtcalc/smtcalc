@@ -403,6 +403,27 @@
     .legend-desc { font-size: 0.85rem; color: #aaa; }
 
     /* STANDARDS NOTE */
+    .timer-note {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid #e07b00;
+      padding: 1.25rem 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 60px;
+    }
+    .timer-note-heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e07b00;
+      margin-bottom: 0.6rem;
+    }
+    .timer-note p { font-size: 0.88rem; color: #888; line-height: 1.7; margin: 0 0 0.5rem 0; }
+    .timer-note p:last-child { margin-bottom: 0; }
+    .timer-note strong { color: var(--text); }
+
     .standards-note {
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -641,6 +662,14 @@
       </div>
     </div>
 
+    <!-- TIMER BEHAVIOR NOTE -->
+    <div class="timer-note">
+      <div class="timer-note-heading">How the timer works</div>
+      <p>The elapsed floor life is calculated using Excel's <strong>NOW()</strong> function, which returns the current date and time. <strong>NOW() is not a live clock.</strong> It recalculates only when the file is opened, when a cell is edited, or when you press <strong>F9</strong> manually.</p>
+      <p>If you leave the workbook open on your screen all day without touching it, the displayed elapsed time will be <strong>frozen at the last recalculation</strong> and will not reflect the true floor life consumed. Press <strong>F9</strong> to force an update, or simply close and reopen the file.</p>
+      <p>The recommended workflow is to close the file when not actively using it and reopen it when you need a status check. The calculation is always accurate at the moment of recalculation, regardless of how long the file was closed.</p>
+    </div>
+
     <!-- STANDARDS NOTE -->
     <div class="standards-note">
       <p>
@@ -662,9 +691,22 @@
     <div class="footer-inner">
       <div class="footer-copy">
         &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
       </div>
     </div>
   </footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
 
 </body>
 </html>
