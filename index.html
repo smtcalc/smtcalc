@@ -607,7 +607,7 @@
   <div class="stats-bar">
     <div class="stats-inner">
       <div class="stat">
-        <span class="stat-value">6</span>
+        <span class="stat-value">7</span>
         <span class="stat-label">Tools Available</span>
       </div>
       <div class="stat">
@@ -719,7 +719,6 @@
           </div>
         </div>
       </a>
-
       <!-- SMD RESISTOR CODE CALCULATOR -->
       <a href="resistor-code-calculator/" class="tool-card">
         <div class="tool-number">06</div>
@@ -732,6 +731,22 @@
           <div class="tool-link">
             Open Tool
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- MSL TRACKER -->
+      <a href="msl-tracker/" class="tool-card" style="grid-column: span 2">
+        <div class="tool-number">07</div>
+        <div class="tool-card-inner">
+          <div class="tool-tag">Components / Moisture &mdash; Free Download</div>
+          <div class="tool-name">MSL Tracker</div>
+          <p class="tool-desc">
+            Free Excel workbook for tracking moisture-sensitive component floor life across your production floor. Color-coded dashboard, bake event logging, ambient RH correction per J-STD-033D, and automatic floor life recalculation. Requires Microsoft 365 or Excel 2021.
+          </p>
+          <div class="tool-link">
+            Download Free
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </div>
         </div>
       </a>
@@ -790,22 +805,9 @@
     <div class="footer-inner">
       <div class="footer-copy">
         © 2026 <a href="/">SMTCalc.com</a> — Free tools for electronics manufacturing professionals.
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
       </div>
     </div>
   </footer>
 
-
-<script>
-function showContact() {
-  var u = 'contact';
-  var d = 'smtcalc.com';
-  var a = document.getElementById('contact-link');
-  a.href = 'mailto:' + u + '@' + d;
-  a.textContent = u + '@' + d;
-  a.onclick = null;
-}
-</script>
 </body>
 </html>
