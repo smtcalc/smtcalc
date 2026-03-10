@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MSL Tracker — Free Excel Workbook | SMTCalc</title>
+  <meta name="description" content="Free Excel workbook for tracking moisture-sensitive component floor life per J-STD-033D. Color-coded dashboard, bake log, RH correction, and auto-status. Download free." />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --accent: #f5a623;
+      --accent2: #e8320a;
+      --text: #f0ede8;
+      --muted: #888;
+      --border: #2a2a2a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    nav { display: flex; gap: 2rem; align-items: center; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: 120px 2rem 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
+    }
+
+    .page-hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .breadcrumb {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .tool-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(245,166,35,0.3);
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span { color: var(--accent); display: block; }
+
+    .page-hero .subtitle {
+      font-size: 1.05rem;
+      color: #aaa;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    /* DOWNLOAD BOX */
+    .download-box {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 1.75rem 2.25rem;
+      min-width: 320px;
+      margin-bottom: 2rem;
+    }
+
+    .download-box-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .download-filename {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .download-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2.25rem;
+      margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.15s;
+      align-self: flex-start;
+    }
+    .btn-download:hover { background: #ffb940; transform: translateY(-2px); }
+
+    .req-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .req-note strong { color: var(--text); }
+
+    /* CONTENT AREA */
+    .content-area {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 100px;
+    }
+
+    /* SHEET OVERVIEW */
+    .sheets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+      gap: 1.5px;
+      background: var(--border);
+      border: 1.5px solid var(--border);
+      margin-bottom: 60px;
+    }
+
+    .sheet-card {
+      background: var(--bg);
+      padding: 1.75rem;
+    }
+
+    .sheet-tab {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .sheet-tab.green  { background: rgba(112,173,71,0.2);  color: #70AD47; border: 1px solid rgba(112,173,71,0.3); }
+    .sheet-tab.blue   { background: rgba(46,117,182,0.2);  color: #5BA3E0; border: 1px solid rgba(46,117,182,0.3); }
+    .sheet-tab.orange { background: rgba(237,125,49,0.2);  color: #ED7D31; border: 1px solid rgba(237,125,49,0.3); }
+    .sheet-tab.grey   { background: rgba(150,150,150,0.15); color: #aaa;   border: 1px solid rgba(150,150,150,0.2); }
+
+    .sheet-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.02em;
+    }
+
+    .sheet-desc {
+      font-size: 0.85rem;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* SECTION TITLES */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* FEATURE LIST */
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+      gap: 1rem;
+      margin-bottom: 60px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid rgba(245,166,35,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    .feature-text strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+    .feature-text span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* USAGE STEPS */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-bottom: 60px;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2.5rem;
+      line-height: 1;
+      color: rgba(245,166,35,0.25);
+      flex-shrink: 0;
+      width: 48px;
+      text-align: right;
+    }
+
+    .step-content strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    .step-content p { font-size: 0.88rem; color: #888; line-height: 1.6; }
+
+    /* STATUS LEGEND */
+    .status-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-bottom: 60px;
+      overflow: hidden;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .legend-row:last-child { border-bottom: none; }
+
+    .legend-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.75rem;
+      min-width: 130px;
+      text-align: center;
+    }
+    .badge-green  { background: #E2EFDA; color: #375623; }
+    .badge-yellow { background: #FFF2CC; color: #7F6000; }
+    .badge-orange { background: #FFD966; color: #7F3F00; }
+    .badge-red    { background: #FCE4D6; color: #C00000; }
+    .badge-grey   { background: #2a2a2a; color: #aaa; border: 1px solid #444; }
+
+    .legend-desc { font-size: 0.85rem; color: #aaa; }
+
+    /* STANDARDS NOTE */
+    .standards-note {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 60px;
+    }
+    .standards-note p { font-size: 0.88rem; color: #888; line-height: 1.7; }
+    .standards-note strong { color: var(--text); }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-copy a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .sheets-grid { grid-template-columns: 1fr; }
+      .feature-list { grid-template-columns: 1fr; }
+      .page-hero { padding: 100px 1.25rem 40px; }
+      .content-area { padding: 0 1.25rem 60px; }
+      nav a.hide-mobile { display: none; }
+      .download-box { min-width: unset; width: 100%; }
+      .legend-badge { min-width: 110px; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <header>
+    <a href="/" class="logo">SMT<span>Calc</span></a>
+    <nav>
+      <a href="/#tools" class="hide-mobile">Tools</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <div class="hero-grid"></div>
+    <div class="page-hero-inner">
+      <div class="breadcrumb">
+        <a href="/">SMTCalc</a> &rsaquo; MSL Tracker
+      </div>
+      <div class="tool-tag">Components / Moisture &mdash; Free Download</div>
+      <h1>
+        MSL Tracker
+        <span>Excel Workbook</span>
+      </h1>
+      <p class="subtitle">
+        Track moisture-sensitive component floor life across your production floor. Color-coded status dashboard, bake event logging, ambient RH correction, and automatic floor life recalculation. All per J-STD-033D.
+      </p>
+
+      <div class="download-box">
+        <div class="download-box-label">Free Download</div>
+        <div class="download-filename">MSL_Tracker.xlsx</div>
+        <div class="download-meta">Excel Workbook &mdash; v1.0 &mdash; J-STD-033D</div>
+        <a href="MSL_Tracker.xlsx" download class="btn-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Free
+        </a>
+        <div class="req-note">Requires <strong>Microsoft 365</strong> or <strong>Excel 2021</strong> or later.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-area">
+
+    <!-- SHEETS OVERVIEW -->
+    <div class="section-label">What's Inside</div>
+    <h2>Four Sheets, One Workflow</h2>
+    <div class="sheets-grid">
+      <div class="sheet-card">
+        <div class="sheet-tab green">Dashboard</div>
+        <div class="sheet-name">Dashboard</div>
+        <p class="sheet-desc">Daily status overview. KPI counters for active, OK, caution, warning, and expired reels. Full reel table with color-coded floor life remaining. Open this in the morning.</p>
+      </div>
+      <div class="sheet-card">
+        <div class="sheet-tab blue">Reel Log</div>
+        <div class="sheet-name">Reel Log</div>
+        <p class="sheet-desc">Main data entry sheet. Log Reel ID, description, MSL level, opened date and time, and ambient RH. Everything else calculates automatically: adjusted floor life, hours exposed, hours remaining, and status.</p>
+      </div>
+      <div class="sheet-card">
+        <div class="sheet-tab orange">Bake Log</div>
+        <div class="sheet-name">Bake Log</div>
+        <p class="sheet-desc">Record bake events by Reel ID, start and end date and time, package body thickness, and bake temperature. Required bake time is looked up automatically from J-STD-033D Table 4-1. Floor life is restored only when the actual bake meets or exceeds the required time. The Reel Log updates immediately.</p>
+      </div>
+      <div class="sheet-card">
+        <div class="sheet-tab grey">Reference</div>
+        <div class="sheet-name">Reference</div>
+        <p class="sheet-desc">J-STD-033D tables embedded in the workbook: floor life by MSL level, RH correction multipliers, and required bake times for 40 C and 125 C bake options.</p>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section-label">Key Features</div>
+    <h2>What It Does</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">&#x23F1;</div>
+        <div class="feature-text">
+          <strong>Live Floor Life Counter</strong>
+          <span>Hours exposed updates every time the file is opened, calculated from the date and time you logged on the reel.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">&#x1F4A7;</div>
+        <div class="feature-text">
+          <strong>RH Correction</strong>
+          <span>Enter ambient RH and the workbook applies the J-STD-033D Table 5-2 multiplier automatically. 40% RH gives you 1.5x floor life. Below 10% RH gives 5x.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">&#x1F525;</div>
+        <div class="feature-text">
+          <strong>Bake Recovery</strong>
+          <span>Log a bake event with package thickness and bake temperature. Required bake time is looked up from J-STD-033D Table 4-1. Supports 125, 90, 60, and 40&deg;C. Floor life resets only when the bake is complete.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">&#x1F7E2;</div>
+        <div class="feature-text">
+          <strong>Color-Coded Status</strong>
+          <span>Green, yellow, orange, and red status indicators on both the Dashboard and Reel Log. At-risk reels are impossible to miss.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">&#x1F4CB;</div>
+        <div class="feature-text">
+          <strong>Bake Recommendation</strong>
+          <span>Reference sheet includes required bake times per MSL level for both bake temperatures, straight from J-STD-033D.</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">&#x1F4CA;</div>
+        <div class="feature-text">
+          <strong>Up to 50 Active Reels</strong>
+          <span>Reel Log handles 50 concurrent reels. Bake Log handles 100 bake events. Enough for most production environments.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS LEGEND -->
+    <div class="section-label">Status Colors</div>
+    <h2>How to Read the Dashboard</h2>
+    <div class="status-legend">
+      <div class="legend-row">
+        <div class="legend-badge badge-green">OK</div>
+        <div class="legend-desc">More than 24 hours of floor life remaining. No action needed.</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-badge badge-green">OK &mdash; MSL1</div>
+        <div class="legend-desc">MSL level 1. Unlimited floor life per J-STD-033D. No tracking required.</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-badge badge-yellow">CAUTION &lt;24h</div>
+        <div class="legend-desc">Between 12 and 24 hours remaining. Plan to use or bake soon.</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-badge badge-orange">WARNING &lt;12h</div>
+        <div class="legend-desc">Less than 12 hours remaining. Use today or bake immediately.</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-badge badge-red">EXPIRED</div>
+        <div class="legend-desc">Floor life exceeded. Component must be baked before use or scrapped.</div>
+      </div>
+      <div class="legend-row">
+        <div class="legend-badge badge-grey">Not Started</div>
+        <div class="legend-desc">Reel has not been opened from dry pack. Floor life clock has not started.</div>
+      </div>
+    </div>
+
+    <!-- HOW TO USE -->
+    <div class="section-label">Quick Start</div>
+    <h2>How to Use It</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Open the Reel Log when you break a dry pack</strong>
+          <p>Go to the <strong style="color:var(--text)">Reel Log</strong> sheet (blue tab). Find the first empty row. Enter the Reel ID in column A exactly as it appears on the label. You will need this ID again if you log a bake, so keep it consistent.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Select the MSL level from the dropdown</strong>
+          <p>Click column B and select the MSL level from the dropdown. The value comes from the component datasheet or the label on the dry pack bag. Valid levels are 1, 2, 2a, 3, 4, 5, 5a, and 6. Base floor life calculates automatically from this selection.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Enter the opening date and time in column C</strong>
+          <p>Press <strong style="color:var(--text)">Ctrl+;</strong> to insert today's date, then press <strong style="color:var(--text)">Space</strong>, then type the current time manually, for example <strong style="color:var(--text)">14:30</strong>. Finnish and other European locales may use a dot separator, e.g. <strong style="color:var(--text)">14.30</strong>. Both work. Press Enter to confirm. The floor life countdown starts from this moment.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Enter the ambient RH in column D (optional but recommended)</strong>
+          <p>Type the relative humidity percentage in your production area. The workbook applies the J-STD-033D Table 5-2 correction automatically. At 40% RH you get 1.5x floor life. At or below 10% RH you get 5x. Leave it blank and the calculation defaults to the standard 60% RH condition.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Check the Dashboard every morning</strong>
+          <p>Open the file and go to the <strong style="color:var(--text)">Dashboard</strong> sheet (green tab). It recalculates the moment the file opens. The KPI boxes at the top give you a count by status. Scroll down for the full reel table. Any orange or red rows need action before production starts.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <strong>Log a bake event in the Bake Log</strong>
+          <p>Go to the <strong style="color:var(--text)">Bake Log</strong> sheet (orange tab). Enter the Reel ID in column A exactly as it appears in the Reel Log. Enter the bake start date and time, then the end date and time. Select the package body thickness from the dropdown in column F and the bake temperature from the dropdown in column G. The workbook looks up the required bake time from J-STD-033D Table 4-1. If actual bake time meets or exceeds the required time, full floor life is restored. A short bake grants nothing.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <strong>Clear a row when the reel is consumed</strong>
+          <p>When a reel is fully used, select the entire row in the Reel Log and press Delete. This removes it from the Dashboard count and keeps the active reel list clean. The bake history in the Bake Log can stay as a permanent record.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDARDS NOTE -->
+    <div class="standards-note">
+      <p>
+        <strong>Standards basis:</strong> All floor life values, RH correction multipliers, and bake recovery times are taken directly from
+        <strong>J-STD-033D</strong> (IPC/JEDEC Joint Standard for Handling, Packing, Shipping and Use of Moisture/Reflow Sensitive Surface Mount Devices).
+        The workbook embeds the relevant tables in the Reference sheet so you can verify any value without leaving Excel.
+      </p>
+    </div>
+
+    <!-- BACK TO TOOLS -->
+    <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All Tools
+    </a>
+
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-copy">
+        &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
