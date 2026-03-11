@@ -587,35 +587,278 @@
     .bake-table th, .bake-table td { padding: 0.6rem 0.65rem; }
   }
 
-  /* GUIDE BANNER */
-  .guide-inner {
+  @media print {
+    header, .guide-toggle-btn, .guide-content { display: none !important; }
+  }
+
+  /* INLINE GUIDE */
+  .guide-toggle-btn {
+    width: 100%;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent);
-    padding: 1rem 1.25rem;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    flex-wrap: wrap;
+    transition: background 0.2s;
+    margin-bottom: 0;
+  }
+  .guide-toggle-btn:hover { background: var(--bg3); }
+  .guide-toggle-label { display: flex; align-items: center; gap: 0.75rem; }
+  .guide-toggle-label svg { flex-shrink: 0; }
+  .guide-toggle-arrow {
+    font-size: 1rem;
+    color: var(--accent);
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+  .guide-toggle-arrow.open { transform: rotate(180deg); }
+  .guide-content {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-left: 3px solid var(--accent);
     margin-bottom: 1.5rem;
   }
-  .guide-inner p { font-size: 0.85rem; color: #999; }
-  .guide-inner strong { color: var(--text); }
-  .guide-btn {
+  .guide-content.open { display: block; }
+  .guide-section {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-section:last-child { border-bottom: none; }
+  .guide-section-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .guide-section-title::before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--accent);
+  }
+  .guide-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .guide-three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 680px) {
+    .guide-two-col, .guide-three-col { grid-template-columns: 1fr; }
+  }
+  .guide-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 1rem 1.1rem;
+  }
+  .guide-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .guide-card-title.green { color: var(--green); }
+  .guide-card-title.red { color: var(--red); }
+  .guide-card-title.blue { color: var(--blue); }
+  .guide-card-title.accent { color: var(--accent); }
+  .guide-card-body {
     font-size: 0.8rem;
+    color: #aaa;
+    line-height: 1.6;
+  }
+  .guide-card-border-green { border-left: 3px solid var(--green); }
+  .guide-card-border-red { border-left: 3px solid var(--red); }
+  .guide-card-border-blue { border-left: 3px solid var(--blue); }
+  .guide-card-border-accent { border-left: 3px solid var(--accent); }
+  .guide-card-border-muted { border-left: 3px solid var(--muted); }
+  .guide-note {
+    background: rgba(245,166,35,0.06);
+    border: 1px solid rgba(245,166,35,0.15);
+    border-left: 3px solid var(--accent);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.78rem;
+    color: #999;
+    line-height: 1.55;
+    margin-top: 1rem;
+  }
+  .guide-warn {
+    background: rgba(232,50,10,0.07);
+    border: 1px solid rgba(232,50,10,0.2);
+    border-left: 3px solid var(--red);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.78rem;
+    color: #ccc;
+    line-height: 1.55;
+    margin-top: 1rem;
+  }
+  .guide-msl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+  .guide-msl-table th {
+    font-family: var(--mono);
+    font-size: 0.6rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent);
-    text-decoration: none;
-    border: 1px solid rgba(245,166,35,0.3);
-    padding: 0.4rem 1rem;
-    white-space: nowrap;
-    transition: background 0.2s;
+    text-align: left;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border2);
+    background: var(--bg3);
   }
-  .guide-btn:hover { background: rgba(245,166,35,0.08); }
+  .guide-msl-table td {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #aaa;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-msl-table tr:last-child td { border-bottom: none; }
+  .guide-msl-table tr:hover td { background: var(--bg3); }
+  .guide-msl-table .unlimited { color: var(--green); }
+  .guide-msl-table .warn-time { color: var(--accent); }
+  .guide-msl-table .danger-time { color: var(--red); }
+  .guide-process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 680px) { .guide-process-steps { grid-template-columns: repeat(2, 1fr); } }
+  .guide-process-step {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 1rem 0.9rem;
+    position: relative;
+  }
+  .guide-process-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .guide-process-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+  .guide-process-body {
+    font-size: 0.75rem;
+    color: #888;
+    line-height: 1.55;
+  }
+  .guide-temp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 680px) { .guide-temp-grid { grid-template-columns: repeat(2, 1fr); } }
+  .guide-temp-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 0.9rem 0.75rem;
+    text-align: center;
+  }
+  .guide-temp-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    margin-bottom: 0.15rem;
+  }
+  .guide-temp-tol {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .guide-temp-desc {
+    font-size: 0.72rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .guide-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+  }
+  .guide-checklist li {
+    font-size: 0.82rem;
+    color: #bbb;
+    line-height: 1.6;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border);
+    padding-left: 1.4rem;
+    position: relative;
+  }
+  .guide-checklist li:last-child { border-bottom: none; }
+  .guide-checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .guide-checklist li.warn-item { color: var(--red); }
+  .guide-checklist li.warn-item::before {
+    content: '⚠';
+    color: var(--red);
+  }
+  .guide-key-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 680px) { .guide-key-numbers { grid-template-columns: repeat(2, 1fr); } }
+  .guide-key-num-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .guide-key-num-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: var(--accent);
+    line-height: 1.1;
+    flex-shrink: 0;
+    min-width: 3rem;
+  }
+  .guide-key-num-desc {
+    font-size: 0.72rem;
+    color: #888;
+    line-height: 1.5;
+  }
 
   /* end styles */
   /* FOOTER */
@@ -662,10 +905,219 @@
 
 <div class="tool-wrap">
 
-  <div class="guide-inner">
-    <p><strong>New to this calculator?</strong> Read the short guide covering MSL levels, why baking matters, how to use all the inputs, and how to read the bake time results.</p>
-    <a href="https://www.canva.com/design/DAHDQD_0hrw/iI2bUYFY0EmE7uInR-joaA/view?utm_content=DAHDQD_0hrw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6e11f40b53" target="_blank" class="guide-btn">Read the Guide &#x2192;</a>
-  </div>
+  <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
+    <span class="guide-toggle-label">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#f5a623" stroke-width="1.2"/></svg>
+      Quick Guide &mdash; How the MSL Bake Calculator Works
+    </span>
+    <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
+  </button>
+
+  <div class="guide-content" role="region">
+
+    <!-- 01 WHY PLASTIC COMPONENTS ABSORB MOISTURE -->
+    <div class="guide-section">
+      <div class="guide-section-title">01 &mdash; Why Plastic Components Absorb Moisture</div>
+      <div class="guide-two-col">
+        <div>
+          <div class="guide-card-body" style="margin-bottom:1rem;">Most surface mount ICs use plastic encapsulation. The mold compound that protects the die is permeable to water vapor, absorbing moisture from the surrounding air slowly and invisibly. This is not a defect. It is a material property.</div>
+          <div class="guide-card-body">The problem occurs during reflow soldering, when the component is rapidly heated to 220&ndash;260&deg;C. The absorbed moisture vaporizes and expands violently inside the package. The result is called popcorning: internal delamination and micro-cracking that may not be visible externally but causes early field failures. Pads lift, bond wires break, and the die cracks from the stress.</div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="margin-bottom:0.6rem;">MSL Levels at a Glance</div>
+          <table class="guide-msl-table">
+            <thead>
+              <tr><th>MSL</th><th>Floor Life</th><th>Sensitivity</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td class="unlimited">Unlimited</td><td>None</td></tr>
+              <tr><td>2</td><td class="unlimited">1 year</td><td>Low</td></tr>
+              <tr><td>2a</td><td>4 weeks</td><td>Low-med</td></tr>
+              <tr><td>3</td><td>168 hours</td><td>Medium</td></tr>
+              <tr><td>4</td><td class="warn-time">72 hours</td><td>High</td></tr>
+              <tr><td>5</td><td class="warn-time">48 hours</td><td>Very high</td></tr>
+              <tr><td>5a</td><td class="danger-time">24 hours</td><td>Very high</td></tr>
+              <tr><td>6</td><td class="danger-time">Bake before use</td><td>Extreme</td></tr>
+            </tbody>
+          </table>
+          <div class="guide-note">Floor life = how long a component may be exposed to uncontrolled factory air (30&deg;C / 60% RH) after opening the moisture-barrier bag. Once the clock expires, baking is mandatory before reflow.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 THE BAKING PROCESS -->
+    <div class="guide-section">
+      <div class="guide-section-title">02 &mdash; The Baking Process &mdash; How It Works</div>
+      <div class="guide-process-steps">
+        <div class="guide-process-step">
+          <div class="guide-process-num">1</div>
+          <div class="guide-process-title">Component absorbs moisture</div>
+          <div class="guide-process-body">Stored in open air. Moisture diffuses through the mold compound, concentrating near the die attach and paddle.</div>
+        </div>
+        <div class="guide-process-step">
+          <div class="guide-process-num">2</div>
+          <div class="guide-process-title">Oven raises temperature</div>
+          <div class="guide-process-body">125&deg;C, 90&deg;C, or 40&deg;C with RH below 5%. Heat reverses the diffusion gradient: moisture migrates outward.</div>
+        </div>
+        <div class="guide-process-step">
+          <div class="guide-process-num">3</div>
+          <div class="guide-process-title">Moisture evaporates out</div>
+          <div class="guide-process-body">Water vapor escapes through the package surface. The process follows Fickian diffusion kinetics.</div>
+        </div>
+        <div class="guide-process-step">
+          <div class="guide-process-num">4</div>
+          <div class="guide-process-title">Component is dry and safe</div>
+          <div class="guide-process-body">Floor life clock resets to zero. Component may be reflowed within the rated floor life window.</div>
+        </div>
+      </div>
+      <div class="guide-warn">&#9888;&nbsp; <strong>Critical:</strong> all bake temperatures require less than 5% RH in the oven. A warm oven with high humidity will not dry the component. It may actually drive moisture deeper.</div>
+    </div>
+
+    <!-- 03 INPUTS -->
+    <div class="guide-section">
+      <div class="guide-section-title">03 &mdash; How to Use the Calculator &mdash; Inputs</div>
+      <div class="guide-two-col" style="margin-bottom:1rem;">
+        <div>
+          <div class="guide-section-title" style="margin-bottom:0.6rem; font-size:0.6rem;">Component Parameters</div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.75rem;">
+            <div class="guide-card-title">1. MSL Level</div>
+            <div class="guide-card-body">Select from MSL 1 to 6. MSL 1 never needs baking. MSL 6 always needs baking before every use. Floor life is shown automatically for reference.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.75rem;">
+            <div class="guide-card-title">2. Package Body Thickness</div>
+            <div class="guide-card-body">Measure the body only; exclude leads, balls, and pins. Five bands: under 0.5 mm, 0.5&ndash;0.8 mm, 0.8&ndash;1.4 mm, 1.4&ndash;2.0 mm, and over 2.0 mm. Thicker packages need more bake time.</div>
+          </div>
+          <div class="guide-card guide-card-border-blue">
+            <div class="guide-card-title">3. Large BGA / Stacked Die</div>
+            <div class="guide-card-body">Check this for any package larger than 17&times;17 mm or any stacked die component. J-STD-033D Note 2 applies: fixed 96h at 125&deg;C regardless of thickness.</div>
+          </div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="margin-bottom:0.6rem; font-size:0.6rem;">Floor Life Exposure</div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.75rem;">
+            <div class="guide-card-title">4. Time Out of Bag (hours)</div>
+            <div class="guide-card-body">Cumulative hours the component has been in factory air since the moisture-barrier bag was first opened. Partial days count, be precise.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.75rem;">
+            <div class="guide-card-title">5. Exposure Condition</div>
+            <div class="guide-card-body">Standard = up to 30&deg;C / 60% RH. If factory humidity exceeded 60% RH at any point, select Elevated. This triggers a note to track desorption data instead of relying purely on the timed bake.</div>
+          </div>
+          <div class="guide-card" style="background:var(--bg4); border:1px solid var(--border2);">
+            <div class="guide-section-title" style="margin-bottom:0.4rem; font-size:0.58rem;">Auto-Classification</div>
+            <div class="guide-card-body">The calculator automatically determines whether your excess exposure exceeds 72 hours. This threshold governs which column of J-STD-033D Table 4-1 applies. The result is displayed before the bake time table.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 READING RESULTS -->
+    <div class="guide-section">
+      <div class="guide-section-title">04 &mdash; Reading the Results</div>
+      <div class="guide-temp-grid">
+        <div class="guide-temp-card">
+          <div class="guide-temp-val" style="color:var(--red)">125&deg;C</div>
+          <div class="guide-temp-tol">+10/&minus;0&deg;C</div>
+          <div class="guide-temp-desc">Fastest option. Standard oven baking. Suitable for most packages. Verify component temp rating first.</div>
+        </div>
+        <div class="guide-temp-card">
+          <div class="guide-temp-val" style="color:var(--accent)">90&deg;C</div>
+          <div class="guide-temp-tol">+8/&minus;0&deg;C</div>
+          <div class="guide-temp-desc">Moderate speed. Used when 125&deg;C exceeds component specification. Still requires less than 5% RH.</div>
+        </div>
+        <div class="guide-temp-card">
+          <div class="guide-temp-val" style="color:var(--blue)">60&deg;C</div>
+          <div class="guide-temp-tol">Calculated</div>
+          <div class="guide-temp-desc">Dry storage cabinet range. Calculated via Arrhenius model from J-STD-033D Appendix B. Not a tabled value.</div>
+        </div>
+        <div class="guide-temp-card">
+          <div class="guide-temp-val" style="color:var(--muted)">40&deg;C</div>
+          <div class="guide-temp-tol">+5/&minus;0&deg;C</div>
+          <div class="guide-temp-desc">Slowest option. Weeks for thick packages. Use only if 60&deg;C or above is not possible.</div>
+        </div>
+      </div>
+      <div class="guide-note" style="margin-top:0.75rem;">The fastest valid temperature is highlighted in green in the results table. Pick that one when an oven is available. &nbsp;|&nbsp; 60&deg;C column: Arrhenius model, J-STD-033D Appendix B. Document derivation method if customer traceability is needed.</div>
+    </div>
+
+    <!-- 05 SPECIAL CASES -->
+    <div class="guide-section">
+      <div class="guide-section-title">05 &mdash; Special Cases and Practical Rules</div>
+      <div class="guide-two-col">
+        <div class="guide-card guide-card-border-green">
+          <div class="guide-card-title green">MSL 1 &mdash; No bake ever</div>
+          <div class="guide-card-body">MSL 1 components are not moisture-sensitive. Unlimited floor life. The calculator will tell you no bake is required and will never show a bake time table.</div>
+        </div>
+        <div class="guide-card guide-card-border-red">
+          <div class="guide-card-title red">MSL 6 &mdash; Mandatory bake</div>
+          <div class="guide-card-body">MSL 6 must be baked before every single use. There is no standard table. Bake conditions come from the component supplier datasheet. Contact the manufacturer.</div>
+        </div>
+        <div class="guide-card guide-card-border-blue">
+          <div class="guide-card-title">Thin MSL 2 (below 1.4 mm)</div>
+          <div class="guide-card-body">J-STD-033D Table 4-1 Note 4: baking is not required for MSL 2 devices with body thickness below 1.4 mm, even after floor life exceedance. The thin geometry allows rapid re-equilibration.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Large BGA / Stacked Die</div>
+          <div class="guide-card-body">Packages over 17&times;17 mm or any stacked die: fixed 96 hours at 125&deg;C per Note 2. Thickness bands do not apply. For stacked die, verify with supplier. Actual time may be longer.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title">Elevated Humidity Exposure</div>
+          <div class="guide-card-body">If the component was exposed above 60% RH, the tabled times may be insufficient. Track desorption by periodic weighing rather than relying solely on the time value.</div>
+        </div>
+        <div class="guide-card guide-card-border-muted">
+          <div class="guide-card-title">The 72-Hour Threshold</div>
+          <div class="guide-card-body">Table 4-1 has two columns: excess under 72h and excess over 72h. Longer excess exposure means more moisture; the over-72h column requires meaningfully longer bake times.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 CHECKLIST + KEY NUMBERS -->
+    <div class="guide-section">
+      <div class="guide-section-title">06 &mdash; Quick Reference Checklist</div>
+      <div class="guide-two-col">
+        <div>
+          <ul class="guide-checklist">
+            <li>Check component label for MSL level and floor life</li>
+            <li>Record bag-open date and time on the component tray</li>
+            <li>Monitor cumulative exposure, partial shifts count</li>
+            <li>Enter MSL level, package thickness, and hours out of bag</li>
+            <li>Select bake temperature available in your facility</li>
+            <li>Confirm oven RH is below 5% before starting the bake</li>
+            <li class="warn-item">Do not use a warm oven with high RH, it will not work</li>
+            <li class="warn-item">Do not rely on guesswork for MSL 6, always consult the datasheet</li>
+          </ul>
+        </div>
+        <div>
+          <div class="guide-section-title" style="margin-bottom:0.5rem; font-size:0.6rem;">Key Numbers</div>
+          <div class="guide-key-numbers" style="grid-template-columns: 1fr 1fr; margin-top:0;">
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val">72h</div>
+              <div class="guide-key-num-desc">Threshold for worst-case bake column</div>
+            </div>
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val">&lt;5%</div>
+              <div class="guide-key-num-desc">Maximum RH during baking (all temps)</div>
+            </div>
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val">96h</div>
+              <div class="guide-key-num-desc">Fixed bake for large BGA at 125&deg;C</div>
+            </div>
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val" style="font-size:1rem;">0.445 eV</div>
+              <div class="guide-key-num-desc">Activation energy for 60&deg;C calculation</div>
+            </div>
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val">125&deg;C</div>
+              <div class="guide-key-num-desc">Fastest standard bake temperature</div>
+            </div>
+            <div class="guide-key-num-card">
+              <div class="guide-key-num-val" style="font-size:0.95rem;">J-STD-033D</div>
+              <div class="guide-key-num-desc">Governing standard &mdash; Table 4-1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.guide-content -->
 
   <!-- INPUTS -->
   <div class="panel-grid">
@@ -838,6 +1290,15 @@
 </div><!-- end tool-wrap -->
 
 <script>
+function toggleGuide(btn) {
+  var content = btn.nextElementSibling;
+  var arrow = btn.querySelector('.guide-toggle-arrow');
+  var isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
 // ============================================================
 // J-STD-033D TABLE 4-1 BAKE DATA
 // Structure: bakeTimes[thickness][mslLevel][exceedance]
