@@ -132,35 +132,183 @@
     padding: 0 2rem;
   }
 
-  /* GUIDE BANNER */
-  .guide-inner {
+  /* INLINE GUIDE */
+  .guide-toggle-btn {
+    width: 100%;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent);
-    padding: 1rem 1.25rem;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    flex-wrap: wrap;
+    transition: background 0.2s;
+    margin-bottom: 0;
+  }
+  .guide-toggle-btn:hover { background: var(--bg3); }
+  .guide-toggle-label { display: flex; align-items: center; gap: 0.75rem; }
+  .guide-toggle-label svg { flex-shrink: 0; }
+  .guide-toggle-arrow {
+    font-size: 1rem;
+    color: var(--accent);
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+  .guide-toggle-arrow.open { transform: rotate(180deg); }
+  .guide-content {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-left: 3px solid var(--accent);
     margin-bottom: 1.5rem;
   }
-  .guide-inner p { font-size: 0.85rem; color: #999; }
-  .guide-inner strong { color: var(--text); }
-  .guide-btn {
+  .guide-content.open { display: block; }
+  .guide-section {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-section:last-child { border-bottom: none; }
+  .guide-section-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent);
-    text-decoration: none;
-    border: 1px solid rgba(245,166,35,0.3);
-    padding: 0.4rem 1rem;
-    white-space: nowrap;
-    transition: background 0.2s;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .guide-btn:hover { background: rgba(245,166,35,0.08); }
+  .guide-section-title::before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--accent);
+  }
+  .guide-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .guide-three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 680px) {
+    .guide-two-col, .guide-three-col { grid-template-columns: 1fr; }
+  }
+  .guide-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 1rem 1.1rem;
+  }
+  .guide-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .guide-card-title.green { color: var(--green); }
+  .guide-card-title.accent { color: var(--accent); }
+  .guide-card-title.blue { color: var(--blue); }
+  .guide-card-body {
+    font-size: 0.8rem;
+    color: #aaa;
+    line-height: 1.6;
+  }
+  .guide-card-border-green { border-left: 3px solid var(--green); }
+  .guide-card-border-accent { border-left: 3px solid var(--accent); }
+  .guide-card-border-blue { border-left: 3px solid var(--blue); }
+  .guide-card-border-red { border-left: 3px solid var(--red); }
+  .guide-note {
+    background: rgba(245,166,35,0.06);
+    border: 1px solid rgba(245,166,35,0.15);
+    border-left: 3px solid var(--accent);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.78rem;
+    color: #999;
+    line-height: 1.55;
+    margin-top: 1rem;
+  }
+  .guide-formula {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    padding: 0.5rem 0.75rem;
+    color: var(--green);
+    margin: 0.4rem 0 0.5rem;
+    white-space: pre;
+  }
+  .guide-formula-unit {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--blue);
+  }
+  .guide-verdict {
+    border: 1px solid var(--border2);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .guide-verdict:last-child { margin-bottom: 0; }
+  .guide-verdict-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+  .guide-verdict-when {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .guide-verdict-body { font-size: 0.78rem; color: #aaa; line-height: 1.55; }
+  .guide-tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+  }
+  @media (max-width: 680px) { .guide-tips-grid { grid-template-columns: 1fr; } }
+  .guide-tip {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-top: 2px solid var(--accent);
+    padding: 0.9rem 0.9rem;
+  }
+  .guide-tip-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .guide-tip-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+  .guide-tip-body { font-size: 0.75rem; color: #888; line-height: 1.55; }
+
+  @media print {
+    header, .guide-toggle-btn, .guide-content { display: none !important; }
+  }
 
   /* MODE TOGGLE */
   .mode-toggle {
@@ -616,11 +764,270 @@
 
 <div class="tool-wrap">
 
-  <!-- GUIDE BANNER -->
-  <div class="guide-inner">
-    <p><strong>New to this calculator?</strong> Read the guide covering tunnel length, dwell time, load factor, and how to interpret the constraint check.</p>
-    <a href="https://www.canva.com/design/DAHDRrbe_dA/f0K9eupZUuHtKcE6s6TtyA/view?utm_content=DAHDRrbe_dA&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he7cafc826a" target="_blank" class="guide-btn" id="guideBtn">Read the Guide &#8594;</a>
-  </div>
+  <!-- INLINE GUIDE -->
+  <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
+    <span class="guide-toggle-label">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#f5a623" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#f5a623" stroke-width="1.2"/></svg>
+      Quick Guide &mdash; How the Reflow Throughput Calculator Works
+    </span>
+    <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
+  </button>
+
+  <div class="guide-content" role="region">
+
+    <!-- 01 HOW THE TOOL WORKS -->
+    <div class="guide-section">
+      <div class="guide-section-title">01 &mdash; How the Tool Works</div>
+      <div class="guide-two-col">
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Enter</div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Heated Tunnel Length</div>
+            <div class="guide-card-body">Heated zone only, not overall machine length.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Required Dwell Time</div>
+            <div class="guide-card-body">Total seconds needed in the heated zone, from preheat entry to reflow peak.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Board Length</div>
+            <div class="guide-card-body">In direction of conveyor travel. For panels, use the full panel dimension including any frame.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Load Factor</div>
+            <div class="guide-card-body">Board pitch ratio. Default 90% means boards are spaced 10% of board length apart.</div>
+          </div>
+          <div class="guide-card guide-card-border-blue">
+            <div class="guide-card-title blue">P&amp;P Cycle Time (Optional)</div>
+            <div class="guide-card-body">Slowest placement machine cycle time. Leave blank for oven capability only. Fill in to get a bottleneck check.</div>
+          </div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Get</div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Max Process Speed</div>
+            <div class="guide-card-body">Max belt speed the oven can run while still delivering the required dwell time. This is the hard ceiling.</div>
+          </div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Required Belt Speed</div>
+            <div class="guide-card-body">Speed the line demands to match P&amp;P cycle time. Shown only when P&amp;P cycle time is entered.</div>
+          </div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Throughput</div>
+            <div class="guide-card-body">Boards per hour at current process speed. Assumes continuous loading.</div>
+          </div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Board Spacing on Belt</div>
+            <div class="guide-card-body">Gap between boards at process speed. Below 10 cm warrants a closer look at conveyor entry clearance.</div>
+          </div>
+          <div class="guide-card guide-card-border-green">
+            <div class="guide-card-title green">Bottleneck Status</div>
+            <div class="guide-card-body">Green / Amber / Red verdict with speed margin percentage.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 MODE A INPUTS -->
+    <div class="guide-section">
+      <div class="guide-section-title">02 &mdash; Mode A &mdash; Input Parameters</div>
+      <div class="guide-three-col">
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Oven Parameters</div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Heated Tunnel Length</div>
+            <div class="guide-card-body">e.g. 250 cm. Heated zone only, not total machine footprint.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Required Dwell Time</div>
+            <div class="guide-card-body">e.g. 270 s. Typical SAC305 total dwell: 240&ndash;300 s. Check your paste datasheet.</div>
+          </div>
+          <div class="guide-card guide-card-border-accent">
+            <div class="guide-card-title">Load Factor</div>
+            <div class="guide-card-body">Default 90%. Tighter than ~85% risks board-to-board collisions at conveyor entry.</div>
+          </div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Board &amp; Line</div>
+          <div class="guide-card guide-card-border-blue">
+            <div class="guide-card-title">Board Length</div>
+            <div class="guide-card-body">e.g. 20 cm in direction of travel. For panels, use the full panel dimension including any tooling frame.</div>
+          </div>
+          <div class="guide-note" style="margin-top:0.6rem;">The unit toggle (cm / inches) at the top converts all inputs and outputs simultaneously.</div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Optional</div>
+          <div class="guide-card guide-card-border-blue">
+            <div class="guide-card-title blue">P&amp;P Cycle Time</div>
+            <div class="guide-card-body">e.g. 40 s. Cycle time of your slowest placement machine. Leave blank to skip the bottleneck check. When filled, the tool compares oven process speed against the speed the line demands.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 MODE A RESULTS -->
+    <div class="guide-section">
+      <div class="guide-section-title">03 &mdash; Mode A &mdash; Reading the Results</div>
+      <div class="guide-three-col" style="margin-bottom:1rem;">
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Max Process Speed</div>
+          <div class="guide-card-body">The maximum belt speed at which the board still receives the full required dwell. Running faster than this cuts dwell short.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Throughput</div>
+          <div class="guide-card-body">Boards per hour the oven can deliver at its max process speed with the given board pitch and load factor.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Board Spacing</div>
+          <div class="guide-card-body">The physical gap between consecutive board trailing and leading edges at process speed.</div>
+        </div>
+        <div class="guide-card guide-card-border-blue">
+          <div class="guide-card-title blue">Required Belt Speed</div>
+          <div class="guide-card-body">The belt speed the P&amp;P cycle time demands. Compare this to Max Process Speed to see if the oven can keep up.</div>
+        </div>
+        <div class="guide-card guide-card-border-blue">
+          <div class="guide-card-title blue">Speed Headroom</div>
+          <div class="guide-card-body">Percentage margin between process speed and required speed. Positive = oven has headroom. Negative = oven is the bottleneck.</div>
+        </div>
+      </div>
+      <div class="guide-note">Example: 250 cm tunnel | 270 s dwell | 20 cm board | 90% load | 50 s P&amp;P &rarr; Max process speed 27.8 cm/min | Required 24.0 cm/min | +15.7% headroom | 74 boards/h</div>
+    </div>
+
+    <!-- 04 BOTTLENECK VERDICTS -->
+    <div class="guide-section">
+      <div class="guide-section-title">04 &mdash; Bottleneck Status &mdash; The Three Verdicts</div>
+      <div class="guide-verdict" style="border-left:3px solid var(--green);">
+        <div class="guide-verdict-label" style="color:var(--green);">Oven can keep up</div>
+        <div class="guide-verdict-when">When: Process speed &ge; Required speed + 10%</div>
+        <div class="guide-verdict-body">The oven is not the bottleneck. You have room to slow the belt slightly if your profile needs more dwell without creating a throughput problem. Board spacing and throughput figures are your reference for scheduling.</div>
+      </div>
+      <div class="guide-verdict" style="border-left:3px solid var(--accent);">
+        <div class="guide-verdict-label" style="color:var(--accent);">Marginal &mdash; tight headroom</div>
+        <div class="guide-verdict-when">When: 0% to +10% margin</div>
+        <div class="guide-verdict-body">Any profile change demanding lower belt speed will make the oven the bottleneck. Verify your dwell time with a proper thermal profile run. A 5% longer dwell requirement could flip this into red.</div>
+      </div>
+      <div class="guide-verdict" style="border-left:3px solid var(--red);">
+        <div class="guide-verdict-label" style="color:var(--red);">Oven is the bottleneck</div>
+        <div class="guide-verdict-when">When: Process speed &lt; Required speed</div>
+        <div class="guide-verdict-body">At the belt speed the line demands, dwell time falls short of the required value. Options: longer-tunnel oven, a shorter dwell profile if the paste spec allows, or accept a lower throughput target.</div>
+      </div>
+    </div>
+
+    <!-- 05 MODE B -->
+    <div class="guide-section">
+      <div class="guide-section-title">05 &mdash; Mode B &mdash; Size an Oven for a Target Throughput</div>
+      <div class="guide-two-col">
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Enter</div>
+          <div class="guide-card guide-card-border-blue" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Target Throughput</div>
+            <div class="guide-card-body">e.g. 180 boards/h. The output rate your line needs to hit.</div>
+          </div>
+          <div class="guide-card guide-card-border-blue" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title">Board Length, Load Factor, Dwell Time</div>
+            <div class="guide-card-body">Same definitions as Mode A. These define how fast the belt must run and how long the board must be in the oven.</div>
+          </div>
+        </div>
+        <div>
+          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Get</div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Min. Heated Length</div>
+            <div class="guide-card-body">The shortest heated tunnel that can deliver the required dwell at the speed the throughput target demands. Shown in cm, m, and mm.</div>
+          </div>
+          <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
+            <div class="guide-card-title green">Required Belt Speed</div>
+            <div class="guide-card-body">The belt speed needed to hit the throughput target with your board pitch.</div>
+          </div>
+          <div class="guide-card" style="border:1px solid var(--border2); background:var(--bg3);">
+            <div class="guide-card-title">Oven Class Reference</div>
+            <div class="guide-card-body">5-zone (~180 cm), 7-zone (~250 cm), 10-zone (~360 cm) typical heated lengths. Each row shows Sufficient or Too short against your calculated minimum. Reference data from Indium Corporation. Always verify against the specific oven model datasheet.</div>
+          </div>
+        </div>
+      </div>
+      <div class="guide-note">Mode B gives you the minimum. Add at least 10&ndash;15% margin before selecting an oven model. Profile headroom and future product mix changes will consume that margin fast.</div>
+    </div>
+
+    <!-- 06 THE MATH -->
+    <div class="guide-section">
+      <div class="guide-section-title">06 &mdash; The Math Behind the Calculator</div>
+      <div class="guide-three-col">
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Process Speed</div>
+          <div class="guide-formula">Speed = Tunnel Length / Dwell Time &times; 60
+[cm/min] = [cm] / [s] &times; 60</div>
+          <div class="guide-card-body">Max belt speed at which the board still receives the required dwell. Hard ceiling for the oven.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Board Pitch</div>
+          <div class="guide-formula">Pitch = Board Length / Load Factor
+[cm] = [cm] / [0.90]</div>
+          <div class="guide-card-body">Centre-to-centre distance between boards. 90% load factor means a 10% gap between consecutive boards.</div>
+        </div>
+        <div class="guide-card guide-card-border-accent">
+          <div class="guide-card-title accent">Throughput</div>
+          <div class="guide-formula">TPut = (Process Speed / Pitch) &times; 60
+[brd/h] = [cm/min] / [cm] &times; 60</div>
+          <div class="guide-card-body">Boards per hour at maximum process speed. Assumes continuous loading.</div>
+        </div>
+        <div class="guide-card guide-card-border-blue">
+          <div class="guide-card-title blue">Required Speed (Mode A)</div>
+          <div class="guide-formula">Req. Speed = Pitch / P&P Cycle &times; 60
+[cm/min] = [cm] / [s] &times; 60</div>
+          <div class="guide-card-body">Belt speed the line demands. If this exceeds process speed, the oven is the bottleneck.</div>
+        </div>
+        <div class="guide-card guide-card-border-blue">
+          <div class="guide-card-title blue">Min. Tunnel Length (Mode B)</div>
+          <div class="guide-formula">Min. Length = Req. Speed &times; Dwell / 60
+[cm] = [cm/min] &times; [s] / 60</div>
+          <div class="guide-card-body">Shortest heated tunnel that delivers required dwell at the speed the throughput target needs.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-title">Heated vs. Overall Length</div>
+          <div class="guide-formula">Overall = Heated + 0.5 to 1.5 m
+cooling + load/unload conveyor</div>
+          <div class="guide-card-body">Always size from heated tunnel length, not overall machine length. Ovens with identical zone counts vary by manufacturer.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 TIPS -->
+    <div class="guide-section">
+      <div class="guide-section-title">07 &mdash; Tips &amp; Best Practices</div>
+      <div class="guide-tips-grid">
+        <div class="guide-tip">
+          <div class="guide-tip-num">01</div>
+          <div class="guide-tip-title">Use heated length, not machine length</div>
+          <div class="guide-tip-body">A 10-zone oven is typically 3.6 m heated but 5+ m overall. The datasheet is the only reliable source.</div>
+        </div>
+        <div class="guide-tip">
+          <div class="guide-tip-num">02</div>
+          <div class="guide-tip-title">Dwell time comes from your paste spec</div>
+          <div class="guide-tip-body">Use heated-zone duration from preheat entry to reflow peak. For SAC305, typically 250&ndash;360 s. Do not include cooling zone time.</div>
+        </div>
+        <div class="guide-tip">
+          <div class="guide-tip-num">03</div>
+          <div class="guide-tip-title">Load factor 90% is a safe default</div>
+          <div class="guide-tip-body">At 90%, boards are 10% of board length apart. Tighter than ~85% risks board-to-board collisions at the conveyor entry.</div>
+        </div>
+        <div class="guide-tip">
+          <div class="guide-tip-num">04</div>
+          <div class="guide-tip-title">P&amp;P cycle time is the constraint check</div>
+          <div class="guide-tip-body">Without it the tool shows oven capability only. Fill it in to know if the oven is your bottleneck or the problem is elsewhere on the line.</div>
+        </div>
+        <div class="guide-tip">
+          <div class="guide-tip-num">05</div>
+          <div class="guide-tip-title">Mode B gives you minimum heated length</div>
+          <div class="guide-tip-body">Add at least 10&ndash;15% margin before selecting an oven model. Profile headroom and future product mix will consume that margin.</div>
+        </div>
+        <div class="guide-tip">
+          <div class="guide-tip-num">06</div>
+          <div class="guide-tip-title">cm / inch toggle converts everything</div>
+          <div class="guide-tip-body">Switch units at the top. All inputs, outputs, and the oven class reference table update simultaneously.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.guide-content -->
 
   <!-- UNIT TOGGLE -->
   <div class="unit-toggle" id="unitToggle">
@@ -935,6 +1342,15 @@
 </div><!-- tool-wrap -->
 
 <script>
+function toggleGuide(btn) {
+  var content = btn.nextElementSibling;
+  var arrow = btn.querySelector('.guide-toggle-arrow');
+  var isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
 // =========================================================
 //  STATE
 // =========================================================
