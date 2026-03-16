@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solder Alloy Reference - SMTCalc</title>
+  <meta name="description" content="Free SMT solder alloy reference. Compare RoHS-compliant lead-free alloys by thermal properties, process suitability, and application. Covers SAC305, SAC405, SN100C, BiSn, Innolot, and more.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0a0a0a;
+      --bg2:     #111111;
+      --bg3:     #1a1a1a;
+      --bg4:     #222222;
+      --accent:  #f5a623;
+      --accent2: #e8320a;
+      --green:   #2ecc71;
+      --yellow:  #f5a623;
+      --red:     #e8320a;
+      --text:    #f0ede8;
+      --muted:   #888;
+      --border:  #2a2a2a;
+      --border2: #333;
+      --mono:    'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .tool-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.75rem;
+    }
+
+    /* HERO */
+    .tool-hero {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .tool-hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .tool-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .tool-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px; height: 2px;
+      background: var(--accent);
+    }
+    .tool-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+    }
+    .tool-hero p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* MAIN LAYOUT */
+    .tool-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .tool-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+    @media (max-width: 680px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem 0; }
+    }
+    .panel-full {
+      grid-column: 1 / -1;
+      background: var(--bg);
+      padding: 1.75rem;
+    }
+    .panel-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* FILTER PANEL */
+    .filter-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+    }
+    .filter-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 52px;
+    }
+    .filter-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .chip {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+      color: var(--muted);
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--text); }
+    .chip.active { border-color: var(--accent); background: rgba(245,166,35,0.1); color: var(--accent); }
+
+    .search-wrap { flex: 1; min-width: 180px; }
+    .search-wrap input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: #3a3a3a; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .alloy-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+    .alloy-table thead tr {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+    .alloy-table th {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      white-space: nowrap;
+      font-weight: 400;
+    }
+    .alloy-table th.sortable { cursor: pointer; }
+    .alloy-table th.sortable:hover { color: var(--text); }
+    .alloy-table th.sort-active { color: var(--accent); }
+    .sort-icon { font-size: 0.55rem; margin-left: 0.25rem; }
+
+    .alloy-table td {
+      padding: 0.75rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .alloy-row { cursor: pointer; transition: background 0.1s; }
+    .alloy-row:hover { background: var(--bg3); }
+    .alloy-row.expanded { background: var(--bg4); }
+    .alloy-row.expanded td { border-bottom: none; }
+
+    .alloy-name-cell .a-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .cat-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.53rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 0.12rem 0.4rem;
+    }
+    .cat-standard   { border: 1px solid #2a4530; color: #5a9060; background: rgba(46,180,80,0.05); }
+    .cat-low-silver { border: 1px solid #253040; color: #5a7fa0; background: rgba(70,120,180,0.06); }
+    .cat-low-temp   { border: 1px solid #3a3010; color: #b89030; background: rgba(190,150,30,0.07); }
+    .cat-high-rel   { border: 1px solid #35203a; color: #9060a0; background: rgba(140,80,160,0.07); }
+
+    .mono-comp {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: #999;
+    }
+    .temp-val { font-family: var(--mono); font-size: 0.85rem; }
+    .temp-unit { font-size: 0.62rem; color: var(--muted); margin-left: 0.1rem; }
+
+    .range-ok   { font-family: var(--mono); font-size: 0.82rem; color: var(--green); }
+    .range-warn { font-family: var(--mono); font-size: 0.82rem; color: var(--yellow); }
+    .range-bad  { font-family: var(--mono); font-size: 0.82rem; color: var(--red); }
+
+    .process-chips { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .proc-chip {
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.4rem;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+    }
+    .proc-chip.reflow   { border-color: rgba(245,166,35,0.35); color: var(--accent); }
+    .proc-chip.wave     { border-color: rgba(80,140,220,0.35); color: #6a9ad0; }
+    .proc-chip.selective { border-color: rgba(80,190,100,0.35); color: #60b870; }
+
+    .col-compare { width: 36px; }
+    .compare-check { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+
+    .expand-btn {
+      font-size: 0.65rem;
+      color: var(--muted);
+      display: inline-block;
+      transition: transform 0.18s, color 0.18s;
+      line-height: 1;
+    }
+    .alloy-row.expanded .expand-btn { transform: rotate(90deg); color: var(--accent); }
+
+    /* HIDE ON SMALL SCREENS */
+    @media (max-width: 720px) { .hide-md { display: none !important; } }
+    @media (max-width: 520px) { .hide-sm { display: none !important; } }
+
+    /* DETAIL ROW */
+    .detail-row td {
+      padding: 0;
+      border-bottom: 2px solid rgba(245,166,35,0.3);
+      background: var(--bg4);
+    }
+    .detail-card {
+      padding: 1.25rem 1.5rem 1.5rem;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 600px) { .detail-card { grid-template-columns: 1fr; } }
+
+    .detail-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      align-self: start;
+    }
+    .d-stat { background: var(--bg3); padding: 0.55rem 0.7rem; }
+    .d-stat-label {
+      font-family: var(--mono);
+      font-size: 0.53rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.18rem;
+    }
+    .d-stat-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.1;
+    }
+
+    .detail-notes h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .detail-notes p {
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: #ccc;
+      margin-bottom: 0.85rem;
+    }
+    .detail-app-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .detail-app-val { font-size: 0.82rem; color: #bbb; line-height: 1.55; }
+
+    /* COMPARISON PANEL */
+    .compare-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .compare-count {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .clear-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      background: transparent;
+      padding: 0.35rem 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .compare-grid {
+      display: grid;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr !important; } }
+
+    .compare-col { background: var(--bg3); padding: 1.25rem 1.25rem 1.5rem; }
+    .cmp-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.7rem;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    .cmp-comp {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: #777;
+      margin-bottom: 0.6rem;
+      word-break: break-word;
+    }
+    .cmp-data {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 0.85rem;
+    }
+    .cmp-datum { background: var(--bg); padding: 0.5rem 0.65rem; }
+    .cmp-datum-label {
+      font-family: var(--mono);
+      font-size: 0.53rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+    .cmp-datum-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .bar-wrap { margin-bottom: 0.85rem; }
+    .bar-scale {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      color: #444;
+      margin-top: 0.2rem;
+    }
+    .cmp-note {
+      font-size: 0.77rem;
+      line-height: 1.6;
+      color: #999;
+    }
+
+    /* HINT BELOW TABLE */
+    .compare-hint {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #3a3a3a;
+      margin-top: 0.85rem;
+    }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      font-size: 0.71rem;
+      color: #484848;
+      line-height: 1.55;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+
+    /* PRINT BAR */
+    .print-bar {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .print-bar label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .print-bar input[type=text] {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.9rem;
+      outline: none;
+    }
+    .print-bar input[type=text]:focus { border-color: var(--accent); }
+    .print-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .footer-copy a { color: var(--accent); text-decoration: none; }
+
+    /* NO RESULTS */
+    .no-results {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #383838;
+    }
+
+    @media print {
+      header, .print-bar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Solder Alloy Reference</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Solder / Materials Reference</div>
+    <h1>Solder Alloy<br>Reference</h1>
+    <p>RoHS-compliant lead-free alloys, compared side by side. Filter by category or process, sort any column, and select up to three alloys for a direct comparison. All data from published alloy specifications.</p>
+  </div>
+</div>
+
+<div class="tool-wrap">
+  <div class="tool-main">
+
+    <!-- FILTER -->
+    <div class="panel-full">
+      <div class="panel-label">Filter &amp; Sort</div>
+      <div class="filter-row">
+        <span class="filter-label">Search</span>
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="name or composition..." oninput="applyFilters()">
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Category</span>
+        <div class="filter-chips" id="cat-chips">
+          <button class="chip active" data-cat="all"        onclick="setCat(this)">All</button>
+          <button class="chip"        data-cat="standard"   onclick="setCat(this)">Standard SAC</button>
+          <button class="chip"        data-cat="low-silver" onclick="setCat(this)">Low / Ag-Free</button>
+          <button class="chip"        data-cat="low-temp"   onclick="setCat(this)">Low-Temp</button>
+          <button class="chip"        data-cat="high-rel"   onclick="setCat(this)">High-Rel</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Process</span>
+        <div class="filter-chips" id="proc-chips">
+          <button class="chip active" data-proc="all"       onclick="setProc(this)">All</button>
+          <button class="chip"        data-proc="reflow"    onclick="setProc(this)">Reflow</button>
+          <button class="chip"        data-proc="wave"      onclick="setProc(this)">Wave</button>
+          <button class="chip"        data-proc="selective" onclick="setProc(this)">Selective</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="panel-full">
+      <div class="panel-label">
+        Alloy Data
+        <span id="alloy-count" style="font-weight:400; color:var(--muted); margin-left:0.4rem; font-size:0.6rem;"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="alloy-table">
+          <thead>
+            <tr>
+              <th class="col-compare" title="Add to comparison (max 3)"></th>
+              <th class="sortable" onclick="setSort('name')">
+                Alloy <span class="sort-icon" id="si-name">&#8597;</span>
+              </th>
+              <th class="hide-md">Composition</th>
+              <th class="sortable" onclick="setSort('solidus')">
+                Solidus <span class="sort-icon" id="si-solidus">&#8597;</span>
+              </th>
+              <th class="sortable" onclick="setSort('liquidus')">
+                Liquidus <span class="sort-icon" id="si-liquidus">&#8597;</span>
+              </th>
+              <th class="sortable hide-sm" onclick="setSort('range')">
+                Range <span class="sort-icon" id="si-range">&#8597;</span>
+              </th>
+              <th class="hide-md" style="min-width:90px">Melt Profile</th>
+              <th>Reflow Peak</th>
+              <th class="hide-sm">Wave / Sel.</th>
+              <th class="hide-md">Process</th>
+              <th style="width:28px"></th>
+            </tr>
+          </thead>
+          <tbody id="alloy-tbody"></tbody>
+        </table>
+      </div>
+      <div class="compare-hint">Check up to 3 alloys to compare side by side below the table.</div>
+      <div class="disclaimer">
+        Thermal data from published alloy specifications and industry references. Values may vary by supplier and measurement method.
+        Always verify against your paste or solder supplier's current datasheet before process specification.
+      </div>
+    </div>
+
+    <!-- COMPARISON -->
+    <div class="panel-full" id="compare-section" style="display:none">
+      <div class="panel-label" style="margin-bottom:0.75rem">Side-by-Side Comparison</div>
+      <div class="compare-header">
+        <span class="compare-count" id="compare-count"></span>
+        <button class="clear-btn" onclick="clearCompare()">Clear Comparison</button>
+      </div>
+      <div id="compare-grid" class="compare-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Alloy selection review for product X">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===================== DATA =====================
+var ALLOYS = [
+  {
+    id: 'sac305',
+    name: 'SAC305',
+    comp: 'Sn96.5Ag3.0Cu0.5',
+    solidus: 217,
+    liquidus: 220,
+    reflowPeak: '235-250',
+    wave: '255-265',
+    powder: 'T3, T4, T5',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'standard',
+    ag: 3.0,
+    app: 'General electronics, consumer, industrial, telecommunications',
+    note: 'Industry-standard lead-free alloy. The 3&#176;C pasty range gives near-eutectic behavior, forgiving of minor reflow profile variation. Silver content provides good thermal fatigue resistance. The default choice for most RoHS production lines and the benchmark against which other alloys are typically compared.'
+  },
+  {
+    id: 'sac405',
+    name: 'SAC405',
+    comp: 'Sn95.5Ag4.0Cu0.5',
+    solidus: 217,
+    liquidus: 221,
+    reflowPeak: '235-250',
+    wave: '255-265',
+    powder: 'T3, T4, T5',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'standard',
+    ag: 4.0,
+    app: 'Automotive, aerospace, high-reliability electronics, extended thermal cycling',
+    note: 'Higher silver content compared to SAC305 improves thermal cycling reliability for harsh environments. More expensive per kg due to the increased silver. Commonly specified in automotive and aerospace applications where extended thermal fatigue life is required. Process parameters are essentially identical to SAC305, making it a drop-in substitution for demanding applications.'
+  },
+  {
+    id: 'sac387',
+    name: 'SAC387',
+    comp: 'Sn95.5Ag3.8Cu0.7',
+    solidus: 217,
+    liquidus: 220,
+    reflowPeak: '235-250',
+    wave: '255-265',
+    powder: 'T3, T4, T5',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'standard',
+    ag: 3.8,
+    app: 'General electronics, second-source alternative to SAC305',
+    note: 'Thermally and processwise nearly identical to SAC305. The slightly higher Cu content may give marginally better wetting in wave applications. Used as a second-source alloy when SAC305 is unavailable, or when a customer specification explicitly calls for this composition. No process parameter changes are needed when switching from SAC305.'
+  },
+  {
+    id: 'sac0307',
+    name: 'SAC0307',
+    comp: 'Sn99.3Ag0.3Cu0.7',
+    solidus: 217,
+    liquidus: 228,
+    reflowPeak: '245-255',
+    wave: '260-270',
+    powder: 'T3, T4, T5',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'low-silver',
+    ag: 0.3,
+    app: 'Cost-sensitive consumer electronics, high-volume lines',
+    note: 'Very low silver content reduces alloy cost significantly compared to SAC305. The wider 11&#176;C pasty range requires higher process temperatures and is less tolerant of reflow profile variation. Not recommended for applications requiring thermal cycling reliability. Favored in high-volume consumer lines where material cost reduction is the primary driver over long-term joint performance.'
+  },
+  {
+    id: 'sn100c',
+    name: 'SN100C',
+    comp: 'Sn99.25Cu0.7Ni0.05 + Ge',
+    solidus: 226,
+    liquidus: 228,
+    reflowPeak: '245-260',
+    wave: '260-270',
+    powder: 'T3, T4',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'low-silver',
+    ag: 0.0,
+    app: 'Wave soldering, selective soldering, cost-driven silver-free lines',
+    note: 'Nihon Superior proprietary alloy. Nickel addition inhibits copper dissolution from PCB pads and from the wave solder pot walls over time. Germanium improves wetting and significantly reduces dross formation. Very popular for wave solder pots due to stable bath chemistry, low dross, and predictable behavior. The silver-free composition makes it one of the lowest material-cost lead-free options.'
+  },
+  {
+    id: 'sncu07',
+    name: 'SnCu0.7',
+    comp: 'Sn99.3Cu0.7',
+    solidus: 227,
+    liquidus: 227,
+    reflowPeak: '245-260',
+    wave: '260-270',
+    powder: 'T3, T4',
+    process: ['reflow', 'wave', 'selective'],
+    cat: 'low-silver',
+    ag: 0.0,
+    app: 'Low-cost wave soldering, non-critical assemblies',
+    note: 'Eutectic binary alloy, the lowest-cost lead-free option. Higher dross generation in wave applications compared to SN100C, and greater copper dissolution from PCB pads over time. The absence of Ge and Ni reduces wetting performance and bath stability. Adequate for non-critical, cost-driven applications. Not recommended where long-term wave pot bath stability or pad integrity are priorities.'
+  },
+  {
+    id: 'bisn42',
+    name: 'Bi58Sn42',
+    comp: 'Bi58Sn42',
+    solidus: 138,
+    liquidus: 138,
+    reflowPeak: '150-165',
+    wave: null,
+    powder: 'T4, T5',
+    process: ['reflow'],
+    cat: 'low-temp',
+    ag: 0.0,
+    app: 'Heat-sensitive assemblies, package-on-package, pre-populated boards, temperature-sensitive substrates',
+    note: 'Eutectic low-temperature alloy enabling reflow well below 200&#176;C, substantially reducing thermal stress on heat-sensitive components and substrates. Brittle bulk mechanical properties limit use in shock and vibration environments. Critical risk: if any lead-containing components, HASL finishes, or legacy leaded parts are present, bismuth and lead form a Bi-Pb ternary eutectic at approximately 96&#176;C, leading to catastrophic solder joint failure in the field.'
+  },
+  {
+    id: 'bisnag',
+    name: 'Bi57Sn42Ag1',
+    comp: 'Bi57Sn42Ag1',
+    solidus: 138,
+    liquidus: 141,
+    reflowPeak: '155-170',
+    wave: null,
+    powder: 'T4, T5',
+    process: ['reflow'],
+    cat: 'low-temp',
+    ag: 1.0,
+    app: 'Heat-sensitive assemblies with improved mechanical requirements over binary BiSn',
+    note: 'Silver addition improves mechanical properties and thermal fatigue resistance compared to binary Bi58Sn42 while maintaining the same low-temperature process window. Slightly wider 3&#176;C pasty range. The Pb contamination risk from Bi-Pb ternary eutectic formation at 96&#176;C is identical to Bi58Sn42 and requires the same strict bill-of-materials control. Specify over Bi58Sn42 when the assembly sees vibration or moderate thermal cycling alongside heat-sensitive constraints.'
+  },
+  {
+    id: 'innolot',
+    name: 'Innolot',
+    comp: 'Sn91.8Ag3.8Cu0.7Bi3.0Sb1.4Ni0.15',
+    solidus: 205,
+    liquidus: 218,
+    reflowPeak: '240-250',
+    wave: null,
+    powder: 'T4, T5',
+    process: ['reflow'],
+    cat: 'high-rel',
+    ag: 3.8,
+    app: 'Automotive underhood, AEC-Q100 Grade 0, harsh environment extended temperature cycling (-40 to +150&#176;C)',
+    note: 'Heraeus proprietary high-reliability alloy developed for AEC-Q100 Grade 0 thermal cycling requirements. Multi-element composition (Bi, Sb, Ni) strengthens the solder matrix against creep and thermal fatigue at elevated temperatures. Bismuth and antimony lower the solidus below the standard SAC eutectic, giving a 13&#176;C pasty range. Significantly more expensive than SAC305. Requires qualified paste chemistry and supplier-specific process guidance. Only warranted for the most demanding thermal cycling conditions.'
+  }
+];
+
+// ===================== STATE =====================
+var state = {
+  search: '',
+  cat: 'all',
+  proc: 'all',
+  sortKey: 'solidus',
+  sortDir: 'asc',
+  expanded: null,
+  compare: []
+};
+
+// ===================== HELPERS =====================
+function catLabel(cat) {
+  if (cat === 'standard')   return 'Standard SAC';
+  if (cat === 'low-silver') return 'Low / Ag-Free';
+  if (cat === 'low-temp')   return 'Low-Temp';
+  if (cat === 'high-rel')   return 'High-Rel';
+  return cat;
+}
+
+function rangeClass(r) {
+  if (r <= 3)  return 'range-ok';
+  if (r <= 8)  return 'range-warn';
+  return 'range-bad';
+}
+
+// Inline SVG temperature bar (scale 100-280 deg C, 180 deg range)
+function tempBar(solidus, liquidus, height) {
+  height = height || 14;
+  var R = 180; // total range 100-280
+  function x(t) { return ((t - 100) / R * 100).toFixed(3); }
+  var refs = [138, 217, 227];
+  var refLines = refs.map(function(t) {
+    return '<line x1="' + x(t) + '%" y1="0" x2="' + x(t) + '%" y2="' + height + '" stroke="#2a2a2a" stroke-width="1"/>';
+  }).join('');
+  var trackY = Math.round(height * 0.36);
+  var trackH = Math.round(height * 0.29);
+  var barY   = Math.round(height * 0.21);
+  var barH   = Math.round(height * 0.57);
+  var bar;
+  if (liquidus - solidus <= 1) {
+    bar = '<line x1="' + x(solidus) + '%" y1="' + Math.round(height*0.07) + '" x2="' + x(solidus) + '%" y2="' + Math.round(height*0.93) + '" stroke="#f5a623" stroke-width="2.5"/>';
+  } else {
+    var bw = Math.max(((liquidus - solidus) / R * 100), 1.2).toFixed(3);
+    bar = '<rect x="' + x(solidus) + '%" y="' + barY + '" width="' + bw + '%" height="' + barH + '" fill="#f5a623"/>';
+  }
+  return '<svg width="100%" height="' + height + '" viewBox="0 0 100 ' + height + '" preserveAspectRatio="none" style="display:block">' +
+    '<rect x="0" y="' + trackY + '" width="100%" height="' + trackH + '" fill="#1a1a1a"/>' +
+    refLines + bar + '</svg>';
+}
+
+function getFiltered() {
+  var s = state.search.toLowerCase().trim();
+  var list = ALLOYS.filter(function(a) {
+    if (s && a.name.toLowerCase().indexOf(s) < 0 && a.comp.toLowerCase().indexOf(s) < 0) return false;
+    if (state.cat !== 'all' && a.cat !== state.cat) return false;
+    if (state.proc !== 'all' && a.process.indexOf(state.proc) < 0) return false;
+    return true;
+  });
+  list.sort(function(a, b) {
+    var va, vb;
+    switch (state.sortKey) {
+      case 'name':     va = a.name;   vb = b.name;   break;
+      case 'solidus':  va = a.solidus;  vb = b.solidus;  break;
+      case 'liquidus': va = a.liquidus; vb = b.liquidus; break;
+      case 'range':    va = a.liquidus - a.solidus; vb = b.liquidus - b.solidus; break;
+      default:         va = a.solidus;  vb = b.solidus;
+    }
+    if (va < vb) return state.sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return state.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
+// ===================== RENDER TABLE =====================
+function renderTable() {
+  var list = getFiltered();
+  var tbody = document.getElementById('alloy-tbody');
+
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11"><div class="no-results">No alloys match the current filters</div></td></tr>';
+  } else {
+    tbody.innerHTML = list.map(buildRow).join('');
+  }
+
+  var cnt = document.getElementById('alloy-count');
+  if (cnt) cnt.textContent = '(' + list.length + ' of ' + ALLOYS.length + ')';
+
+  // Sort icons
+  ['name', 'solidus', 'liquidus', 'range'].forEach(function(k) {
+    var el = document.getElementById('si-' + k);
+    if (!el) return;
+    var th = el.parentElement;
+    if (state.sortKey === k) {
+      el.innerHTML = state.sortDir === 'asc' ? '&#8593;' : '&#8595;';
+      th.classList.add('sort-active');
+    } else {
+      el.innerHTML = '&#8597;';
+      th.classList.remove('sort-active');
+    }
+  });
+}
+
+function buildRow(a) {
+  var r = a.liquidus - a.solidus;
+  var rCls = rangeClass(r);
+  var isExp = state.expanded === a.id;
+  var isChk = state.compare.indexOf(a.id) >= 0;
+  var maxHit = !isChk && state.compare.length >= 3;
+
+  var procChips = a.process.map(function(p) {
+    return '<span class="proc-chip ' + p + '">' + p.charAt(0).toUpperCase() + p.slice(1) + '</span>';
+  }).join('');
+
+  var waveCell = a.wave
+    ? '<span class="temp-val">' + a.wave + '</span><span class="temp-unit">&#176;C</span>'
+    : '<span style="color:#3a3a3a">N/A</span>';
+
+  var html = '';
+  html += '<tr class="alloy-row' + (isExp ? ' expanded' : '') + '" onclick="rowClick(event,\'' + a.id + '\')">';
+  html += '<td class="col-compare" onclick="event.stopPropagation()">';
+  html += '<input type="checkbox" class="compare-check"' + (isChk ? ' checked' : '') + (maxHit ? ' disabled' : '') + ' onchange="toggleCompare(\'' + a.id + '\')" onclick="event.stopPropagation()">';
+  html += '</td>';
+  html += '<td class="alloy-name-cell"><div class="a-name">' + a.name + '</div><div class="cat-tag cat-' + a.cat + '">' + catLabel(a.cat) + '</div></td>';
+  html += '<td class="hide-md"><span class="mono-comp">' + a.comp + '</span></td>';
+  html += '<td><span class="temp-val">' + a.solidus + '</span><span class="temp-unit">&#176;C</span></td>';
+  html += '<td><span class="temp-val">' + a.liquidus + '</span><span class="temp-unit">&#176;C</span></td>';
+  html += '<td class="hide-sm"><span class="' + rCls + '">' + r + '&#176;C</span></td>';
+  html += '<td class="hide-md" style="min-width:90px">' + tempBar(a.solidus, a.liquidus, 14) + '</td>';
+  html += '<td><span class="temp-val">' + a.reflowPeak + '</span><span class="temp-unit">&#176;C</span></td>';
+  html += '<td class="hide-sm">' + waveCell + '</td>';
+  html += '<td class="hide-md"><div class="process-chips">' + procChips + '</div></td>';
+  html += '<td style="text-align:center"><span class="expand-btn">&#9654;</span></td>';
+  html += '</tr>';
+
+  // Detail row
+  var r2 = a.liquidus - a.solidus;
+  html += '<tr class="detail-row" id="dr-' + a.id + '" style="display:' + (isExp ? 'table-row' : 'none') + '">';
+  html += '<td colspan="11">';
+  html += '<div class="detail-card">';
+  // stats grid left
+  html += '<div class="detail-stats">';
+  html += dStat('Solidus', a.solidus + '&#176;C');
+  html += dStat('Liquidus', a.liquidus + '&#176;C');
+  html += dStat('Pasty Range', '<span class="' + rangeClass(r2) + '">' + r2 + '&#176;C</span>');
+  html += dStat('Reflow Peak', a.reflowPeak + '&#176;C');
+  html += dStat('Wave / Sel.', a.wave ? a.wave + '&#176;C' : 'N/A');
+  html += dStat('Powder', a.powder);
+  html += dStat('Process', a.process.map(function(p) { return p.charAt(0).toUpperCase() + p.slice(1); }).join(', '));
+  html += dStat('Silver (Ag)', a.ag + '%');
+  html += '</div>';
+  // notes right
+  html += '<div class="detail-notes">';
+  html += '<h4>Process Notes</h4>';
+  html += '<p>' + a.note + '</p>';
+  html += '<div class="detail-app-label">Typical Applications</div>';
+  html += '<div class="detail-app-val">' + a.app + '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '</td></tr>';
+
+  return html;
+}
+
+function dStat(label, val) {
+  return '<div class="d-stat"><div class="d-stat-label">' + label + '</div><div class="d-stat-val">' + val + '</div></div>';
+}
+
+// ===================== RENDER COMPARISON =====================
+function renderComparison() {
+  var sec = document.getElementById('compare-section');
+  var grid = document.getElementById('compare-grid');
+  var cnt = document.getElementById('compare-count');
+
+  if (state.compare.length === 0) {
+    sec.style.display = 'none';
+    return;
+  }
+
+  var wasHidden = sec.style.display === 'none';
+  sec.style.display = 'block';
+  var n = state.compare.length;
+  cnt.textContent = n + ' alloy' + (n === 1 ? '' : 's') + ' selected for comparison';
+  grid.style.gridTemplateColumns = 'repeat(' + n + ', 1fr)';
+
+  grid.innerHTML = state.compare.map(function(id) {
+    var a = ALLOYS.filter(function(x) { return x.id === id; })[0];
+    if (!a) return '';
+    var r = a.liquidus - a.solidus;
+    var rCls = rangeClass(r);
+    var waveVal = a.wave ? a.wave + '&#176;C' : 'N/A';
+    var procStr = a.process.map(function(p) { return p.charAt(0).toUpperCase() + p.slice(1); }).join(', ');
+
+    return '<div class="compare-col">' +
+      '<div class="cmp-name">' + a.name + '</div>' +
+      '<div class="cmp-comp">' + a.comp + '</div>' +
+      '<div class="cat-tag cat-' + a.cat + '" style="margin-bottom:0.85rem">' + catLabel(a.cat) + '</div>' +
+      '<div class="cmp-data">' +
+        cmpDatum('Solidus',     a.solidus + '&#176;C') +
+        cmpDatum('Liquidus',    a.liquidus + '&#176;C') +
+        cmpDatum('Pasty Range', '<span class="' + rCls + '">' + r + '&#176;C</span>') +
+        cmpDatum('Reflow Peak', a.reflowPeak + '&#176;C') +
+        cmpDatum('Wave / Sel.', waveVal) +
+        cmpDatum('Silver (Ag)', a.ag + '%') +
+        cmpDatum('Powder',      '<span style="font-size:0.85rem">' + a.powder + '</span>') +
+        cmpDatum('Process',     '<span style="font-size:0.78rem">' + procStr + '</span>') +
+      '</div>' +
+      '<div class="bar-wrap">' +
+        tempBar(a.solidus, a.liquidus, 20) +
+        '<div class="bar-scale"><span>100&#176;C</span><span>ref: 138 / 217 / 227&#176;C</span><span>280&#176;C</span></div>' +
+      '</div>' +
+      '<div class="cmp-note">' + a.note + '</div>' +
+    '</div>';
+  }).join('');
+
+  if (wasHidden) {
+    setTimeout(function() {
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+}
+
+function cmpDatum(label, val) {
+  return '<div class="cmp-datum"><div class="cmp-datum-label">' + label + '</div><div class="cmp-datum-val">' + val + '</div></div>';
+}
+
+// ===================== EVENTS =====================
+function rowClick(e, id) {
+  if (e.target.type === 'checkbox' || e.target.tagName === 'INPUT') return;
+  state.expanded = state.expanded === id ? null : id;
+  renderTable();
+}
+
+function toggleCompare(id) {
+  var idx = state.compare.indexOf(id);
+  if (idx >= 0) {
+    state.compare.splice(idx, 1);
+  } else {
+    if (state.compare.length >= 3) return;
+    state.compare.push(id);
+  }
+  renderTable();
+  renderComparison();
+}
+
+function clearCompare() {
+  state.compare = [];
+  renderTable();
+  renderComparison();
+}
+
+function setCat(btn) {
+  state.cat = btn.getAttribute('data-cat');
+  document.querySelectorAll('[data-cat]').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderTable();
+}
+
+function setProc(btn) {
+  state.proc = btn.getAttribute('data-proc');
+  document.querySelectorAll('[data-proc]').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderTable();
+}
+
+function applyFilters() {
+  state.search = document.getElementById('searchInput').value;
+  renderTable();
+}
+
+function setSort(key) {
+  if (state.sortKey === key) {
+    state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.sortKey = key;
+    state.sortDir = 'asc';
+  }
+  renderTable();
+}
+
+// ===================== PRINT =====================
+function printReport() {
+  var title = document.getElementById('reportTitle').value || 'Solder Alloy Reference';
+  var list = getFiltered();
+  var ts = new Date().toLocaleDateString('en-GB') + '  ' + new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  var catF = state.cat === 'all' ? 'All categories' : catLabel(state.cat);
+  var procF = state.proc === 'all' ? 'All process types' : (state.proc.charAt(0).toUpperCase() + state.proc.slice(1));
+
+  var rows = list.map(function(a) {
+    var r = a.liquidus - a.solidus;
+    return '<tr>' +
+      '<td><strong>' + a.name + '</strong><br><span style="color:#999;font-size:0.75em">' + catLabel(a.cat) + '</span></td>' +
+      '<td style="font-family:monospace;font-size:0.78em;color:#555">' + a.comp + '</td>' +
+      '<td>' + a.solidus + '&#176;C</td>' +
+      '<td>' + a.liquidus + '&#176;C</td>' +
+      '<td>' + r + '&#176;C</td>' +
+      '<td>' + a.reflowPeak + '&#176;C</td>' +
+      '<td>' + (a.wave ? a.wave + '&#176;C' : 'N/A') + '</td>' +
+      '<td>' + a.process.map(function(p) { return p.charAt(0).toUpperCase(); }).join('/') + '</td>' +
+      '</tr>';
+  }).join('');
+
+  var cmpHTML = '';
+  if (state.compare.length > 0) {
+    cmpHTML = '<div class="sec-label" style="margin-top:2rem">Comparison</div>';
+    state.compare.forEach(function(id) {
+      var a = ALLOYS.filter(function(x) { return x.id === id; })[0];
+      if (!a) return;
+      var r = a.liquidus - a.solidus;
+      cmpHTML += '<div style="margin-bottom:1rem;padding:0.75rem;border:1px solid #ddd">' +
+        '<strong style="font-size:1.1em">' + a.name + '</strong> &nbsp; <span style="font-family:monospace;font-size:0.85em;color:#666">' + a.comp + '</span><br>' +
+        '<span style="font-family:monospace;font-size:0.75em;color:#888">' +
+          'Solidus: ' + a.solidus + '&#176;C &nbsp; Liquidus: ' + a.liquidus + '&#176;C &nbsp; Range: ' + r + '&#176;C &nbsp; Reflow: ' + a.reflowPeak + '&#176;C' +
+        '</span>' +
+        '<p style="font-size:0.83em;margin-top:0.5rem;color:#444">' + a.note + '</p>' +
+        '</div>';
+    });
+  }
+
+  var win = window.open('', '_blank', 'width=820,height=950');
+  win.document.write(
+    '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<title>' + title + '</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400&family=Share+Tech+Mono&display=swap" rel="stylesheet">' +
+    '<style>' +
+    'body{font-family:"Barlow",sans-serif;font-weight:300;color:#111;background:#fff;padding:2rem;font-size:13px}' +
+    '.rpt-hdr{border-bottom:3px solid #f5a623;padding-bottom:1rem;margin-bottom:1.5rem}' +
+    '.rpt-eyebrow{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#aaa}' +
+    '.rpt-title{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:1.9rem;text-transform:uppercase;color:#111;margin:0.15rem 0}' +
+    '.rpt-ts{font-family:"Share Tech Mono",monospace;font-size:0.62rem;color:#aaa}' +
+    '.rpt-filter{font-family:"Share Tech Mono",monospace;font-size:0.62rem;color:#888;margin-bottom:1rem}' +
+    '.sec-label{font-family:"Share Tech Mono",monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#f5a623;border-top:1px solid #f5a623;padding-top:0.4rem;margin-bottom:0.75rem}' +
+    'table{width:100%;border-collapse:collapse}' +
+    'thead tr{background:#f7f7f7}' +
+    'th{font-family:"Share Tech Mono",monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;color:#aaa;padding:0.5rem 0.6rem;text-align:left;border-bottom:1px solid #ddd}' +
+    'td{padding:0.5rem 0.6rem;border-bottom:1px solid #eee;font-size:0.82rem;vertical-align:top}' +
+    '.disc{font-size:0.65rem;color:#bbb;margin-top:2rem;padding-top:0.75rem;border-top:1px solid #eee}' +
+    '@media print{@page{size:A4 portrait;margin:15mm;}-webkit-print-color-adjust:exact}' +
+    '</style></head><body>' +
+    '<div class="rpt-hdr">' +
+    '<div class="rpt-eyebrow">SMTCalc.com / Solder Alloy Reference</div>' +
+    '<div class="rpt-title">' + title + '</div>' +
+    '<div class="rpt-ts">' + ts + '</div>' +
+    '</div>' +
+    '<div class="rpt-filter">Category: ' + catF + ' &nbsp;|&nbsp; Process: ' + procF + ' &nbsp;|&nbsp; ' + list.length + ' alloys</div>' +
+    '<div class="sec-label">Alloy Data</div>' +
+    '<table>' +
+    '<thead><tr><th>Alloy</th><th>Composition</th><th>Solidus</th><th>Liquidus</th><th>Range</th><th>Reflow Peak</th><th>Wave / Sel.</th><th>Process</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+    cmpHTML +
+    '<div class="disc">Thermal data from published alloy specifications and industry references. Values may vary by supplier and measurement method. Always verify against your paste or solder supplier current datasheet before process specification. Generated by SMTCalc.com.</div>' +
+    '</body></html>'
+  );
+  win.document.close();
+  win.onload = function() { win.print(); };
+}
+
+// ===================== CONTACT =====================
+function showContact() {
+  var u = 'contact', d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// ===================== INIT =====================
+renderTable();
+</script>
+
+</body>
+</html>
