@@ -316,6 +316,35 @@
     @media (max-width: 720px) { .hide-md { display: none !important; } }
     @media (max-width: 520px) { .hide-sm { display: none !important; } }
 
+    /* MOBILE */
+    @media (max-width: 680px) {
+      /* Kill the hero glow entirely on narrow viewports. Its centre lands
+         directly over the content at this width, making the subtle tint
+         visually dominant against the dark background. */
+      .tool-hero::before { display: none; }
+
+      .tool-wrap { padding: 0 1rem; }
+
+      .filter-row { gap: 0.5rem; }
+      .search-wrap { min-width: 140px; }
+      .filter-label { min-width: 60px; }
+
+      .alloy-table { min-width: 0; width: 100%; }
+      .alloy-table th,
+      .alloy-table td { padding: 0.55rem 0.45rem; }
+      .alloy-name-cell .a-name { font-size: 0.95rem; }
+
+      .detail-card { padding: 1rem 1rem 1.25rem; gap: 1.25rem; }
+
+      .print-bar { padding: 0 1rem; }
+    }
+
+    @media (max-width: 480px) {
+      /* On very small screens hide Reflow Peak so the table fits without
+         horizontal scroll: checkbox + Alloy + Solidus + Liquidus + expand */
+      .hide-xs { display: none !important; }
+    }
+
     /* DETAIL ROW */
     .detail-row td {
       padding: 0;
@@ -647,7 +676,7 @@
                 Range <span class="sort-icon" id="si-range">&#8597;</span>
               </th>
               <th class="hide-md" style="min-width:90px">Melt Profile</th>
-              <th>Reflow Peak</th>
+              <th class="hide-xs">Reflow Peak</th>
               <th class="hide-sm">Wave / Sel.</th>
               <th class="hide-md">Process</th>
               <th style="width:28px"></th>
@@ -962,7 +991,7 @@ function buildRow(a) {
   html += '<td><span class="temp-val">' + a.liquidus + '</span><span class="temp-unit">&#176;C</span></td>';
   html += '<td class="hide-sm"><span class="' + rCls + '">' + r + '&#176;C</span></td>';
   html += '<td class="hide-md" style="min-width:90px">' + tempBar(a.solidus, a.liquidus, 14) + '</td>';
-  html += '<td><span class="temp-val">' + a.reflowPeak + '</span><span class="temp-unit">&#176;C</span></td>';
+  html += '<td class="hide-xs"><span class="temp-val">' + a.reflowPeak + '</span><span class="temp-unit">&#176;C</span></td>';
   html += '<td class="hide-sm">' + waveCell + '</td>';
   html += '<td class="hide-md"><div class="process-chips">' + procChips + '</div></td>';
   html += '<td style="text-align:center"><span class="expand-btn">&#9654;</span></td>';
