@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flux Designator Decoder -- SMTCalc</title>
+  <meta name="description" content="Decode J-STD-004B flux designators instantly. Look up base material, activity level, and halide content from any four-character flux code. Reverse lookup also available. Free tool for SMT process engineers.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0a0a0a;
+      --bg2:     #111111;
+      --bg3:     #1a1a1a;
+      --bg4:     #222222;
+      --accent:  #f5a623;
+      --accent2: #e8320a;
+      --green:   #2ecc71;
+      --yellow:  #f5a623;
+      --red:     #e8320a;
+      --text:    #f0ede8;
+      --muted:   #888;
+      --border:  #2a2a2a;
+      --border2: #333;
+      --mono:    'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    .tool-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.75rem;
+    }
+
+    /* HERO */
+    .tool-hero {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .tool-hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .tool-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .tool-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .tool-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      line-height: 1.0;
+      margin-bottom: 0.75rem;
+    }
+    .tool-hero h1 span { color: var(--accent); }
+
+    .tool-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 680px;
+      line-height: 1.65;
+    }
+
+    /* MAIN LAYOUT */
+    .main-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* MODE TABS */
+    .mode-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border2);
+      width: fit-content;
+    }
+
+    .mode-tab {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.5rem;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border-right: 1px solid var(--border2);
+    }
+    .mode-tab:last-child { border-right: none; }
+    .mode-tab.active {
+      background: var(--accent);
+      color: #000;
+    }
+    .mode-tab:not(.active):hover {
+      background: var(--bg3);
+      color: var(--text);
+    }
+
+    /* PANELS */
+    .panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    /* FORM ELEMENTS */
+    .field-group {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"], select {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      padding: 0.65rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder {
+      color: #555;
+      letter-spacing: 0.04em;
+      font-size: 1rem;
+    }
+    select { font-size: 1rem; letter-spacing: 0.04em; text-transform: none; cursor: pointer; }
+    select option { background: var(--bg3); }
+
+    .char-hint {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #555;
+      margin-top: 0.4rem;
+    }
+
+    /* RESULT BLOCK */
+    .result-block {
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .result-block.show { display: block; }
+
+    .result-designator {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 4rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .result-subtitle {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 600px) { .prop-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .prop-box {
+      background: var(--bg3);
+      padding: 0.9rem 1rem;
+    }
+
+    .prop-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .prop-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .prop-value.accent { color: var(--accent); }
+
+    .result-desc {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #bbb;
+    }
+    .result-desc strong { color: var(--text); font-weight: 500; }
+
+    .result-note {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--border2);
+      padding: 0.9rem 1.25rem;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #888;
+      margin-top: 0.75rem;
+    }
+
+    /* ERROR */
+    .error-block {
+      display: none;
+      margin-top: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--red);
+      padding: 1rem 1.25rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--red);
+      letter-spacing: 0.05em;
+    }
+    .error-block.show { display: block; }
+
+    /* REFERENCE TABLE */
+    .ref-table-wrap {
+      overflow-x: auto;
+    }
+
+    table.ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    table.ref-table th {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-align: left;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background: var(--bg3);
+    }
+
+    table.ref-table td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    table.ref-table tr:last-child td { border-bottom: none; }
+
+    table.ref-table tr.ref-row {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    table.ref-table tr.ref-row:hover { background: var(--bg4); }
+    table.ref-table tr.ref-row:hover .ref-code { color: var(--accent); }
+
+    .ref-code {
+      font-family: var(--mono);
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      font-weight: 400;
+      transition: color 0.15s;
+    }
+
+    .ref-base-chip {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      padding: 0.15rem 0.5rem;
+      color: var(--muted);
+    }
+
+    .halide-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid;
+    }
+    .halide-badge.free { color: var(--green); border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+    .halide-badge.present { color: var(--yellow); border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.06); }
+
+    .activity-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot.low { background: var(--green); }
+    .dot.moderate { background: var(--yellow); }
+    .dot.high { background: var(--red); }
+
+    .ref-click-hint {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* GUIDE ACCORDION */
+    .inline-guide {
+      margin-bottom: 2rem;
+    }
+
+    .guide-toggle-btn {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: background 0.2s;
+    }
+    .guide-toggle-btn:hover { background: var(--bg3); }
+
+    .guide-toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .guide-toggle-arrow {
+      font-size: 1rem;
+      color: var(--accent);
+      transition: transform 0.25s;
+      display: inline-block;
+    }
+    .guide-toggle-arrow.open { transform: rotate(180deg); }
+
+    .guide-content {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-left: 3px solid var(--accent);
+    }
+    .guide-content.open { display: block; }
+
+    .guide-section {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-section:last-child { border-bottom: none; }
+
+    .guide-section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .guide-section-title::before {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .guide-body {
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #bbb;
+    }
+    .guide-body p { margin-bottom: 0.75rem; }
+    .guide-body p:last-child { margin-bottom: 0; }
+    .guide-body strong { color: var(--text); font-weight: 500; }
+
+    .guide-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) { .guide-two-col { grid-template-columns: 1fr; } }
+
+    .guide-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      padding: 1rem 1.1rem;
+    }
+
+    .guide-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    .guide-card-title span {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-right: 0.4rem;
+    }
+
+    .guide-card-body {
+      font-size: 0.8rem;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .guide-formula {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      padding: 0.75rem 1rem;
+      color: var(--accent);
+      margin: 0.75rem 0;
+      line-height: 1.9;
+      display: block;
+      width: 100%;
+    }
+
+    .guide-type-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+    @media (max-width: 500px) { .guide-type-row { grid-template-columns: 1fr; } }
+
+    .guide-type-cell {
+      background: var(--bg3);
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .guide-type-code {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+
+    .guide-type-label {
+      font-size: 0.75rem;
+      color: var(--text);
+      font-weight: 400;
+      margin-bottom: 0.15rem;
+    }
+
+    .guide-type-halide {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* PRINT BAR */
+    .print-bar {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .print-bar label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .print-bar input[type=text] {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.9rem;
+      outline: none;
+      text-transform: none;
+      letter-spacing: normal;
+      font-size: 0.85rem;
+    }
+    .print-bar input[type=text]:focus { border-color: var(--accent); }
+
+    .print-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .footer-copy a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* PRINT */
+    @media print {
+      header, .guide-toggle-btn, .print-bar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Flux Designator Decoder</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Materials / Flux Chemistry</div>
+    <h1>Flux <span>Designator</span> Decoder</h1>
+    <p>Decode any J-STD-004B flux designator to its base material, activity level, and halide content. Build a designator from properties. Based on Table 3-9 of J-STD-004B with Amendment 1.</p>
+  </div>
+</div>
+
+<div class="main-wrap">
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" id="tab-decode" onclick="setMode('decode')" role="tab" aria-selected="true">&#9654; Decode</button>
+    <button class="mode-tab" id="tab-build" onclick="setMode('build')" role="tab" aria-selected="false">&#9633; Build</button>
+    <button class="mode-tab" id="tab-ref" onclick="setMode('ref')" role="tab" aria-selected="false">&#9776; All Codes</button>
+  </div>
+
+  <!-- ===================== DECODE MODE ===================== -->
+  <div id="mode-decode">
+    <div class="panel">
+      <div class="panel-title">Enter Flux Designator</div>
+      <div class="field">
+        <label>4-Character Flux Code (e.g., ROMO, ORL1, INM1)</label>
+        <input type="text" id="decode-input" maxlength="4" placeholder="Type code..." oninput="decodeFlux()" autocomplete="off" spellcheck="false">
+        <div class="char-hint" id="decode-hint">Type all 4 characters to decode</div>
+      </div>
+
+      <div class="result-block" id="decode-result">
+        <div class="result-designator" id="r-designator"></div>
+        <div class="result-subtitle">J-STD-004B / Table 3-9 Flux Designator</div>
+        <div class="prop-grid">
+          <div class="prop-box">
+            <div class="prop-label">Base Material</div>
+            <div class="prop-value accent" id="r-base-code"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Material Name</div>
+            <div class="prop-value" id="r-base-name"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Activity Level</div>
+            <div class="prop-value" id="r-activity"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Halide Content</div>
+            <div class="prop-value" id="r-halide"></div>
+          </div>
+        </div>
+        <div class="result-desc" id="r-base-desc"></div>
+        <div class="result-note" id="r-activity-note"></div>
+      </div>
+
+      <div class="error-block" id="decode-error">Invalid code. Valid format: [RO|RE|OR|IN] + [LO|L1|MO|M1|HO|H1]</div>
+    </div>
+  </div>
+
+  <!-- ===================== BUILD MODE ===================== -->
+  <div id="mode-build" style="display:none;">
+    <div class="panel">
+      <div class="panel-title">Select Flux Properties</div>
+      <div class="field-group">
+        <div class="field">
+          <label>Base Material</label>
+          <select id="build-base" onchange="buildFlux()">
+            <option value="">-- Select --</option>
+            <option value="RO">RO -- Rosin</option>
+            <option value="RE">RE -- Resin</option>
+            <option value="OR">OR -- Organic</option>
+            <option value="IN">IN -- Inorganic</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Activity Level</label>
+          <select id="build-activity" onchange="buildFlux()">
+            <option value="">-- Select --</option>
+            <option value="L">Low</option>
+            <option value="M">Moderate</option>
+            <option value="H">High</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Halide Content</label>
+          <select id="build-halide" onchange="buildFlux()">
+            <option value="">-- Select --</option>
+            <option value="O">Halide-free (O -- 0.0%)</option>
+            <option value="1">Contains halides (1)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="result-block" id="build-result">
+        <div class="result-designator" id="b-designator"></div>
+        <div class="result-subtitle">J-STD-004B / Table 3-9 Flux Designator</div>
+        <div class="prop-grid">
+          <div class="prop-box">
+            <div class="prop-label">Base Material</div>
+            <div class="prop-value accent" id="b-base-code"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Material Name</div>
+            <div class="prop-value" id="b-base-name"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Activity Level</div>
+            <div class="prop-value" id="b-activity"></div>
+          </div>
+          <div class="prop-box">
+            <div class="prop-label">Halide Content</div>
+            <div class="prop-value" id="b-halide"></div>
+          </div>
+        </div>
+        <div class="result-desc" id="b-base-desc"></div>
+        <div class="result-note" id="b-activity-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== REFERENCE TABLE MODE ===================== -->
+  <div id="mode-ref" style="display:none;">
+    <div class="panel">
+      <div class="panel-title">All 24 J-STD-004B Flux Designators</div>
+      <div class="ref-click-hint">Click any row to decode</div>
+      <div class="ref-table-wrap">
+        <table class="ref-table" id="ref-table">
+          <thead>
+            <tr>
+              <th>Designator</th>
+              <th>Base Material</th>
+              <th>Activity</th>
+              <th>Halide Content</th>
+              <th>Flux Type</th>
+            </tr>
+          </thead>
+          <tbody id="ref-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDE ACCORDION -->
+  <div class="inline-guide">
+    <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
+      <div class="guide-toggle-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Guide: Understanding J-STD-004B Flux Designators
+      </div>
+      <span class="guide-toggle-arrow">&#9660;</span>
+    </button>
+    <div class="guide-content">
+
+      <div class="guide-section">
+        <div class="guide-section-title">01 -- How the Designator Works</div>
+        <div class="guide-body">
+          <p>The J-STD-004B flux designator is a four-character code that encodes the complete chemical classification of a flux in a compact, standardized format. Every flux and solder paste sold for electronics assembly carries one of these codes in its datasheet.</p>
+          <p>The code splits cleanly into two parts:</p>
+        </div>
+        <div class="guide-formula">
+[ Base Material -- 2 chars ]  +  [ Flux Type -- 2 chars ]
+
+Example:  R O M 1
+          |____|__|__|
+            RO  M   1
+          Rosin  Moderate  Contains halides
+        </div>
+        <div class="guide-body">
+          <p>The <strong>first two characters</strong> tell you what the flux is made of. The <strong>last two characters</strong> tell you how active it is and whether it contains halide activators. Together they give you the full picture needed for cleaning and reliability decisions.</p>
+          <p>Note: The letter O in the flux type (e.g., ROMO, REHO) stands for the <strong>absence of halides</strong> -- it is not the digit zero. Per J-STD-004B Note 1, a flux may be called halide-free if halide content is below 0.05% by weight in the flux solids.</p>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">02 -- Base Material Types (Characters 1-2)</div>
+        <div class="guide-body">
+          <p>The base material determines the fundamental chemistry of the flux vehicle and residue characteristics.</p>
+        </div>
+        <div class="guide-two-col">
+          <div class="guide-card">
+            <div class="guide-card-title"><span>RO</span>Rosin</div>
+            <div class="guide-card-body">Natural rosin derived from pine tree resin, primarily abietic acid and its isomers. The traditional flux chemistry used in electronics since the early days of PCB assembly. Activates thermally during reflow and self-deactivates on cooling as the resin solidifies. Solid residues are non-conductive when halide-free and are well-characterized for cleaning and no-clean evaluation.</div>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-title"><span>RE</span>Resin</div>
+            <div class="guide-card-body">Synthetic or chemically modified resin bases that are not classified as natural rosin. Engineered to replicate or improve on rosin performance with more consistent batch-to-batch composition. Broadly similar handling, activation behavior, and residue characteristics to RO types, but with tighter chemical control possible through synthesis.</div>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-title"><span>OR</span>Organic Acid</div>
+            <div class="guide-card-body">Organic acid fluxes, often water-soluble. More aggressive oxide removal than rosin-based materials. Frequently used in wave soldering and applications requiring reliable wetting on difficult surface finishes. Designed to be fully cleaned after soldering -- residues are hygroscopic and can cause ionic contamination issues if left on the board.</div>
+          </div>
+          <div class="guide-card">
+            <div class="guide-card-title"><span>IN</span>Inorganic</div>
+            <div class="guide-card-body">Inorganic acids and halide salts such as phosphoric acid, hydrochloric acid, and zinc chloride. The most aggressive flux category available. Extremely effective on heavily oxidized surfaces. Mandatory complete cleaning required after use. Rarely encountered in standard PCB assembly. More common in industrial metalwork, plumbing, and specialized joining applications.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">03 -- Activity Level and Halide Content (Characters 3-4)</div>
+        <div class="guide-body">
+          <p>The flux type code encodes two separate pieces of information in two characters. The <strong>letter</strong> (L, M, or H) indicates the flux residue activity level. The <strong>second character</strong> (O or 1) indicates halide content.</p>
+          <p><strong>Activity level</strong> describes how aggressively the flux attacks metal oxides on pad and component surfaces. Higher activity means better wetting on difficult or oxidized surfaces, but also means more aggressive residues that may require cleaning to prevent long-term reliability issues.</p>
+          <p><strong>Halide activators</strong> (typically chlorine or bromine compounds) are powerful oxide removers. They make a flux substantially more active and improve wetting performance. The tradeoff is that halide residues are corrosive and hygroscopic. If not fully removed, they can cause electrochemical migration, dendritic growth, and field failures -- especially in humid environments.</p>
+        </div>
+        <div class="guide-type-row">
+          <div class="guide-type-cell">
+            <div class="guide-type-code">LO</div>
+            <div class="guide-type-label">Low activity, halide-free</div>
+            <div class="guide-type-halide">0.0% halide content</div>
+          </div>
+          <div class="guide-type-cell">
+            <div class="guide-type-code">L1</div>
+            <div class="guide-type-label">Low activity, contains halides</div>
+            <div class="guide-type-halide">&lt;0.5% halide by weight</div>
+          </div>
+          <div class="guide-type-cell">
+            <div class="guide-type-code">MO</div>
+            <div class="guide-type-label">Moderate activity, halide-free</div>
+            <div class="guide-type-halide">0.0% halide content</div>
+          </div>
+          <div class="guide-type-cell">
+            <div class="guide-type-code">M1</div>
+            <div class="guide-type-label">Moderate activity, contains halides</div>
+            <div class="guide-type-halide">0.5-2.0% halide by weight</div>
+          </div>
+          <div class="guide-type-cell">
+            <div class="guide-type-code">HO</div>
+            <div class="guide-type-label">High activity, halide-free</div>
+            <div class="guide-type-halide">0.0% halide content</div>
+          </div>
+          <div class="guide-type-cell">
+            <div class="guide-type-code">H1</div>
+            <div class="guide-type-label">High activity, contains halides</div>
+            <div class="guide-type-halide">&gt;2.0% halide by weight</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">04 -- Practical Guidance: Cleaning and Reliability</div>
+        <div class="guide-body">
+          <p>The flux designator is a shorthand for the cleaning decision. Here is how to read it in practice:</p>
+          <p><strong>Halide-free (O suffix), Low or Moderate activity (LO, MO):</strong> These are the typical no-clean candidates. The residues are relatively inert when properly processed. Whether you can genuinely leave them on the board depends on your application class (IPC-A-610 Class 1, 2, or 3), the specific product's TDS, and your reflow profile. A poorly reflowed or cold-soldered ROMO paste is not automatically safe to leave uncleaned.</p>
+          <p><strong>Contains halides (1 suffix), any activity level:</strong> Evaluate cleaning need carefully. For Class 2 and especially Class 3 assemblies, cleaning is typically required. Halide residues under conformal coating are particularly problematic -- the coating traps moisture against the corrosive residue.</p>
+          <p><strong>High activity (H prefix), any halide class:</strong> Always evaluate cleaning, even for HO types. High-activity residues are more likely to cause issues over product lifetime in humid environments.</p>
+          <p><strong>Important:</strong> The flux designator tells you the chemistry category, not the specific product formulation. Always verify cleaning compatibility, no-clean suitability, and application class acceptability against the flux or solder paste manufacturer's TDS and qualification data. The designator is a starting point for the decision, not the final answer.</p>
+        </div>
+      </div>
+
+    </div><!-- /.guide-content -->
+  </div><!-- /.inline-guide -->
+
+</div><!-- /.main-wrap -->
+
+<!-- PRINT BAR -->
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Paste qualification -- ROMO verification">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// =====================
+// FLUX DATA
+// =====================
+
+var BASE_MATERIALS = {
+  'RO': {
+    name: 'Rosin',
+    desc: 'Natural rosin from pine tree resin (primarily abietic acid and isomers). The traditional electronics flux chemistry. Thermally activates during reflow and self-deactivates on cooling as the resin solidifies. Halide-free RO types are widely used in no-clean processes. Solid residues are non-conductive when halide-free and are well-characterized for cleaning evaluation.'
+  },
+  'RE': {
+    name: 'Resin',
+    desc: 'Synthetic or chemically modified resin bases, not classified as natural rosin. Engineered for consistent batch-to-batch composition with similar activation and residue behavior to RO types. Used where tighter chemical control and reproducibility are needed compared to natural rosin.'
+  },
+  'OR': {
+    name: 'Organic Acid',
+    desc: 'Organic acid fluxes, often water-soluble. More aggressive than rosin-based materials, designed to ensure wetting on difficult surface finishes. Commonly used in wave and selective soldering. Residues are hygroscopic and designed to be fully cleaned after soldering to prevent ionic contamination.'
+  },
+  'IN': {
+    name: 'Inorganic',
+    desc: 'Inorganic acids and halide salts (phosphoric acid, hydrochloric acid, zinc chloride). The most aggressive flux category. Mandatory complete cleaning required after use. Extremely effective on heavily oxidized surfaces. Rarely used in standard PCB assembly -- more common in industrial metalwork and plumbing.'
+  }
+};
+
+var FLUX_TYPES = {
+  'LO': { activity: 'Low',      halide: '0.0%',      halidePresence: 'Halide-free',       halideChar: 'O', activityChar: 'L' },
+  'L1': { activity: 'Low',      halide: '<0.5%',     halidePresence: 'Contains halides',   halideChar: '1', activityChar: 'L' },
+  'MO': { activity: 'Moderate', halide: '0.0%',      halidePresence: 'Halide-free',       halideChar: 'O', activityChar: 'M' },
+  'M1': { activity: 'Moderate', halide: '0.5-2.0%',  halidePresence: 'Contains halides',   halideChar: '1', activityChar: 'M' },
+  'HO': { activity: 'High',     halide: '0.0%',      halidePresence: 'Halide-free',       halideChar: 'O', activityChar: 'H' },
+  'H1': { activity: 'High',     halide: '>2.0%',     halidePresence: 'Contains halides',   halideChar: '1', activityChar: 'H' }
+};
+
+var ACTIVITY_NOTES = {
+  'LO': 'Low activity, halide-free. Typical no-clean candidate for Class 1 and Class 2 applications. Verify suitability against the flux TDS and your reflow profile. Low activity means less oxide removal capability -- surface finish quality matters more.',
+  'L1': 'Low activity with halide content below 0.5%. Evaluate cleaning need by application class. Halide residues can be corrosive in humid environments and are not suitable under conformal coating without cleaning.',
+  'MO': 'Moderate activity, halide-free. Common in mainstream no-clean solder pastes (e.g., SAC305 no-clean types). Evaluate no-clean suitability against the TDS, application class, and operating environment. Class 3 or conformal coat applications require residue evaluation.',
+  'M1': 'Moderate activity with halide content 0.5-2.0%. Cleaning is typically required for Class 2 and Class 3 assemblies. Not suitable for no-clean processes in high-reliability applications. Halide residues under conformal coating are a known reliability risk.',
+  'HO': 'High activity, halide-free. Used for difficult surface finishes or challenging wetting conditions. High-activity residues warrant cleaning evaluation even without halides. Verify no-clean suitability carefully against TDS if cleaning is not planned.',
+  'H1': 'High activity with halide content above 2.0%. Cleaning is required. Most aggressive standard flux category. Used in applications where oxide removal demands outweigh the cleaning constraint. Not suitable for no-clean processes.'
+};
+
+var VALID_BASES = ['RO', 'RE', 'OR', 'IN'];
+var VALID_TYPES = ['LO', 'L1', 'MO', 'M1', 'HO', 'H1'];
+
+// =====================
+// MODE SWITCHING
+// =====================
+
+var currentMode = 'decode';
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-decode').style.display = (mode === 'decode') ? '' : 'none';
+  document.getElementById('mode-build').style.display  = (mode === 'build')  ? '' : 'none';
+  document.getElementById('mode-ref').style.display    = (mode === 'ref')    ? '' : 'none';
+
+  var tabs = document.querySelectorAll('.mode-tab');
+  tabs[0].classList.toggle('active', mode === 'decode');
+  tabs[1].classList.toggle('active', mode === 'build');
+  tabs[2].classList.toggle('active', mode === 'ref');
+  tabs[0].setAttribute('aria-selected', String(mode === 'decode'));
+  tabs[1].setAttribute('aria-selected', String(mode === 'build'));
+  tabs[2].setAttribute('aria-selected', String(mode === 'ref'));
+}
+
+// =====================
+// DECODE MODE
+// =====================
+
+function decodeFlux() {
+  var raw = document.getElementById('decode-input').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  document.getElementById('decode-input').value = raw;
+
+  var resultEl = document.getElementById('decode-result');
+  var errorEl  = document.getElementById('decode-error');
+  var hintEl   = document.getElementById('decode-hint');
+
+  resultEl.classList.remove('show');
+  errorEl.classList.remove('show');
+
+  if (raw.length < 4) {
+    hintEl.textContent = (raw.length === 0) ? 'Type all 4 characters to decode' : (4 - raw.length) + ' more character' + ((4 - raw.length) === 1 ? '' : 's') + ' needed';
+    return;
+  }
+
+  var base = raw.substring(0, 2);
+  var type = raw.substring(2, 4);
+
+  if (VALID_BASES.indexOf(base) === -1 || VALID_TYPES.indexOf(type) === -1) {
+    hintEl.textContent = '';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  hintEl.textContent = 'Valid designator';
+  showDecodeResult('r', base, type, raw);
+  resultEl.classList.add('show');
+}
+
+function showDecodeResult(prefix, base, type, code) {
+  var bData = BASE_MATERIALS[base];
+  var tData = FLUX_TYPES[type];
+  document.getElementById(prefix + '-designator').textContent   = code;
+  document.getElementById(prefix + '-base-code').textContent    = base;
+  document.getElementById(prefix + '-base-name').textContent    = bData.name;
+  document.getElementById(prefix + '-activity').textContent     = tData.activity;
+  document.getElementById(prefix + '-halide').textContent       = tData.halide + '  (' + tData.halidePresence + ')';
+  document.getElementById(prefix + '-base-desc').innerHTML      = bData.desc;
+  document.getElementById(prefix + '-activity-note').textContent = ACTIVITY_NOTES[type];
+}
+
+// =====================
+// BUILD MODE
+// =====================
+
+function buildFlux() {
+  var base     = document.getElementById('build-base').value;
+  var activity = document.getElementById('build-activity').value;
+  var halide   = document.getElementById('build-halide').value;
+  var resultEl = document.getElementById('build-result');
+
+  if (!base || !activity || !halide) {
+    resultEl.classList.remove('show');
+    return;
+  }
+
+  var type = activity + halide;
+  var code = base + type;
+  showDecodeResult('b', base, type, code);
+  resultEl.classList.add('show');
+}
+
+// =====================
+// REFERENCE TABLE
+// =====================
+
+function buildRefTable() {
+  var tbody = document.getElementById('ref-tbody');
+  var rows = '';
+
+  VALID_BASES.forEach(function(base) {
+    VALID_TYPES.forEach(function(type) {
+      var code   = base + type;
+      var bData  = BASE_MATERIALS[base];
+      var tData  = FLUX_TYPES[type];
+      var actClass = tData.activity.toLowerCase();
+      var hClass = tData.halideChar === 'O' ? 'free' : 'present';
+      var hLabel = tData.halideChar === 'O' ? 'Halide-free' : 'Contains halides';
+
+      rows += '<tr class="ref-row" onclick="goDecode(\'' + code + '\')">' +
+        '<td><span class="ref-code">' + code + '</span></td>' +
+        '<td><span class="ref-base-chip">' + base + '</span>&nbsp; ' + bData.name + '</td>' +
+        '<td><span class="activity-dot"><span class="dot ' + actClass + '"></span>' + tData.activity + '</span></td>' +
+        '<td>' + tData.halide + '</td>' +
+        '<td><span class="halide-badge ' + hClass + '">' + hLabel + '</span></td>' +
+        '</tr>';
+    });
+  });
+
+  tbody.innerHTML = rows;
+}
+
+function goDecode(code) {
+  setMode('decode');
+  document.getElementById('decode-input').value = code;
+  decodeFlux();
+}
+
+// =====================
+// GUIDE TOGGLE
+// =====================
+
+function toggleGuide(btn) {
+  var content = btn.nextElementSibling;
+  var arrow   = btn.querySelector('.guide-toggle-arrow');
+  var isOpen  = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+// =====================
+// PRINT REPORT
+// =====================
+
+function printReport() {
+  var title     = document.getElementById('reportTitle').value || 'Flux Designator Lookup';
+  var timestamp = new Date().toLocaleString();
+
+  var designator = '';
+  var base = '', baseName = '', activity = '', halide = '', halidePresence = '', baseDesc = '', actNote = '';
+
+  if (currentMode === 'decode') {
+    var raw = document.getElementById('decode-input').value.toUpperCase();
+    if (raw.length === 4 && document.getElementById('decode-result').classList.contains('show')) {
+      var b = raw.substring(0,2), t = raw.substring(2,4);
+      designator     = raw;
+      base           = b;
+      baseName       = BASE_MATERIALS[b].name;
+      activity       = FLUX_TYPES[t].activity;
+      halide         = FLUX_TYPES[t].halide;
+      halidePresence = FLUX_TYPES[t].halidePresence;
+      baseDesc       = BASE_MATERIALS[b].desc;
+      actNote        = ACTIVITY_NOTES[t];
+    }
+  } else if (currentMode === 'build') {
+    var bv = document.getElementById('build-base').value;
+    var av = document.getElementById('build-activity').value;
+    var hv = document.getElementById('build-halide').value;
+    if (bv && av && hv) {
+      var t2 = av + hv;
+      designator     = bv + t2;
+      base           = bv;
+      baseName       = BASE_MATERIALS[bv].name;
+      activity       = FLUX_TYPES[t2].activity;
+      halide         = FLUX_TYPES[t2].halide;
+      halidePresence = FLUX_TYPES[t2].halidePresence;
+      baseDesc       = BASE_MATERIALS[bv].desc;
+      actNote        = ACTIVITY_NOTES[t2];
+    }
+  }
+
+  if (!designator) {
+    alert('No result to print. Complete a lookup first.');
+    return;
+  }
+
+  var html = '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<title>' + title + ' -- SMTCalc</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">' +
+    '<style>' +
+    '@page { size: A4 portrait; margin: 0; }' +
+    '* { box-sizing: border-box; margin: 0; padding: 0; }' +
+    'body { background: #fff; color: #111; font-family: Barlow, sans-serif; font-weight: 300; padding: 2.5cm; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+    '.rpt-header { border-bottom: 3px solid #f5a623; padding-bottom: 1.25rem; margin-bottom: 2rem; }' +
+    '.rpt-tool { font-family: "Barlow Condensed", sans-serif; font-size: 9pt; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 0.4rem; }' +
+    '.rpt-title { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 22pt; letter-spacing: 0.02em; text-transform: uppercase; color: #111; margin-bottom: 0.25rem; }' +
+    '.rpt-ts { font-family: "Share Tech Mono", monospace; font-size: 8pt; color: #aaa; }' +
+    '.sec-label { font-family: "Share Tech Mono", monospace; font-size: 7.5pt; letter-spacing: 0.2em; text-transform: uppercase; color: #f5a623; margin: 1.5rem 0 0.75rem; border-top: 1px solid #eee; padding-top: 0.75rem; }' +
+    '.designator { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 42pt; color: #f5a623; letter-spacing: 0.06em; line-height: 1; margin-bottom: 0.2rem; }' +
+    '.des-sub { font-family: "Share Tech Mono", monospace; font-size: 7.5pt; color: #aaa; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.25rem; }' +
+    '.prop-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #ddd; border: 1px solid #ddd; margin-bottom: 1.25rem; }' +
+    '.prop-box { background: #f8f8f8; padding: 0.6rem 0.75rem; }' +
+    '.prop-label { font-family: "Share Tech Mono", monospace; font-size: 7pt; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 0.2rem; }' +
+    '.prop-value { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 12pt; color: #111; }' +
+    '.prop-value.accent { color: #f5a623; }' +
+    '.desc-block { background: #f8f8f8; border-left: 3px solid #f5a623; padding: 0.75rem 1rem; font-size: 9pt; line-height: 1.65; color: #333; margin-bottom: 0.75rem; }' +
+    '.note-block { background: #f0f0f0; border-left: 3px solid #ccc; padding: 0.75rem 1rem; font-size: 8.5pt; line-height: 1.6; color: #555; }' +
+    '.rpt-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; font-family: "Share Tech Mono", monospace; font-size: 7.5pt; color: #bbb; }' +
+    '</style></head><body>' +
+    '<div class="rpt-header">' +
+    '<div class="rpt-tool">SMTCalc.com -- Flux Designator Decoder</div>' +
+    '<div class="rpt-title">' + title + '</div>' +
+    '<div class="rpt-ts">Generated: ' + timestamp + ' | Reference: J-STD-004B Table 3-9</div>' +
+    '</div>' +
+    '<div class="sec-label">Flux Designator</div>' +
+    '<div class="designator">' + designator + '</div>' +
+    '<div class="des-sub">J-STD-004B / Table 3-9 Classification</div>' +
+    '<div class="prop-grid">' +
+    '<div class="prop-box"><div class="prop-label">Base Material</div><div class="prop-value accent">' + base + '</div></div>' +
+    '<div class="prop-box"><div class="prop-label">Material Name</div><div class="prop-value">' + baseName + '</div></div>' +
+    '<div class="prop-box"><div class="prop-label">Activity Level</div><div class="prop-value">' + activity + '</div></div>' +
+    '<div class="prop-box"><div class="prop-label">Halide Content</div><div class="prop-value">' + halide + '</div></div>' +
+    '</div>' +
+    '<div class="sec-label">Base Material</div>' +
+    '<div class="desc-block">' + baseDesc + '</div>' +
+    '<div class="sec-label">Activity / Halide Notes</div>' +
+    '<div class="note-block">' + actNote + '</div>' +
+    '<div class="rpt-footer">smtcalc.com | Free tools for electronics manufacturing professionals</div>' +
+    '</body></html>';
+
+  var win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = function() { win.print(); };
+}
+
+// =====================
+// CONTACT OBFUSCATION
+// =====================
+
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// =====================
+// INIT
+// =====================
+
+buildRefTable();
+</script>
+</body>
+</html>
