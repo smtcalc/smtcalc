@@ -269,13 +269,6 @@ header {
   gap: 0.4rem;
   flex-wrap: wrap;
 }
-.std-rev {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--muted);
-  font-weight: 400;
-  letter-spacing: 0.06em;
-}
 
 .std-title {
   font-family: 'Barlow', sans-serif;
@@ -454,7 +447,7 @@ footer a:hover { color: var(--accent); }
 
 <div class="info-panel">
   <div class="info-box">
-    <strong>Note on standard revisions:</strong> Revision letters shown are the latest revisions as of early 2024 and may be superseded. Always verify the current revision before ordering or referencing a standard in documentation. Standards are available at
+    <strong>Note on standard revisions:</strong> Revision letters are not shown as they change over time. Always verify the current revision before ordering or referencing a standard in documentation. Standards are available at
     <a href="https://shop.electronics.org" target="_blank" rel="noopener" style="color: var(--accent);">shop.electronics.org</a>.
     Standards from JEDEC (joint publications) are indicated with the JEDEC prefix.
   </div>
@@ -943,11 +936,8 @@ function renderCards(list, query) {
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
     var catLabel = CAT_LABELS[s.cat] || s.cat;
-    var revText  = s.rev ? 'Rev ' + s.rev : '';
     html += '<div class="std-card">' +
-      '<div class="std-number">' + highlight(s.id, query) +
-        (revText ? '<span class="std-rev">' + esc(revText) + '</span>' : '') +
-      '</div>' +
+      '<div class="std-number">' + highlight(s.id, query) + '</div>' +
       '<div class="std-title">' + highlight(s.title, query) + '</div>' +
       '<span class="std-cat-badge">' + esc(catLabel) + '</span>' +
       '<div class="std-desc">' + highlight(s.desc, query) + '</div>' +
@@ -1010,8 +1000,7 @@ function printResults() {
   var rows = '';
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
-    var rev = s.rev ? ' Rev ' + s.rev : '';
-    rows += '<tr><td style="font-weight:700;color:#c07c0a;white-space:nowrap">' + s.id + rev + '</td>' +
+    rows += '<tr><td style="font-weight:700;color:#c07c0a;white-space:nowrap">' + s.id + '</td>' +
             '<td style="color:#555;font-size:0.72rem;padding:0 6px">' + (CAT_LABELS[s.cat] || s.cat) + '</td>' +
             '<td style="font-weight:500">' + s.title + '</td>' +
             '<td style="font-size:0.78rem;color:#555">' + s.desc + '</td></tr>';
