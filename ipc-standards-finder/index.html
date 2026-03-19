@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPC Standards Finder - SMTCalc</title>
+  <meta name="description" content="Free IPC standards finder for electronics manufacturing. Search by keyword, standard number, or process area to find the right IPC, J-STD, and related standards for PCB assembly, design, fabrication, and inspection.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:      #f7f5f2;
+  --bg2:     #f0ede8;
+  --bg3:     #e8e4de;
+  --bg4:     #dedad3;
+  --accent:  #c07c0a;
+  --accent2: #be2e0a;
+  --green:   #1a8c4e;
+  --yellow:  #c07c0a;
+  --red:     #be2e0a;
+  --text:    #1a1815;
+  --muted:   #6b6560;
+  --border:  #d5d0ca;
+  --border2: #c8c2bb;
+  --mono:    'Share Tech Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(247,245,242,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text);
+}
+.logo span { color: var(--accent); }
+.tool-badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  padding: 0.3rem 0.75rem;
+}
+
+/* HERO */
+.hero {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(192,124,10,0.13) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+.eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 2px;
+  background: var(--accent);
+}
+.hero h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+.hero p {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+/* SEARCH PANEL */
+.search-panel {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 2rem;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+#searchInput {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 1rem;
+  padding: 0.7rem 0.9rem 0.7rem 2.6rem;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+#searchInput:focus { border-color: var(--accent); }
+#searchInput::placeholder { color: var(--muted); }
+
+#catSelect {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6560' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  min-width: 210px;
+  transition: border-color 0.2s;
+}
+#catSelect:focus { border-color: var(--accent); }
+
+#clearBtn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+#clearBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+.result-meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.result-count {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* RESULTS GRID */
+.results-section {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  padding: 0 2rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 700px) {
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .results-grid { grid-template-columns: 1fr; }
+}
+
+.std-card {
+  background: var(--bg);
+  padding: 1.1rem 1.1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: background 0.15s;
+  cursor: default;
+  position: relative;
+}
+.std-card:hover { background: var(--bg2); }
+
+.std-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.std-rev {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.std-title {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.std-cat-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.4rem;
+  margin-top: 0.1rem;
+  align-self: flex-start;
+}
+
+.std-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-top: 0.15rem;
+  flex: 1;
+}
+
+
+/* HIGHLIGHT MATCH */
+.hl { background: rgba(192,124,10,0.18); color: var(--text); }
+
+/* NO RESULTS */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  background: var(--bg);
+}
+.no-results-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.no-results p {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* INFO PANEL */
+.info-panel {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+}
+.info-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.info-box strong { color: var(--text); }
+
+/* PRINT BAR */
+.print-bar {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.print-bar label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.print-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+@media print {
+  header, .print-bar, .search-panel { display: none !important; }
+  .results-section { padding: 0; }
+  .results-grid { border: 1px solid #ccc; }
+  .std-card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">IPC Standards Finder</div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Standards Reference</div>
+    <h1>IPC Standards Finder</h1>
+    <p>
+      Search by keyword, process area, or standard number to find the right IPC and J-STD document. Covers assembly, design, fabrication, materials, cleaning, testing, and more. Over 75 standards indexed.
+    </p>
+  </div>
+</section>
+
+<div class="search-panel">
+  <div class="search-row">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by number, topic, or keyword..." autocomplete="off" spellcheck="false">
+    </div>
+    <select id="catSelect">
+      <option value="">All Categories</option>
+      <option value="assembly">Assembly &amp; Acceptance</option>
+      <option value="design">PCB Design</option>
+      <option value="fabrication">PCB Fabrication</option>
+      <option value="materials">Solder &amp; Materials</option>
+      <option value="coating">Conformal Coating</option>
+      <option value="components">Components &amp; MSL</option>
+      <option value="stencil">Stencil &amp; Printing</option>
+      <option value="cleaning">Cleaning &amp; Cleanliness</option>
+      <option value="repair">Repair &amp; Rework</option>
+      <option value="test">Test &amp; Reliability</option>
+      <option value="finish">Surface Finishes</option>
+      <option value="packaging">Advanced Packaging</option>
+      <option value="harness">Wire &amp; Cable Harness</option>
+      <option value="general">General &amp; Terms</option>
+    </select>
+    <button id="clearBtn" onclick="clearSearch()">Clear</button>
+  </div>
+  <div class="result-meta">
+    <span id="resultCount" class="result-count">0</span> standards found
+  </div>
+</div>
+
+<div class="results-section">
+  <div class="results-grid" id="resultsGrid"></div>
+</div>
+
+<div class="info-panel">
+  <div class="info-box">
+    <strong>Note on standard revisions:</strong> Revision letters shown are the latest revisions as of early 2024 and may be superseded. Always verify the current revision before ordering or referencing a standard in documentation. Standards are available at
+    <a href="https://shop.electronics.org" target="_blank" rel="noopener" style="color: var(--accent);">shop.electronics.org</a>.
+    Standards from JEDEC (joint publications) are indicated with the JEDEC prefix.
+  </div>
+</div>
+
+<div class="print-bar">
+  <label>Print current results</label>
+  <button class="print-btn" onclick="printResults()">&#9113; Print List</button>
+</div>
+
+<footer>
+  &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+  &nbsp;|&nbsp;
+  <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+</footer>
+
+<script>
+// ============================================================
+//  STANDARDS DATABASE
+// ============================================================
+var STANDARDS = [
+
+  // ASSEMBLY & ACCEPTANCE
+  { id:'J-STD-001',        rev:'J',  cat:'assembly',
+    title:'Requirements for Soldered Electrical and Electronic Assemblies',
+    desc:'The primary process standard for soldering. Defines materials, methods, and acceptance criteria for all soldering operations. Covers flux, solder, cleanliness, and process controls. Referenced by virtually every electronics contract worldwide.',
+    kw:'soldering reflow wave selective hand solder joint process J-STD-001' },
+
+  { id:'IPC-HDBK-001',     rev:'H',  cat:'assembly',
+    title:'Handbook and Guide to Supplement J-STD-001',
+    desc:'Companion guide to J-STD-001. Provides background, explanations, and process guidance to help engineers and technicians understand the why behind each requirement. Useful for training and process development.',
+    kw:'soldering handbook guide process training supplement' },
+
+  { id:'IPC-A-610',        rev:'H',  cat:'assembly',
+    title:'Acceptability of Electronic Assemblies',
+    desc:'The most widely used inspection standard in the industry. Defines visual acceptance criteria for solder joints, component placement, marking, conformal coating, and mechanical assembly. Organized by Class 1, 2, and 3.',
+    kw:'inspection acceptance solder joint visual class 1 2 3 IPC610 acceptability electronic assembly' },
+
+  { id:'IPC-A-600',        rev:'K',  cat:'assembly',
+    title:'Acceptability of Printed Boards',
+    desc:'Defines visual and dimensional acceptance criteria for bare printed circuit boards. Covers conductor width and spacing, surface finish, holes, laminate quality, and marking. Used for incoming PCB inspection.',
+    kw:'PCB bare board inspection acceptance printed circuit board IPC600 incoming quality' },
+
+  { id:'IPC-A-630',        rev:'B',  cat:'assembly',
+    title:'Acceptability Standard for Electronic Enclosures',
+    desc:'Acceptance standard for the manufacture, inspection, and testing of electronic enclosures. Covers sheet metal, plastics, hardware, and surface finish quality criteria for chassis and enclosure construction.',
+    kw:'enclosure chassis sheet metal plastic acceptability inspection hardware assembly' },
+
+  { id:'IPC-9191',         rev:'B',  cat:'assembly',
+    title:'General Guidelines for Implementation of Statistical Process Control',
+    desc:'Practical guidelines for implementing SPC in electronics manufacturing. Covers control chart selection, data collection, process capability indices (Cp, Cpk), and interpretation of results.',
+    kw:'SPC statistical process control Cp Cpk capability quality control charts' },
+
+  { id:'IPC-AJ-820',       rev:'B',  cat:'assembly',
+    title:'Assembly and Joining Handbook',
+    desc:'Broad reference covering materials, processes, and assembly techniques for electronics manufacturing. Covers soldering physics, flux chemistry, joint formation mechanisms, and process troubleshooting.',
+    kw:'assembly joining handbook soldering process reference flux chemistry physics' },
+
+  { id:'IPC-7530',         rev:'A',  cat:'assembly',
+    title:'Guidelines for Temperature Profiling for Mass Soldering Processes',
+    desc:'Best practices for measuring and documenting reflow and wave solder oven temperature profiles. Covers thermocouple placement, profile documentation, and profile validation methodology.',
+    kw:'reflow profile temperature profiling wave solder thermocouple oven thermal profiling' },
+
+  // PCB DESIGN
+  { id:'IPC-2221',         rev:'C',  cat:'design',
+    title:'Generic Standard on Printed Board Design',
+    desc:'Foundation design standard covering requirements applicable to all rigid printed board types: conductor sizing, spacing, material selection, land patterns, and via design. Parent of the IPC-222x series.',
+    kw:'PCB design conductor trace spacing via land pattern board design generic IPC2221' },
+
+  { id:'IPC-2222',         rev:'B',  cat:'design',
+    title:'Sectional Standard on Design for Rigid Organic Printed Boards',
+    desc:'Sectional standard within the IPC-2221 family. Covers design requirements specific to rigid organic (FR4, etc.) printed boards. Supplements IPC-2221 with material-specific requirements.',
+    kw:'rigid PCB FR4 design organic board IPC2222' },
+
+  { id:'IPC-2223',         rev:'D',  cat:'design',
+    title:'Sectional Standard on Design for Flexible Printed Boards',
+    desc:'Design requirements for flexible and rigid-flex printed circuit boards. Covers bend radius design rules, conductor layout for dynamic flexing, coverlay design, and stiffener areas.',
+    kw:'flex flexible rigid-flex PCB design bend radius coverlay stiffener FPC' },
+
+  { id:'IPC-2226',         rev:'C',  cat:'design',
+    title:'Sectional Design Standard for High Density Interconnect (HDI) Printed Boards',
+    desc:'Design requirements for HDI boards using microvias, buried vias, and stacked or staggered via structures. Covers design rules for high-density PCBs used in handheld and miniaturized products.',
+    kw:'HDI microvia high density interconnect design stacked buried via sequential lamination' },
+
+  { id:'IPC-2228',         rev:'B',  cat:'design',
+    title:'Sectional Standard on Design for Microvia in Printed Boards',
+    desc:'Focuses specifically on microvia design for HDI printed boards. Covers microvia size, aspect ratio, copper filling options, stacking configurations, and reliability design considerations.',
+    kw:'microvia HDI design reliability copper fill stacked via aspect ratio' },
+
+  { id:'IPC-7351',         rev:'C',  cat:'design',
+    title:'Generic Requirements for Surface Mount Design and Land Pattern Standard',
+    desc:'Defines pad (land pattern) geometry for SMT components across three density levels (A, B, C). The primary reference for building component footprints in your CAD library. Covers all standard SMT package families.',
+    kw:'land pattern footprint SMT pad design component library IPC7351 density level' },
+
+  { id:'IPC-2141',         rev:'A',  cat:'design',
+    title:'Controlled Impedance Circuit Boards and High Speed Logic',
+    desc:'Design guidelines for controlled impedance PCBs and high-speed digital logic. Covers trace geometry, dielectric property requirements, and design practices for maintaining signal integrity.',
+    kw:'impedance controlled high speed signal integrity trace design differential pair' },
+
+  { id:'IPC-2251',         rev:'A',  cat:'design',
+    title:'Design Guide for RF/Microwave Circuit Boards',
+    desc:'Design guidelines for RF and microwave frequency printed circuit boards. Covers material selection, transmission line types, via effects, and shielding considerations at high frequencies.',
+    kw:'RF microwave high frequency design circuit board transmission line coplanar waveguide' },
+
+  { id:'IPC-2581',         rev:'C',  cat:'design',
+    title:'Connectivity Data Format for Design and Manufacturing (IPC-DPMX)',
+    desc:'An open, neutral XML-based format for transferring PCB design data between CAD tools and manufacturing systems. Covers component placement, netlist, stack-up, assembly, and test data exchange.',
+    kw:'data format CAD design manufacturing transfer ODB netlist placement IPC-DPMX XML' },
+
+  // PCB FABRICATION
+  { id:'IPC-4101',         rev:'E',  cat:'fabrication',
+    title:'Specification for Base Materials for Rigid and Multilayer Printed Boards',
+    desc:'Primary specification for laminate and prepreg materials used in rigid PCBs. Defines material property requirements organized by slash sheet designations (e.g., /21 for standard FR4). Used to specify and qualify laminate suppliers.',
+    kw:'laminate FR4 base material prepreg rigid PCB specification slash sheet IPC4101' },
+
+  { id:'IPC-4103',         rev:'C',  cat:'fabrication',
+    title:'Specification for Base Materials for High Speed and High Frequency Applications',
+    desc:'Covers specialty laminate materials for RF, microwave, and high-speed digital applications where standard FR4 dielectric performance is insufficient. Includes low-loss, PTFE-based, and ceramic-filled materials.',
+    kw:'high speed high frequency laminate PTFE ceramic low-loss material Rogers Megtron' },
+
+  { id:'IPC-4104',         rev:'A',  cat:'fabrication',
+    title:'Specification for HDI and Microvia Materials',
+    desc:'Covers dielectric materials used in HDI sequential lamination builds, particularly resin-coated copper (RCC) and other thin dielectrics used to form microvia layers.',
+    kw:'HDI microvia material resin coated copper RCC sequential lamination' },
+
+  { id:'IPC-4202',         rev:'B',  cat:'fabrication',
+    title:'Flexible Base Dielectrics for Use in Flexible Printed Boards',
+    desc:'Specification for base dielectric films (polyimide, polyester, etc.) used in flexible printed circuits. Defines material property requirements for the substrate film layer of flex circuits.',
+    kw:'flex flexible polyimide polyester Kapton base material dielectric circuit FPC' },
+
+  { id:'IPC-4204',         rev:'C',  cat:'fabrication',
+    title:'Flexible Metal-Clad Dielectrics for Use in Flexible Printed Boards',
+    desc:'Specification for copper-clad flexible laminate materials used in flexible printed circuits. The flex equivalent of IPC-4101 for rigid boards. Covers adhesive and adhesiveless constructions.',
+    kw:'flex flexible copper clad laminate material circuit FPC adhesiveless' },
+
+  { id:'IPC-4562',         rev:'B',  cat:'fabrication',
+    title:'Metal Foil for Printed Wiring Applications',
+    desc:'Specification for copper foil used in PCB fabrication. Covers electrodeposited (ED) and rolled-annealed (RA) copper foil types, grades, surface treatments, and property requirements.',
+    kw:'copper foil electrodeposited rolled annealed PCB fabrication RA ED' },
+
+  { id:'IPC-4761',         rev:'B',  cat:'fabrication',
+    title:'Design Guide for Protection of Printed Board Via Structures',
+    desc:'Defines via protection types (Type I through VII) including tented, plugged, and filled via configurations. Used when specifying via treatment on the PCB to prevent solder wicking, contamination, or reliability issues.',
+    kw:'via protection tented plugged filled via type I II III IV V VI VII IPC4761' },
+
+  { id:'IPC-6011',         rev:'B',  cat:'fabrication',
+    title:'Generic Performance Specification for Printed Boards',
+    desc:'Generic base performance specification applicable to all types of printed boards. Defines the Class 1, 2, and 3 framework and general requirements that are supplemented by the IPC-601x sectional standards.',
+    kw:'PCB performance specification class 1 2 3 printed board qualification generic IPC6011' },
+
+  { id:'IPC-6012',         rev:'F',  cat:'fabrication',
+    title:'Qualification and Performance Specification for Rigid Printed Boards',
+    desc:'The primary qualification and acceptance standard for rigid PCBs. Defines conductor dimensions, dielectric properties, electrical performance, coupon testing, and board acceptance requirements by class.',
+    kw:'rigid PCB qualification acceptance performance specification IPC6012 coupon testing' },
+
+  { id:'IPC-6013',         rev:'E',  cat:'fabrication',
+    title:'Qualification and Performance Specification for Flexible and Rigid-Flex Printed Boards',
+    desc:'Qualification and performance standard for flexible and rigid-flex printed boards. Covers flex-specific requirements including peel strength, dynamic flex life, and coverlay adhesion alongside standard PCB properties.',
+    kw:'flexible flex rigid-flex PCB qualification performance specification FPC peel strength' },
+
+  { id:'IPC-6018',         rev:'B',  cat:'fabrication',
+    title:'Qualification and Performance Specification for High Frequency (Microwave) Printed Boards',
+    desc:'Qualification standard for PCBs used in RF and microwave applications. Covers tight dimensional tolerances, controlled dielectric properties, impedance requirements, and surface quality for high-frequency boards.',
+    kw:'microwave RF high frequency PCB qualification performance specification IPC6018' },
+
+  { id:'J-STD-003',        rev:'D',  cat:'fabrication',
+    title:'Solderability Tests for Printed Boards',
+    desc:'Defines solderability test methods specifically for bare PCBs. Covers wetting balance, edge dip, float, and wave solder tests on test coupons and actual boards. Used for incoming PCB solderability qualification.',
+    kw:'solderability test PCB bare board wetting balance incoming qualification surface finish' },
+
+  // SOLDER & FLUX MATERIALS
+  { id:'J-STD-004',        rev:'C',  cat:'materials',
+    title:'Requirements for Soldering Fluxes',
+    desc:'Classification and testing requirements for soldering fluxes. Defines the flux designator system (ROL0, REM1, ORH1, etc.) based on base material and activity level. Used for flux qualification and specification.',
+    kw:'flux designator classification ROL REM ORL ORH activity halide J-STD004 rosin organic' },
+
+  { id:'J-STD-005',        rev:'B',  cat:'materials',
+    title:'Requirements for Soldering Pastes',
+    desc:'Specification and test methods for solder paste. Covers viscosity, slump, solder ball formation, tack life, and print performance. Used to qualify and specify solder paste materials for SMT processes.',
+    kw:'solder paste specification viscosity slump tack print qualification J-STD005 paste' },
+
+  { id:'J-STD-006',        rev:'D',  cat:'materials',
+    title:'Requirements for Electronic Grade Solder Alloys',
+    desc:'Defines composition, property, and purity requirements for solder alloys and solders. Covers SnPb, SnAgCu (SAC305, SAC405), SnCu, SnBi, and other alloy systems with composition limits.',
+    kw:'solder alloy SnPb SAC SnAgCu leadfree lead-free composition specification Sn63 J-STD006' },
+
+  { id:'IPC-HDBK-005',     rev:'A',  cat:'materials',
+    title:'Guide to Solder and Soldering',
+    desc:'Handbook on solder metallurgy, flux chemistry, and soldering processes. Companion reference for J-STD-004, 005, and 006. Explains the underlying physics of wetting, intermetallic formation, and joint solidification.',
+    kw:'solder flux soldering handbook guide metallurgy chemistry wetting intermetallic' },
+
+  { id:'J-STD-002',        rev:'F',  cat:'materials',
+    title:'Solderability Tests for Component Leads and Terminations',
+    desc:'Defines solderability test methods for component leads, terminations, lugs, and wires. Covers wetting balance (meniscometer), dip-and-look, and edge dip tests. Used for incoming component solderability qualification.',
+    kw:'solderability test component lead termination wetting balance meniscometer incoming J-STD002' },
+
+  { id:'IPC-SM-817',       rev:'A',  cat:'materials',
+    title:'General Requirements for Dielectric Surface Mounting Adhesives',
+    desc:'Requirements and test methods for SMT adhesives used to attach components to the bottom side of PCBs for wave soldering (the glue-dot process). Covers dot geometry, adhesion strength, dispensing, and cure.',
+    kw:'SMT adhesive glue dot wave solder attachment cure dispensing epoxy snap cure' },
+
+  { id:'IPC-7621',         rev:'A',  cat:'materials',
+    title:'Fluxes for Wave Soldering',
+    desc:'Specification covering flux requirements and process parameters specifically for wave and selective soldering. Addresses foam fluxer and spray fluxer application, flux density monitoring, and process control.',
+    kw:'wave soldering flux fluxer foam spray application selective soldering flux density' },
+
+  // CONFORMAL COATING
+  { id:'IPC-CC-830',       rev:'C',  cat:'coating',
+    title:'Qualification and Performance of Electrical Insulating Compound for Printed Wiring Assemblies',
+    desc:'Qualification standard for conformal coatings. Defines test methods and acceptance criteria for coating materials including acrylic, polyurethane, silicone, epoxy, and parylene types.',
+    kw:'conformal coating qualification acrylic polyurethane silicone epoxy parylene IPC-CC-830 dielectric' },
+
+  { id:'IPC-HDBK-830',     rev:'B',  cat:'coating',
+    title:'Guidelines for Design, Selection, and Application of Conformal Coatings',
+    desc:'Practical guide for selecting and applying conformal coatings. Covers coating type selection criteria, application methods (spray, selective, dip, vapor deposition), masking strategy, curing, and visual inspection.',
+    kw:'conformal coating application spray selective dip parylene cure masking inspection design selection' },
+
+  { id:'IPC-HDBK-850',     rev:'A',  cat:'coating',
+    title:'Handbook for Conformal Coating of Printed Wiring Assemblies',
+    desc:'Companion guide focused on conformal coating application process quality. Covers thickness measurement methods, common defects (bubbles, dewetting, fisheye), adhesion testing, and cure verification.',
+    kw:'conformal coating application process quality inspection thickness defect bubble dewetting' },
+
+  { id:'IPC-SM-840',       rev:'F',  cat:'coating',
+    title:'Qualification and Performance of Permanent Polymer Coating (Solder Mask)',
+    desc:'Qualification standard for solder mask materials including liquid photoimageable (LPI) and dry film types. Covers adhesion, chemical resistance, dielectric properties, and solder mask opening dimensional tolerances.',
+    kw:'solder mask LPI liquid photoimageable dry film qualification PCB solder dam' },
+
+  // COMPONENTS & MSL
+  { id:'J-STD-020',        rev:'F',  cat:'components',
+    title:'Moisture and Reflow Sensitivity Classification for Nonhermetic SMT Components',
+    desc:'Defines the MSL classification system from Level 1 to Level 6. Covers component qualification test procedures: moisture soak conditions, reflow temperature profiles, and failure analysis criteria.',
+    kw:'MSL moisture sensitivity classification plastic component reflow J-STD020 ICs packages' },
+
+  { id:'J-STD-033',        rev:'D',  cat:'components',
+    title:'Handling, Packing, Shipping, and Use of Moisture/Reflow Sensitive Devices',
+    desc:'The floor-level handling standard for MSDs. Defines floor life limits by MSL level, dry storage requirements, bake parameters, and re-qualification requirements after floor life exposure.',
+    kw:'MSL floor life bake dry storage handling moisture sensitive component J-STD033 MSD desiccant HIC' },
+
+  { id:'J-STD-075',        rev:'B',  cat:'components',
+    title:'Classification of Non-IC Electronic Components for Assembly Processes',
+    desc:'Extends moisture sensitivity classification concepts to non-IC components such as ceramic capacitors, film capacitors, inductors, and connectors that may be affected by reflow heat.',
+    kw:'non-IC component moisture sensitivity classification passive connector capacitor inductor' },
+
+  { id:'IPC-1601',         rev:'B',  cat:'components',
+    title:'Printed Board Handling and Storage Guidelines',
+    desc:'Guidelines for handling and storing bare PCBs to prevent contamination, moisture absorption, and oxidation of surface finishes. Covers packaging requirements, storage conditions, humidity levels, and shelf life.',
+    kw:'PCB handling storage bare board shelf life moisture oxidation packaging incoming' },
+
+  { id:'IPC-9501',         rev:'A',  cat:'components',
+    title:'PWB Assembly Performance Test Methods for Wave Soldering Process Evaluation',
+    desc:'Defines test methods and test vehicles for evaluating the wave soldering process performance on printed wiring boards. Covers process window characterization and defect analysis methodology.',
+    kw:'wave soldering test method process evaluation performance PWB assembly' },
+
+  { id:'IPC-9503',         rev:'A',  cat:'components',
+    title:'Moisture Sensitivity Classification for Non-IC Components',
+    desc:'Extends the MSL classification methodology to non-IC passive and electromechanical components that are sensitive to moisture and reflow heat but are not covered by J-STD-020.',
+    kw:'MSL moisture sensitivity non-IC passive component classification handling' },
+
+  // STENCIL & PRINTING
+  { id:'IPC-7525',         rev:'C',  cat:'stencil',
+    title:'Stencil Design Guidelines',
+    desc:'Primary design guideline for stencil apertures. Covers area ratio, aspect ratio, aperture geometry, and stencil thickness selection. The key reference for solder paste volume optimization and paste release.',
+    kw:'stencil aperture area ratio aspect ratio paste release design IPC7525 solder paste printing' },
+
+  { id:'IPC-7526',         rev:'B',  cat:'stencil',
+    title:'Stencil Fabrication Specification',
+    desc:'Specification for stencil fabrication covering laser-cut, electroformed, and chemically etched stencil types. Defines dimensional tolerances, aperture wall quality, foil thickness, and frame requirements.',
+    kw:'stencil fabrication laser cut electroform tolerance aperture specification foil thickness frame' },
+
+  { id:'IPC-7527',         rev:'A',  cat:'stencil',
+    title:'Requirements for Solder Paste Printing',
+    desc:'Requirements and process guidelines for the solder paste printing operation. Covers printer setup, squeegee parameters, paste roll, print speed, snap-off, under-stencil cleaning frequency, and post-print inspection.',
+    kw:'solder paste printing process squeegee printer setup cleaning inspection snap-off print speed' },
+
+  // CLEANING & CLEANLINESS
+  { id:'IPC-5701',         rev:'B',  cat:'cleaning',
+    title:'User Guide for Cleaning Electronic Assemblies',
+    desc:'Comprehensive guide covering cleaning processes for electronic assemblies. Covers aqueous, semi-aqueous, and solvent cleaning chemistry, process equipment selection, contamination types, and test methods.',
+    kw:'cleaning aqueous semi-aqueous solvent flux residue contamination process saponifier spray batch inline' },
+
+  { id:'IPC-5702',         rev:'A',  cat:'cleaning',
+    title:'Guidelines for OEMs Selecting a Residue Cleaning Process',
+    desc:'Decision guide for choosing between cleaning and no-clean processes. Covers reliability implications of flux residue, process window analysis, and cleanliness test requirements for different end-use environments.',
+    kw:'cleaning no-clean residue process selection OEM reliability conformal coating decision' },
+
+  { id:'IPC-5703',         rev:'A',  cat:'cleaning',
+    title:'Guidance for Testing of Assemblies Cleaned with Water',
+    desc:'Covers cleanliness testing methods for water-cleaned assemblies. Includes ion chromatography (IC), SIR (surface insulation resistance) testing, and guidance on interpreting test results against acceptance limits.',
+    kw:'cleanliness testing ion chromatography SIR water cleaning ionic contamination IPC5703' },
+
+  { id:'IPC-5704',         rev:'A',  cat:'cleaning',
+    title:'Cleanliness Requirements for Unpopulated Printed Boards',
+    desc:'Cleanliness requirements for bare (unpopulated) PCBs. Defines acceptable contamination levels and the test methods for incoming bare board inspection before assembly starts.',
+    kw:'cleanliness bare PCB unpopulated contamination incoming inspection ionic' },
+
+  { id:'IPC-9201',         rev:'B',  cat:'cleaning',
+    title:'Surface Insulation Resistance Handbook',
+    desc:'Comprehensive handbook on SIR (surface insulation resistance) testing. Covers test conditions, test coupon design, measurement protocols, and interpretation of SIR data for process and material qualification.',
+    kw:'SIR surface insulation resistance testing cleanliness flux residue IPC9201 leakage' },
+
+  { id:'IPC-9202',         rev:'A',  cat:'cleaning',
+    title:'Material and Process Qualification Testing for Non-Cleaner Processes',
+    desc:'Defines test protocols for qualifying no-clean fluxes and pastes. Covers SIR testing, electrochemical migration (ECM) evaluation, and ionic contamination testing required before a no-clean process can be released.',
+    kw:'no-clean qualification SIR ECM electrochemical migration ionic process flux paste' },
+
+  // REPAIR & REWORK
+  { id:'IPC-7711/7721',    rev:'D',  cat:'repair',
+    title:'Rework, Modification and Repair of Electronic Assemblies',
+    desc:'The comprehensive standard for all rework and repair operations on PCB assemblies. Covers component removal and replacement, conductor repair, via repair, laminate repair, and engineering change order (ECO) modifications.',
+    kw:'rework repair modification BGA component removal replacement conductor via laminate ECO' },
+
+  { id:'IPC-7801',         rev:'A',  cat:'repair',
+    title:'Rework of Ball Grid Array and Chip Scale Package Assemblies',
+    desc:'Specifically addresses the rework of BGA and CSP components. Covers equipment requirements, flux application, reflow profile parameters, inspection criteria, and acceptance requirements for BGA rework.',
+    kw:'BGA rework ball grid array chip scale package CSP reballing profile inspection' },
+
+  // TEST & RELIABILITY
+  { id:'IPC-TM-650',       rev:'',   cat:'test',
+    title:'Test Methods Manual',
+    desc:'The master collection of IPC test methods, containing hundreds of individual procedures referenced by other IPC standards. Methods cover laminates, solder connections, surface insulation, plated holes, and more.',
+    kw:'test methods manual testing procedures IPC-TM-650 reference peel strength pull test' },
+
+  { id:'IPC-9252',         rev:'B',  cat:'test',
+    title:'Guidelines and Requirements for Electrical Testing of Unpopulated Printed Boards',
+    desc:'Requirements for bare board electrical testing covering continuity, isolation, and impedance verification. Covers flying probe, bed-of-nails, and bare board impedance test methods.',
+    kw:'bare board electrical test flying probe continuity isolation PCB testing bed of nails' },
+
+  { id:'IPC-9701',         rev:'B',  cat:'test',
+    title:'Performance Test Methods for Surface Mount Solder Attachments',
+    desc:'Defines thermal cycling test conditions for evaluating SMT solder joint attachment reliability. Covers accelerated thermal cycling profiles, test vehicle requirements, and failure criteria for solder joint fatigue.',
+    kw:'thermal cycling solder joint reliability test SMT attachment qualification fatigue life' },
+
+  { id:'IPC/JEDEC-9702',   rev:'A',  cat:'test',
+    title:'Monotonic Bend Characterization of Board-Level Interconnects',
+    desc:'Standardized bend test for characterizing the mechanical robustness of board-level solder joint interconnects under monotonic (single-event) bending loads. Used for BGA and CSP package qualification.',
+    kw:'bend test mechanical solder joint board level interconnect reliability BGA monotonic' },
+
+  { id:'IPC/JEDEC-9703',   rev:'A',  cat:'test',
+    title:'Mechanical Shock Characterization of Board-Level Interconnects',
+    desc:'Standardized drop and shock test for characterizing solder joint robustness under mechanical shock loads. Commonly used for qualifying handheld and portable electronics against drop events.',
+    kw:'mechanical shock drop test solder joint reliability board level portable handheld' },
+
+  { id:'IPC/JEDEC-9704',   rev:'B',  cat:'test',
+    title:'Printed Wiring Board Strain Gauge Test Guideline',
+    desc:'Guideline for measuring PCB strain using strain gauges during assembly processes such as press-fit insertion, ICT testing, and board handling. Helps prevent hidden solder joint damage from excessive strain.',
+    kw:'strain gauge PCB strain measurement press-fit assembly handling ICT board bending' },
+
+  { id:'IPC-9121',         rev:'C',  cat:'test',
+    title:'Counting and Reporting Criteria for Measurable PCB Attributes',
+    desc:'Provides a standardized methodology for counting and reporting measurable defects on PCBs. Used for establishing yield metrics, DPMO calculations, and process capability measurements in fabrication and assembly.',
+    kw:'defect counting yield PCB process capability DPMO metrics reporting quality' },
+
+  { id:'IPC-9241',         rev:'A',  cat:'test',
+    title:'Guidelines for Development of a Printed Board Electrical Testing Plan',
+    desc:'Guides engineers through developing an electrical test plan for PCBs. Covers test coverage analysis, test method selection (flying probe vs. fixture), cost-benefit analysis, and test documentation requirements.',
+    kw:'electrical test plan PCB testing coverage flying probe bed of nails fixture strategy' },
+
+  // SURFACE FINISHES
+  { id:'IPC-4552',         rev:'B',  cat:'finish',
+    title:'Performance Specification for Electroless Nickel/Immersion Gold (ENIG)',
+    desc:'Specification for ENIG surface finish. Defines nickel thickness (3-6 um), gold thickness (0.05-0.23 um), coating quality requirements, and test methods. Covers detection of the black pad failure mode.',
+    kw:'ENIG electroless nickel immersion gold surface finish black pad IPC4552 thickness' },
+
+  { id:'IPC-4553',         rev:'B',  cat:'finish',
+    title:'Specification for Immersion Silver (ImAg) Plating',
+    desc:'Specification for immersion silver surface finish. Defines silver thickness requirements (0.12-0.40 um), tarnish protection requirements, and test methods. Addresses creep corrosion sensitivity in sulfur-rich environments.',
+    kw:'immersion silver ImAg surface finish tarnish creep corrosion storage IPC4553' },
+
+  { id:'IPC-4554',         rev:'B',  cat:'finish',
+    title:'Specification for Immersion Tin (ImSn) Plating',
+    desc:'Specification for immersion tin surface finish. Defines tin thickness requirements (1.0 um min), acceptable intermetallic growth limits, and test methods. Covers tin whisker risk management and storage limitations.',
+    kw:'immersion tin ImSn surface finish whisker intermetallic storage IPC4554 shelf life' },
+
+  { id:'IPC-4556',         rev:'A',  cat:'finish',
+    title:'Specification for Electroless Nickel/Electroless Palladium/Immersion Gold (ENEPIG)',
+    desc:'Specification for ENEPIG surface finish. Defines thickness requirements for each layer (Ni, Pd, Au). ENEPIG is a high-reliability finish suitable for both soldering and wire bonding on the same pad.',
+    kw:'ENEPIG electroless nickel palladium immersion gold surface finish wire bonding IPC4556' },
+
+  // ADVANCED PACKAGING
+  { id:'IPC-7095',         rev:'E',  cat:'packaging',
+    title:'Design and Assembly Process Implementation for BGAs',
+    desc:'Comprehensive guide for BGA component design and assembly. Covers ball-pad geometry, stencil design, reflow profile requirements, X-ray inspection, and troubleshooting of common BGA defects including head-in-pillow, non-wets, and voiding.',
+    kw:'BGA ball grid array assembly design X-ray inspection head-in-pillow voiding bridging IPC7095' },
+
+  { id:'IPC-7093',         rev:'B',  cat:'packaging',
+    title:'Design and Assembly Process Implementation for Bottom Termination Components (BTCs)',
+    desc:'Guide for QFN, LGA, DFN, and other bottom-termination packages. Covers stencil design for thermal pad voiding control, reflow profile optimization, X-ray inspection, and voiding acceptance criteria.',
+    kw:'QFN LGA DFN BTC bottom termination assembly stencil voiding thermal pad X-ray IPC7093' },
+
+  { id:'IPC-7094',         rev:'B',  cat:'packaging',
+    title:'Design and Assembly Process Implementation for Flip Chip Technology',
+    desc:'Covers flip chip assembly processes including bump design, flux application, chip placement, underfill dispensing and cure, and process parameter optimization. Addresses lead-free flip chip reliability.',
+    kw:'flip chip underfill bump assembly process wafer reflow thermocompression IPC7094' },
+
+  { id:'IPC-7092',         rev:'C',  cat:'packaging',
+    title:'Design and Assembly Process Implementation for Flipchip and Die Size Components',
+    desc:'Covers design and assembly for flip chip components and wafer-level packages (WLP). Addresses bump pitch, underfill, thermal management, and reliability aspects for fine-pitch area-array packages.',
+    kw:'flip chip WLP wafer level package die size assembly design underfill area array' },
+
+  { id:'J-STD-030',        rev:'A',  cat:'packaging',
+    title:'Guidelines for the Assembly of CSP and High Density Components',
+    desc:'Assembly guidelines for chip scale packages (CSP) and other high-density SMT components. Covers process parameters, stencil requirements for fine pitch, thermal management, and inspection considerations.',
+    kw:'CSP chip scale package high density assembly process fine pitch stencil' },
+
+  // WIRE & CABLE HARNESS
+  { id:'IPC/WHMA-A-620',   rev:'D',  cat:'harness',
+    title:'Requirements and Acceptance for Cable and Wire Harness Assemblies',
+    desc:'The acceptance standard for cable and wire harness assemblies. Defines visual and dimensional acceptance criteria for wires, terminals, crimps, splices, connectors, and harness construction across Class 1, 2, and 3.',
+    kw:'wire harness cable connector terminal crimp splice acceptance IPC620 WHMA class' },
+
+  { id:'IPC-D-620',        rev:'',   cat:'harness',
+    title:'Requirements for Soldered Electrical Connections in Wire Harnesses',
+    desc:'Defines requirements for soldered connections in wire and cable harness assemblies. Covers wire tinning, hook joints, wrapped joints, splice joints, and connection quality acceptance criteria.',
+    kw:'wire harness solder connection splice terminal tinning crimp soldering' },
+
+  // GENERAL & TERMS
+  { id:'IPC-T-50',         rev:'M',  cat:'general',
+    title:'Terms and Definitions for Interconnecting and Packaging Electronic Circuits',
+    desc:'The master glossary for the entire IPC standards ecosystem. Defines all terminology used across IPC documents. The authoritative source when a term or abbreviation in any IPC standard is unclear.',
+    kw:'terms definitions glossary terminology IPC vocabulary abbreviations' },
+
+  { id:'IPC-1751',         rev:'A',  cat:'general',
+    title:'Generic Requirements for Declaration Process Management',
+    desc:'Framework standard for managing materials declarations throughout the electronics supply chain. Covers documentation structure and process requirements for substance compliance programs (RoHS, REACH, conflict minerals).',
+    kw:'materials declaration RoHS REACH substance compliance supply chain environmental conflict minerals' },
+
+  { id:'IPC-1752',         rev:'B',  cat:'general',
+    title:'Materials Declaration Data Requirements',
+    desc:'Defines specific data requirements and format for materials declarations. Used to communicate substance content information from component suppliers up through the supply chain. Key for RoHS and REACH compliance.',
+    kw:'materials declaration RoHS REACH data format substance compliance IPC1752 supplier' }
+
+];
+
+// ============================================================
+//  CATEGORY LABELS
+// ============================================================
+var CAT_LABELS = {
+  assembly:    'Assembly & Acceptance',
+  design:      'PCB Design',
+  fabrication: 'PCB Fabrication',
+  materials:   'Solder & Materials',
+  coating:     'Conformal Coating',
+  components:  'Components & MSL',
+  stencil:     'Stencil & Printing',
+  cleaning:    'Cleaning',
+  repair:      'Repair & Rework',
+  test:        'Test & Reliability',
+  finish:      'Surface Finishes',
+  packaging:   'Advanced Packaging',
+  harness:     'Wire & Harness',
+  general:     'General & Terms'
+};
+
+// ============================================================
+//  RENDER
+// ============================================================
+var currentQuery = '';
+var currentCat   = '';
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function highlight(text, query) {
+  if (!query) return esc(text);
+  var escaped = esc(text);
+  var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return escaped.replace(re, '<span class="hl">$1</span>');
+}
+
+
+function renderCards(list, query) {
+  var grid = document.getElementById('resultsGrid');
+  var countEl = document.getElementById('resultCount');
+  countEl.textContent = list.length;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="no-results">' +
+      '<div class="no-results-title">No standards found</div>' +
+      '<p>Try a broader keyword or clear the category filter.</p>' +
+      '</div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var s = list[i];
+    var catLabel = CAT_LABELS[s.cat] || s.cat;
+    var revText  = s.rev ? 'Rev ' + s.rev : '';
+    html += '<div class="std-card">' +
+      '<div class="std-number">' + highlight(s.id, query) +
+        (revText ? '<span class="std-rev">' + esc(revText) + '</span>' : '') +
+      '</div>' +
+      '<div class="std-title">' + highlight(s.title, query) + '</div>' +
+      '<span class="std-cat-badge">' + esc(catLabel) + '</span>' +
+      '<div class="std-desc">' + highlight(s.desc, query) + '</div>' +
+    '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function doFilter() {
+  var q   = currentQuery.toLowerCase().trim();
+  var cat = currentCat;
+
+  var results = STANDARDS.filter(function(s) {
+    var catOk = !cat || s.cat === cat;
+    if (!catOk) return false;
+    if (!q) return true;
+    var haystack = (s.id + ' ' + s.title + ' ' + s.desc + ' ' + s.kw).toLowerCase();
+    return haystack.indexOf(q) !== -1;
+  });
+
+  renderCards(results, q);
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  currentQuery = this.value;
+  doFilter();
+});
+
+document.getElementById('catSelect').addEventListener('change', function() {
+  currentCat = this.value;
+  doFilter();
+});
+
+function clearSearch() {
+  currentQuery = '';
+  currentCat   = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('catSelect').value = '';
+  doFilter();
+}
+
+// ============================================================
+//  PRINT
+// ============================================================
+function printResults() {
+  var q   = currentQuery.toLowerCase().trim();
+  var cat = currentCat;
+
+  var list = STANDARDS.filter(function(s) {
+    var catOk = !cat || s.cat === cat;
+    if (!catOk) return false;
+    if (!q) return true;
+    var hay = (s.id + ' ' + s.title + ' ' + s.desc + ' ' + s.kw).toLowerCase();
+    return hay.indexOf(q) !== -1;
+  });
+
+  var catLabel = cat ? (CAT_LABELS[cat] || cat) : 'All Categories';
+  var searchLabel = q ? ('Search: "' + q + '"') : '';
+
+  var rows = '';
+  for (var i = 0; i < list.length; i++) {
+    var s = list[i];
+    var rev = s.rev ? ' Rev ' + s.rev : '';
+    rows += '<tr><td style="font-weight:700;color:#c07c0a;white-space:nowrap">' + s.id + rev + '</td>' +
+            '<td style="color:#555;font-size:0.72rem;padding:0 6px">' + (CAT_LABELS[s.cat] || s.cat) + '</td>' +
+            '<td style="font-weight:500">' + s.title + '</td>' +
+            '<td style="font-size:0.78rem;color:#555">' + s.desc + '</td></tr>';
+  }
+
+  var win = window.open('','_blank');
+  win.document.write(
+    '<!DOCTYPE html><html><head>' +
+    '<meta charset="UTF-8">' +
+    '<title>IPC Standards List - SMTCalc</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">' +
+    '<style>' +
+    'body{font-family:Barlow,sans-serif;background:#fff;color:#1a1815;padding:2rem;font-size:0.88rem}' +
+    '.hdr{border-bottom:3px solid #c07c0a;margin-bottom:1.5rem;padding-bottom:1rem}' +
+    '.hdr .tool{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:#6b6560}' +
+    '.hdr h1{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:1.8rem;text-transform:uppercase;color:#1a1815;margin:0.2rem 0}' +
+    '.hdr .meta{font-family:"Share Tech Mono",monospace;font-size:0.72rem;color:#6b6560}' +
+    'table{width:100%;border-collapse:collapse}' +
+    'th{font-family:"Share Tech Mono",monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:#6b6560;border-bottom:1px solid #d5d0ca;padding:0.4rem 0.5rem;text-align:left}' +
+    'td{padding:0.45rem 0.5rem;border-bottom:1px solid #e8e4de;vertical-align:top}' +
+    'tr:last-child td{border-bottom:none}' +
+    '@media print{@page{size:A4 landscape;margin:1cm}-webkit-print-color-adjust:exact}' +
+    '</style></head><body>' +
+    '<div class="hdr">' +
+    '<div class="tool">SMTCalc.com / IPC Standards Finder</div>' +
+    '<h1>IPC Standards List</h1>' +
+    '<div class="meta">' +
+      (catLabel ? 'Category: ' + catLabel + ' &nbsp;|&nbsp; ' : '') +
+      (searchLabel ? searchLabel + ' &nbsp;|&nbsp; ' : '') +
+      list.length + ' standard' + (list.length !== 1 ? 's' : '') +
+      ' &nbsp;|&nbsp; Generated: ' + new Date().toLocaleString() +
+    '</div>' +
+    '</div>' +
+    '<table><thead><tr><th>Standard</th><th>Category</th><th>Title</th><th>Description</th></tr></thead><tbody>' +
+    rows +
+    '</tbody></table>' +
+    '</body></html>'
+  );
+  win.document.close();
+  win.onload = function() { win.print(); };
+}
+
+// ============================================================
+//  CONTACT OBFUSCATION
+// ============================================================
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// INIT
+doFilter();
+</script>
+</body>
+</html>
