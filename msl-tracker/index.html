@@ -9,15 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --bg2: #111111;
-      --bg3: #1a1a1a;
-      --accent: #f5a623;
-      --accent2: #e8320a;
-      --text: #f0ede8;
-      --muted: #888;
-      --border: #2a2a2a;
-    }
+      --bg: #f7f5f2;
+      --bg2: #f0ede8;
+      --bg3: #e8e4de;
+      --accent: #c07c0a;
+      --accent2: #be2e0a;
+      --text: #1a1815;
+      --muted: #6b6560;
+      --border: #d5d0ca;
+      --bg4: #dedad3;
+      --green: #1a8c4e;
+      --yellow: #c07c0a;
+      --red: #be2e0a;
+      --border2: #c8c2bb;
+      --mono: 'Share Tech Mono', monospace;
+}
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -26,7 +32,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: 'Barlow', sans-serif;
-      font-weight: 300;
+      font-weight: 400;
       line-height: 1.6;
       overflow-x: hidden;
     }
@@ -50,7 +56,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(10,10,10,0.92);
+      background: rgba(247,245,242,0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -70,7 +76,7 @@
     nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -89,8 +95,8 @@
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(192,124,10,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(192,124,10,0.05) 1px, transparent 1px);
       background-size: 60px 60px;
       mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
     }
@@ -103,7 +109,7 @@
     }
 
     .breadcrumb {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       color: var(--muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -114,12 +120,12 @@
 
     .tool-tag {
       display: inline-block;
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--accent);
-      border: 1px solid rgba(245,166,35,0.3);
+      border: 1px solid rgba(192,124,10,0.35);
       padding: 0.2rem 0.6rem;
       margin-bottom: 1.25rem;
     }
@@ -138,7 +144,7 @@
 
     .page-hero .subtitle {
       font-size: 1.05rem;
-      color: #aaa;
+      color: #5a5550;
       max-width: 580px;
       margin-bottom: 2.5rem;
       line-height: 1.7;
@@ -157,7 +163,7 @@
     }
 
     .download-box-label {
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: 600;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -171,7 +177,7 @@
     }
 
     .download-meta {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: var(--muted);
     }
 
@@ -180,7 +186,7 @@
       align-items: center;
       gap: 0.6rem;
       background: var(--accent);
-      color: #000;
+      color: #1a1815;
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
       font-size: 1rem;
@@ -195,7 +201,7 @@
     .btn-download:hover { background: #ffb940; transform: translateY(-2px); }
 
     .req-note {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: var(--muted);
       margin-top: 0.5rem;
     }
@@ -227,7 +233,7 @@
       display: inline-block;
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.15rem 0.6rem;
@@ -237,7 +243,7 @@
     .sheet-tab.green  { background: rgba(112,173,71,0.2);  color: #70AD47; border: 1px solid rgba(112,173,71,0.3); }
     .sheet-tab.blue   { background: rgba(46,117,182,0.2);  color: #5BA3E0; border: 1px solid rgba(46,117,182,0.3); }
     .sheet-tab.orange { background: rgba(237,125,49,0.2);  color: #ED7D31; border: 1px solid rgba(237,125,49,0.3); }
-    .sheet-tab.grey   { background: rgba(150,150,150,0.15); color: #aaa;   border: 1px solid rgba(150,150,150,0.2); }
+    .sheet-tab.grey   { background: rgba(150,150,150,0.15); color: #5a5550;   border: 1px solid rgba(150,150,150,0.2); }
 
     .sheet-name {
       font-family: 'Barlow Condensed', sans-serif;
@@ -249,14 +255,14 @@
     }
 
     .sheet-desc {
-      font-size: 0.85rem;
-      color: #888;
+      font-size: 0.95rem;
+      color: #6b6560;
       line-height: 1.6;
     }
 
     /* SECTION TITLES */
     .section-label {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 500;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -304,21 +310,21 @@
     .feature-icon {
       width: 32px;
       height: 32px;
-      background: rgba(245,166,35,0.1);
-      border: 1px solid rgba(245,166,35,0.2);
+      background: rgba(192,124,10,0.12);
+      border: 1px solid rgba(192,124,10,0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       color: var(--accent);
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
 
     .feature-text strong {
       display: block;
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.2rem;
@@ -348,7 +354,7 @@
       font-weight: 900;
       font-size: 2.5rem;
       line-height: 1;
-      color: rgba(245,166,35,0.25);
+      color: rgba(192,124,10,0.30);
       flex-shrink: 0;
       width: 48px;
       text-align: right;
@@ -363,7 +369,7 @@
       letter-spacing: 0.05em;
       margin-bottom: 0.3rem;
     }
-    .step-content p { font-size: 0.88rem; color: #888; line-height: 1.6; }
+    .step-content p { font-size: 0.88rem; color: #6b6560; line-height: 1.6; }
 
     /* STATUS LEGEND */
     .status-legend {
@@ -387,7 +393,7 @@
     .legend-badge {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 0.2rem 0.75rem;
@@ -398,9 +404,9 @@
     .badge-yellow { background: #FFF2CC; color: #7F6000; }
     .badge-orange { background: #FFD966; color: #7F3F00; }
     .badge-red    { background: #FCE4D6; color: #C00000; }
-    .badge-grey   { background: #2a2a2a; color: #aaa; border: 1px solid #444; }
+    .badge-grey   { background: #dedad3; color: #5a5550; border: 1px solid #c8c2bb; }
 
-    .legend-desc { font-size: 0.85rem; color: #aaa; }
+    .legend-desc { font-size: 0.95rem; color: #5a5550; }
 
     /* STANDARDS NOTE */
     .standards-note {
@@ -410,7 +416,7 @@
       padding: 1.25rem 1.5rem;
       margin-bottom: 60px;
     }
-    .standards-note p { font-size: 0.88rem; color: #888; line-height: 1.7; }
+    .standards-note p { font-size: 0.88rem; color: #6b6560; line-height: 1.7; }
     .standards-note strong { color: var(--text); }
 
     /* FOOTER */
@@ -428,7 +434,7 @@
       gap: 1rem;
     }
     .footer-copy {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: var(--muted);
     }
     .footer-copy a {
