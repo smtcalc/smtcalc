@@ -85,33 +85,39 @@
       margin: 0 auto;
     }
 
-    .breadcrumb {
-      font-size: 0.85rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
+    .tool-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      margin-bottom: 1.25rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
     }
-    .breadcrumb a { color: var(--accent); text-decoration: none; }
-    .breadcrumb a:hover { text-decoration: underline; }
+    .tool-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px; height: 2px;
+      background: var(--accent);
+    }
 
     .tool-hero h1 {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 900;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
       text-transform: uppercase;
-      letter-spacing: 0.01em;
-      line-height: 1.0;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
       margin-bottom: 0.75rem;
     }
 
-    .tool-hero h1 span { color: var(--accent); }
-
-    .tool-hero-sub {
+    .tool-hero p {
       color: var(--muted);
       font-size: 1rem;
-      max-width: 680px;
-      line-height: 1.65;
+      max-width: 560px;
+      line-height: 1.6;
     }
 
     /* MAIN LAYOUT */
@@ -569,12 +575,9 @@
 
 <div class="tool-hero">
   <div class="tool-hero-inner">
-    <div class="breadcrumb"><a href="/">SMTCalc.com</a> / SMD Resistor Code Calculator</div>
-    <h1>SMD <span>Resistor</span><br>Code Calculator</h1>
-    <p class="tool-hero-sub">
-      Decode surface mount resistor markings instantly. Supports 3-digit, 4-digit, and EIA-96 precision codes.
-      Reverse lookup from resistance value to code. Built for operators, inspectors, and anyone who needs a quick verification on the line.
-    </p>
+    <div class="tool-eyebrow">Components / Passive Identification</div>
+    <h1>SMD Resistor Code Calculator</h1>
+    <p>Decode surface mount resistor markings instantly. Supports 3-digit, 4-digit, and EIA-96 precision codes. Reverse lookup from resistance value to code. Built for operators, inspectors, and anyone who needs a quick verification on the line.</p>
   </div>
 </div>
 
