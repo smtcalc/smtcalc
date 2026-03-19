@@ -1,4 +1,4 @@
-## Hi there 👋
+Code released under the MIT License — free to use, modify, and adapt
 
 <!--
 **smtcalc/smtcalc** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
