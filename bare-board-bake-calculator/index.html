@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bare Board Bake Calculator - SMTCalc</title>
+  <meta name="description" content="Free bare PCB bake time calculator for SMT. Calculate required drying time for bare printed circuit boards before assembly, based on material group, storage duration, and target moisture level.">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f7f5f2;
+    --bg2:     #f0ede8;
+    --bg3:     #e8e4de;
+    --bg4:     #dedad3;
+    --accent:  #c07c0a;
+    --accent2: #be2e0a;
+    --green:   #1a8c4e;
+    --yellow:  #c07c0a;
+    --red:     #be2e0a;
+    --blue:    #2a7ab5;
+    --text:    #1a1815;
+    --muted:   #6b6560;
+    --border:  #d5d0ca;
+    --border2: #c8c2bb;
+    --mono:    'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(247,245,242,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .tool-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* HERO */
+  .tool-hero {
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(192,124,10,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tool-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .tool-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .tool-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px; height: 2px;
+    background: var(--accent);
+  }
+  .tool-hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+  .tool-hero p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  /* MAIN WRAP */
+  .tool-wrap {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  /* PANEL GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .panel {
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+  .panel-full {
+    background: var(--bg);
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .panel-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel-label::before {
+    content: '';
+    display: block;
+    width: 16px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* FIELD */
+  .field { margin-bottom: 1.2rem; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .field-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+    line-height: 1.45;
+  }
+
+  /* TOGGLE GROUP */
+  .toggle-group {
+    display: flex;
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .toggle-group button {
+    flex: 1;
+    background: var(--bg3);
+    border: none;
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.4rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .toggle-group button.active {
+    background: var(--accent);
+    color: #1a1815;
+  }
+
+  /* MATERIAL GROUP SELECTOR */
+  .group-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .group-option {
+    background: var(--bg3);
+    border: none;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .group-option.active {
+    background: var(--bg4);
+    border-left: 3px solid var(--accent);
+    padding-left: calc(1rem - 3px);
+  }
+  .group-option-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--muted);
+    line-height: 1;
+    min-width: 1.5rem;
+    margin-top: 0.1rem;
+  }
+  .group-option.active .group-option-num { color: var(--accent); }
+  .group-option-text {}
+  .group-option-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 0.15rem;
+  }
+  .group-option-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  /* RESULT AREA */
+  .bake-result {
+    text-align: center;
+    padding: 1.5rem 0 1rem;
+  }
+  .bake-result-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .bake-time-big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+  .bake-time-unit {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .bake-time-big.no-bake { color: var(--green); font-size: clamp(1.8rem, 5vw, 2.8rem); line-height: 1.1; }
+  .bake-time-big.warn { color: var(--yellow); }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .stat-box {
+    background: var(--bg3);
+    padding: 0.9rem 1rem;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--text);
+  }
+  .stat-unit {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .stat-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    line-height: 1.3;
+  }
+
+  /* NOTICE BANNER */
+  .notice {
+    padding: 0.9rem 1.1rem;
+    border-left: 3px solid var(--border2);
+    background: var(--bg3);
+    margin-bottom: 1.5px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text);
+    display: none;
+  }
+  .notice.show { display: block; }
+  .notice.warn { border-left-color: var(--yellow); }
+  .notice.info { border-left-color: var(--blue); }
+  .notice.good { border-left-color: var(--green); }
+  .notice strong { font-weight: 600; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 12px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* ACCORDION GUIDE */
+  .accordion {
+    border: 1px solid var(--border);
+    margin-bottom: 1.5px;
+  }
+  .accordion-item { border-bottom: 1px solid var(--border); }
+  .accordion-item:last-child { border-bottom: none; }
+  .accordion-header {
+    width: 100%;
+    background: var(--bg);
+    border: none;
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg2); }
+  .accordion-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .accordion-icon {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); }
+  .accordion-body {
+    display: none;
+    padding: 1.25rem 1.5rem 1.5rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+  .accordion-body p { margin-bottom: 0.9rem; }
+  .accordion-body p:last-child { margin-bottom: 0; }
+  .accordion-body strong { font-weight: 600; color: var(--text); }
+
+  /* MATERIAL TABLE IN GUIDE */
+  .mat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.82rem;
+  }
+  .mat-table th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    background: var(--bg3);
+  }
+  .mat-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .mat-table tr:last-child td { border-bottom: none; }
+  .mat-table .grp-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--accent);
+  }
+
+  /* PRINT BAR */
+  .print-bar {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .print-bar label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .print-bar input[type=text] {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    padding: 0.55rem 0.9rem;
+    outline: none;
+  }
+  .print-bar input[type=text]:focus { border-color: var(--accent); }
+  .print-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* FORMULA BLOCK */
+  .formula-block {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-copy {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .footer-copy a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .tool-hero { padding: 2rem 1.25rem 1.5rem; }
+    .tool-wrap { padding: 0 1.25rem; }
+    .print-bar { padding: 0 1.25rem; }
+    .accordion-header { padding: 1rem 1.25rem; }
+    .accordion-body { padding: 1rem 1.25rem 1.25rem; }
+  }
+  @media (max-width: 400px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    header, .print-bar, .accordion { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Bare Board Bake Calculator</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">PCB Handling / Moisture</div>
+    <h1>Bare Board<br>Bake Calculator</h1>
+    <p>Calculate the required drying time for bare printed circuit boards before assembly. Based on PCB material group, storage conditions, and target moisture level, using the Arrhenius-derived diffusion model from the Solectron Aquaboard study.</p>
+  </div>
+</div>
+
+<div class="tool-wrap">
+
+  <!-- MAIN GRID: INPUTS + RESULTS -->
+  <div class="main-grid">
+
+    <!-- LEFT: INPUTS -->
+    <div class="panel">
+      <div class="panel-label">PCB Parameters</div>
+
+      <!-- MATERIAL GROUP -->
+      <div class="field">
+        <label>PCB Material Group</label>
+        <div class="group-options" id="groupOptions">
+          <button class="group-option" data-group="1" onclick="setGroup(1)">
+            <div class="group-option-num">1</div>
+            <div class="group-option-text">
+              <div class="group-option-name">Low Absorption</div>
+              <div class="group-option-desc">HF materials, PTFE, boards with full copper ground on outer layers. Rarely requires baking.</div>
+            </div>
+          </button>
+          <button class="group-option active" data-group="2" onclick="setGroup(2)">
+            <div class="group-option-num">2</div>
+            <div class="group-option-text">
+              <div class="group-option-name">Standard FR-4</div>
+              <div class="group-option-desc">Standard FR-4, E-glass/Epoxy, E-glass/BT, Aramid/Epoxy. Most common production boards.</div>
+            </div>
+          </button>
+          <button class="group-option" data-group="3" onclick="setGroup(3)">
+            <div class="group-option-num">3</div>
+            <div class="group-option-text">
+              <div class="group-option-name">High Absorption</div>
+              <div class="group-option-desc">Polyimide, phenol, paper-based (CEM1, CEM3), flex and rigid-flex. Moisture-sensitive materials.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STORAGE DURATION -->
+      <div class="field">
+        <label>Storage Duration Before Baking</label>
+        <div class="toggle-group" id="storageToggle">
+          <button class="active" onclick="setStorage(false)">Less than 3 months</button>
+          <button onclick="setStorage(true)">More than 3 months</button>
+        </div>
+      </div>
+
+      <!-- BAKE TEMPERATURE -->
+      <div class="field">
+        <label>Bake Temperature</label>
+        <div class="toggle-group" id="tempToggle">
+          <button onclick="setTemp(80)">80&#176;C</button>
+          <button onclick="setTemp(90)">90&#176;C</button>
+          <button onclick="setTemp(100)">100&#176;C</button>
+          <button onclick="setTemp(110)">110&#176;C</button>
+          <button class="active" onclick="setTemp(120)">120&#176;C</button>
+        </div>
+        <div class="field-note">Valid range: 80&#176;C to 120&#176;C. All temperatures require &lt;5% RH environment.</div>
+      </div>
+
+      <!-- TARGET MOISTURE LEVEL -->
+      <div class="field">
+        <label>Target Moisture Level</label>
+        <div class="toggle-group" id="ppmToggle">
+          <button class="active" onclick="setPPM(800)">800 PPM</button>
+          <button onclick="setPPM(1600)">1600 PPM</button>
+          <button onclick="setPPM(2400)">2400 PPM</button>
+        </div>
+        <div class="field-note">IPC-HDBK-001 recommends 800 PPM maximum prior to soldering. The Aquaboard study found no delamination below 2400 PPM in three successive reflow passes.</div>
+      </div>
+
+    </div><!-- end inputs panel -->
+
+    <!-- RIGHT: RESULTS -->
+    <div class="panel">
+      <div class="panel-label">Bake Time Required</div>
+
+      <div class="bake-result">
+        <div class="bake-result-label">Required Bake Time</div>
+        <div class="bake-time-big" id="bakeTimeDisplay">--</div>
+        <div class="bake-time-unit" id="bakeTimeUnit"></div>
+      </div>
+
+      <div id="noticeNoBake" class="notice good show">
+        <strong>No bake required.</strong> This material group does not absorb enough moisture to exceed the target level under the selected storage conditions. Store in dry packaging and proceed directly to assembly.
+      </div>
+
+      <div id="noticeWarnTemp" class="notice warn">
+        <strong>Low temperature efficiency.</strong> At 80&#176;C, baking efficiency is approximately 18% that of 120&#176;C. Results may vary significantly between board types. Consider increasing to 100&#176;C or higher for reliable and consistent drying.
+      </div>
+
+      <div id="noticeOSP" class="notice warn">
+        <strong>OSP finish note:</strong> Baking degrades OSP (Organic Solderability Preservative) coatings. If boards have an OSP finish, consult the finish supplier before baking. Dry packaging is the preferred storage method for OSP boards.
+      </div>
+
+      <div id="statsArea" style="display:none;">
+        <div class="section-label">Post-Bake Floor Life</div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Ambient Air</div>
+            <div class="stat-value" id="floorLifeAmbient">--</div>
+            <div class="stat-sub" id="floorLifeAmbientSub">at 45% RH / 23&#176;C</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Dry Cabinet</div>
+            <div class="stat-value" id="floorLifeDryCab">--</div>
+            <div class="stat-sub" id="floorLifeDryCabSub">below 5% RH / 23&#176;C</div>
+          </div>
+        </div>
+        <div class="field-note" style="margin-top:0.5rem;">Floor life is the time from baking until the board re-absorbs moisture back to the target level. Boards must be used or returned to dry storage within this window.</div>
+      </div>
+
+    </div><!-- end results panel -->
+  </div><!-- end main grid -->
+
+  <!-- FORMULA REFERENCE -->
+  <div class="panel-full">
+    <div class="section-label">Calculation Method</div>
+    <p style="font-size:0.87rem; line-height:1.6; color:var(--muted); margin-bottom:0.75rem;">
+      Bake time is calculated using the Arrhenius-derived diffusion model from the Solectron Aquaboard study (IPC Apex 2004), established by measuring moisture desorption across seven PCB types at five temperatures from 80&#176;C to 120&#176;C.
+    </p>
+    <div class="formula-block">
+      t (hrs) = A &times; 1.92 &times; 10<sup>-6</sup> &times; e<sup>(5726 / T)</sup><br>
+      T = bake temperature in Kelvin (&#176;C + 273.15)<br>
+      A = material correction coefficient (see table below)
+    </div>
+    <p style="font-size:0.82rem; line-height:1.5; color:var(--muted); margin-top:0.6rem;">
+      Valid for PCB thickness below 2.6 mm. The study population was predominantly E-glass/Epoxy (FR-4) and E-glass/Polyimide. Results for other materials within each group should be treated as estimates. Always verify using the IPC-TM-650 Method 2.6.28 weight-loss test method if your process requires traceable moisture measurement.
+    </p>
+  </div>
+
+  <!-- ACCORDION GUIDE -->
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">What Is Diffusion and Why Does Temperature Matter?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Diffusion is the movement of molecules from an area of high concentration to an area of low concentration, without any external force driving them. A familiar example: a sugar cube placed in coffee will dissolve and spread evenly through the cup on its own, even without stirring. The same principle governs how moisture moves in and out of a PCB laminate.</p>
+        <p>The epoxy resin in an FR-4 board is a porous polymer that binds moisture molecules to itself at the molecular level, much like wood absorbs water. When a dry board is placed in humid air, water molecules slowly work their way inward from all surfaces. When the same board is placed in a hot, dry oven, the process runs in reverse: moisture migrates from the interior toward the surfaces and evaporates off.</p>
+        <p><strong>Why temperature is the critical variable:</strong> the speed at which molecules move through the resin increases exponentially with temperature, following the Arrhenius relationship. At 40&#176;C, the diffusion rate is so slow that removing meaningful moisture from a saturated board would take weeks. At 120&#176;C, the same process is several hundred times faster, and a standard FR-4 board can be dried to below 800 PPM in approximately four hours. Lowering the surrounding humidity to zero does not change this rate. The moisture is already inside the resin; temperature is what gets it out.</p>
+        <p>This is also why a condensing drying cabinet at 40&#176;C is an excellent storage device for already-dry boards, but is not capable of drying a board that has absorbed moisture during ambient storage. The cabinet prevents further absorption effectively. It does not undo absorption that has already occurred.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">PCB Material Groups Explained</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>The three material groups are defined by how much moisture the board absorbs after 28 days at 85&#176;C / 85% RH (the standard accelerated moisture soak condition).</p>
+        <table class="mat-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Absorption limit</th>
+              <th>Typical materials</th>
+              <th>Ambient floor life to 800 PPM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="grp-num">1</span></td>
+              <td>Below 4000 PPM</td>
+              <td>PTFE, ceramic/hydrocarbon (HF materials), E-glass/APPE, FR-4 with full copper planes on both outer layers</td>
+              <td>720 hrs (30 days)</td>
+            </tr>
+            <tr>
+              <td><span class="grp-num">2</span></td>
+              <td>4000 to 9000 PPM</td>
+              <td>Standard FR-4, E-glass/Epoxy, E-glass/BT, Aramid/Epoxy. The most common production board material.</td>
+              <td>72 hrs (3 days)</td>
+            </tr>
+            <tr>
+              <td><span class="grp-num">3</span></td>
+              <td>Above 9000 PPM</td>
+              <td>Polyimide (rigid and flexible), phenol resin, paper-based (CEM1, CEM3), paper/phenol, rigid-flex. Thin pure polyimide flex can exceed 800 PPM in under 30 minutes.</td>
+              <td>24 hrs (1 day)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Note: copper does not absorb moisture. A board with dense copper planes on outer layers has less available resin volume per unit area, which lowers its effective absorption rate. This is why some FR-4 designs fall into Group 1 despite being made from standard epoxy resin.</p>
+        <p>One Group 2 exception worth noting: Aramid/Epoxy (PCB II.11 in the Aquaboard study) reached 800 PPM in only 70 hours at ambient conditions, faster than typical FR-4. The aramid reinforcement is hygroscopic. If your boards use Aramid reinforcement, treat them conservatively within Group 2.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Baking Considerations by Surface Finish</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Surface finish affects whether and how you can bake a board. IPC-1601 Table 3-1 lists the following guidelines:</p>
+        <table class="mat-table">
+          <thead>
+            <tr>
+              <th>Finish</th>
+              <th>Temperature</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ENIG / Nickel-Gold</td>
+              <td>105-125&#176;C</td>
+              <td>Stable. Generally no issue with extended baking.</td>
+            </tr>
+            <tr>
+              <td>Immersion Silver</td>
+              <td>105-125&#176;C</td>
+              <td>Silver may tarnish at elevated temperature. Use sulfur-free packaging after baking.</td>
+            </tr>
+            <tr>
+              <td>Immersion Tin</td>
+              <td>105-125&#176;C</td>
+              <td>Baking may reduce solderability. Each bake accelerates Cu-Sn intermetallic growth.</td>
+            </tr>
+            <tr>
+              <td>HASL / HAL</td>
+              <td>105-125&#176;C</td>
+              <td>Thin areas below 0.77 um may become fully intermetallic and lose solderability.</td>
+            </tr>
+            <tr>
+              <td>OSP</td>
+              <td>Consult supplier</td>
+              <td>Baking degrades the organic coating. Avoid if possible. Dry packaging is preferred.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Every bake cycle degrades solderability to some degree. Baking is a corrective measure, not a routine process step. The right strategy is proper dry packaging from the board fabricator through to assembly, so that baking is never needed.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Method Notes and Limitations</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>The calculation model was established for PCB thickness below 2.6 mm. For thicker boards, longer bake times will be required because moisture must diffuse a greater distance to reach the surface. As a rule of thumb, time scales approximately with the square of thickness.</p>
+        <p>The study population was predominantly E-glass/Epoxy (FR-4) and E-glass/Polyimide boards. Applying the model to less common materials within each group should be treated as a starting estimate, not a certified result.</p>
+        <p>Stacking boards in the oven significantly reduces baking efficiency. The Aquaboard study confirmed that air circulation between boards is required for the time estimates to hold. Use proper rack fixtures to ensure airflow on all board surfaces.</p>
+        <p>For process qualification or customer-traceable results, verify moisture content using IPC-TM-650 Method 2.6.28 (weight-loss method). Weigh the board before baking, bake, weigh again at regular intervals. The board is dry when weight stabilizes. An analytical balance accurate to 0.0001 g is required.</p>
+        <p>The floor life values shown are averages from the Aquaboard study. Individual board designs may behave differently, particularly boards with unusual copper density, unusual aspect ratios, or large exposed edge areas from routing.</p>
+        <p>Source: W. Horaud, S. Leroux, H. Fremont, D. Navarro. "PCB Materials Behaviours towards Humidity and Impact of the Design, Finishes, Baking and Assembly Processes on Assembly Quality and Solder Joint Reliability." Solectron / ACB / IXL. Presented at IPC APEX 2004.</p>
+      </div>
+    </div>
+
+  </div><!-- end accordion -->
+
+</div><!-- end tool-wrap -->
+
+<!-- PRINT BAR -->
+<div class="print-bar">
+  <label>Report Reference</label>
+  <input type="text" id="printRef" placeholder="e.g. Project X -- Board Rev B">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<script>
+  // STATE
+  var state = {
+    group: 2,
+    storageLong: false,
+    temp: 120,
+    ppm: 800
+  };
+
+  // CORRECTION COEFFICIENT TABLE from Aquaboard Table 3
+  // A[group][storageLong][ppm]
+  var A_TABLE = {
+    1: {
+      'false': { 800: 0,   1600: 0,    2400: 0 },
+      'true':  { 800: 1,   1600: 0.25, 2400: 0 }
+    },
+    2: {
+      'false': { 800: 1,   1600: 0.25, 2400: 0 },
+      'true':  { 800: 2,   1600: 1,    2400: 0.25 }
+    },
+    3: {
+      'false': { 800: 2,   1600: 0.5,  2400: 0.25 },
+      'true':  { 800: 3,   1600: 2,    2400: 1 }
+    }
+  };
+
+  // FLOOR LIFE TABLE - ambient air (45% RH, 23 deg C) - Table 5
+  // null = no practical limit
+  var FL_AMBIENT = {
+    1: { 800: 720,  1600: null, 2400: null },
+    2: { 800: 72,   1600: 288,  2400: 480  },
+    3: { 800: 24,   1600: 60,   2400: 120  }
+  };
+
+  // FLOOR LIFE TABLE - dry cabinet (<5% RH, 23 deg C) - Table 4
+  var FL_DRY = {
+    1: { 800: null, 1600: null, 2400: null },
+    2: { 800: 2976, 1600: null, 2400: null },
+    3: { 800: 1488, 1600: 2976, 2400: null }
+  };
+
+  function calcBakeTime(group, storageLong, temp_c, targetPPM) {
+    var a = A_TABLE[group][String(storageLong)][targetPPM];
+    if (a === 0) return 0;
+    var T = temp_c + 273.15;
+    return a * 1.92e-6 * Math.exp(5726 / T);
+  }
+
+  function formatHours(h) {
+    if (h < 1) {
+      var mins = Math.round(h * 60);
+      return { val: String(mins), unit: 'min' };
+    }
+    if (h < 48) {
+      var rounded = Math.round(h * 10) / 10;
+      return { val: rounded.toFixed(1), unit: 'hrs' };
+    }
+    var days = Math.round(h / 24 * 10) / 10;
+    return { val: days.toFixed(1), unit: 'days' };
+  }
+
+  function formatFloorLife(hrs) {
+    if (hrs === null) return { val: 'No limit', unit: '', sub: 'under normal conditions' };
+    if (hrs >= 720) {
+      var d = Math.round(hrs / 24);
+      return { val: d + ' days', unit: '', sub: '(' + hrs + ' hrs)' };
+    }
+    if (hrs >= 48) {
+      var d2 = Math.round(hrs / 24 * 10) / 10;
+      return { val: d2 + ' days', unit: '', sub: '(' + hrs + ' hrs)' };
+    }
+    return { val: hrs + ' hrs', unit: '', sub: '(' + (hrs / 24).toFixed(1) + ' days)' };
+  }
+
+  function setGroup(g) {
+    state.group = g;
+    document.querySelectorAll('.group-option').forEach(function(el) {
+      el.classList.toggle('active', parseInt(el.dataset.group) === g);
+    });
+    calculate();
+  }
+
+  function setStorage(longStorage) {
+    state.storageLong = longStorage;
+    var btns = document.querySelectorAll('#storageToggle button');
+    btns[0].classList.toggle('active', !longStorage);
+    btns[1].classList.toggle('active', longStorage);
+    calculate();
+  }
+
+  function setTemp(t) {
+    state.temp = t;
+    var temps = [80, 90, 100, 110, 120];
+    var btns = document.querySelectorAll('#tempToggle button');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', temps[i] === t);
+    });
+    calculate();
+  }
+
+  function setPPM(p) {
+    state.ppm = p;
+    var ppms = [800, 1600, 2400];
+    var btns = document.querySelectorAll('#ppmToggle button');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', ppms[i] === p);
+    });
+    calculate();
+  }
+
+  function calculate() {
+    var t = calcBakeTime(state.group, state.storageLong, state.temp, state.ppm);
+
+    var display = document.getElementById('bakeTimeDisplay');
+    var unitEl = document.getElementById('bakeTimeUnit');
+    var statsArea = document.getElementById('statsArea');
+    var noticeNoBake = document.getElementById('noticeNoBake');
+    var noticeWarnTemp = document.getElementById('noticeWarnTemp');
+
+    // OSP notice only shown always as informational
+    document.getElementById('noticeOSP').classList.remove('show');
+
+    if (t === 0) {
+      // No bake required
+      display.textContent = 'No Bake';
+      display.className = 'bake-time-big no-bake';
+      unitEl.textContent = 'Required';
+      noticeNoBake.classList.add('show');
+      noticeWarnTemp.classList.remove('show');
+      statsArea.style.display = 'none';
+    } else {
+      noticeNoBake.classList.remove('show');
+      var fmt = formatHours(t);
+      display.textContent = fmt.val;
+      display.className = 'bake-time-big';
+      unitEl.textContent = fmt.unit;
+
+      // Temp warning
+      if (state.temp <= 80) {
+        noticeWarnTemp.classList.add('show');
+      } else {
+        noticeWarnTemp.classList.remove('show');
+      }
+
+      // Floor life
+      statsArea.style.display = 'block';
+      var flAmb = FL_AMBIENT[state.group][state.ppm];
+      var flDry = FL_DRY[state.group][state.ppm];
+
+      var fmtAmb = formatFloorLife(flAmb);
+      var fmtDry = formatFloorLife(flDry);
+
+      document.getElementById('floorLifeAmbient').textContent = fmtAmb.val;
+      document.getElementById('floorLifeAmbientSub').textContent = fmtAmb.sub || ('at 45% RH / 23&#176;C');
+      document.getElementById('floorLifeDryCab').textContent = fmtDry.val;
+      document.getElementById('floorLifeDryCabSub').textContent = fmtDry.sub || ('below 5% RH / 23&#176;C');
+    }
+  }
+
+  function toggleAccordion(btn) {
+    var item = btn.parentElement;
+    item.classList.toggle('open');
+  }
+
+  function printReport() {
+    var ref = document.getElementById('printRef').value || 'Bare Board Bake';
+    var t = calcBakeTime(state.group, state.storageLong, state.temp, state.ppm);
+    var bakeStr = t === 0 ? 'No bake required' : (function() { var f = formatHours(t); return f.val + ' ' + f.unit; })();
+    var groupNames = { 1: 'Group 1 - Low Absorption', 2: 'Group 2 - Standard FR-4', 3: 'Group 3 - High Absorption' };
+    var storageStr = state.storageLong ? 'More than 3 months' : 'Less than 3 months';
+
+    var flAmb = FL_AMBIENT[state.group][state.ppm];
+    var flDry = FL_DRY[state.group][state.ppm];
+    var flAmbStr = formatFloorLife(flAmb).val;
+    var flDryStr = formatFloorLife(flDry).val;
+
+    var ts = new Date().toLocaleString();
+    var win = window.open('', '_blank');
+    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bare Board Bake Report</title>');
+    win.document.write('<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">');
+    win.document.write('<style>');
+    win.document.write('*{box-sizing:border-box;margin:0;padding:0;}');
+    win.document.write('body{background:#fff;color:#1a1815;font-family:Barlow,sans-serif;font-weight:400;padding:2.5rem;max-width:720px;margin:0 auto;font-size:14px;}');
+    win.document.write('.rpt-header{border-bottom:3px solid #c07c0a;padding-bottom:1.25rem;margin-bottom:1.75rem;}');
+    win.document.write('.rpt-tool{font-family:"Barlow Condensed",sans-serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:#888;margin-bottom:0.3rem;}');
+    win.document.write('.rpt-title{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;line-height:1;margin-bottom:0.5rem;}');
+    win.document.write('.rpt-ts{font-family:"Share Tech Mono",monospace;font-size:0.75rem;color:#888;}');
+    win.document.write('.rpt-section{font-family:"Share Tech Mono",monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:#c07c0a;margin:1.5rem 0 0.75rem;border-top:1px solid #e0ddd8;padding-top:0.75rem;}');
+    win.document.write('.rpt-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid #f0ede8;font-size:0.88rem;}');
+    win.document.write('.rpt-row .lbl{color:#888;font-family:"Share Tech Mono",monospace;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;}');
+    win.document.write('.rpt-row .val{font-weight:500;text-align:right;}');
+    win.document.write('.rpt-big{text-align:center;padding:1.5rem 0;border:2px solid #c07c0a;margin:1rem 0;}');
+    win.document.write('.rpt-big .num{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:3.5rem;color:#c07c0a;line-height:1;}');
+    win.document.write('.rpt-big .lbl{font-family:"Share Tech Mono",monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#888;margin-top:0.3rem;}');
+    win.document.write('.rpt-note{font-size:0.8rem;color:#888;margin-top:1rem;line-height:1.5;padding:0.75rem;background:#f7f5f2;border-left:3px solid #d5d0ca;}');
+    win.document.write('@media print{@page{size:A4 portrait;margin:0;}body{padding:1.5cm;max-width:none;}-webkit-print-color-adjust:exact;print-color-adjust:exact;}');
+    win.document.write('</style></head><body>');
+    win.document.write('<div class="rpt-header">');
+    win.document.write('<div class="rpt-tool">SMTCalc.com -- Bare Board Bake Calculator</div>');
+    win.document.write('<div class="rpt-title">' + ref + '</div>');
+    win.document.write('<div class="rpt-ts">Generated: ' + ts + '</div>');
+    win.document.write('</div>');
+    win.document.write('<div class="rpt-section">Input Parameters</div>');
+    win.document.write('<div class="rpt-row"><span class="lbl">Material Group</span><span class="val">' + groupNames[state.group] + '</span></div>');
+    win.document.write('<div class="rpt-row"><span class="lbl">Storage Duration</span><span class="val">' + storageStr + '</span></div>');
+    win.document.write('<div class="rpt-row"><span class="lbl">Bake Temperature</span><span class="val">' + state.temp + '&#176;C</span></div>');
+    win.document.write('<div class="rpt-row"><span class="lbl">Target Moisture Level</span><span class="val">' + state.ppm + ' PPM</span></div>');
+    win.document.write('<div class="rpt-section">Result</div>');
+    win.document.write('<div class="rpt-big"><div class="num">' + bakeStr + '</div><div class="lbl">Required Bake Time</div></div>');
+    if (t > 0) {
+      win.document.write('<div class="rpt-section">Post-Bake Floor Life</div>');
+      win.document.write('<div class="rpt-row"><span class="lbl">Ambient Air (45% RH / 23&#176;C)</span><span class="val">' + flAmbStr + '</span></div>');
+      win.document.write('<div class="rpt-row"><span class="lbl">Dry Cabinet (below 5% RH)</span><span class="val">' + flDryStr + '</span></div>');
+    }
+    win.document.write('<div class="rpt-note">');
+    win.document.write('Method: Arrhenius diffusion model from Solectron Aquaboard study (IPC APEX 2004). ');
+    win.document.write('Valid for PCB thickness below 2.6 mm. ');
+    win.document.write('Verify with IPC-TM-650 Method 2.6.28 for traceable results. ');
+    win.document.write('Floor life data: maximum storage at ambient air (45% RH, 23&#176;C) or dry cabinet (below 5% RH) before re-baking is required. ');
+    win.document.write('Source: W. Horaud et al., Solectron / ACB / IXL, IPC APEX 2004.');
+    win.document.write('</div>');
+    win.document.write('</body></html>');
+    win.document.close();
+    win.onload = function() { win.print(); };
+  }
+
+  // Init
+  calculate();
+</script>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function showContact() {
+    var u = 'contact';
+    var d = 'smtcalc.com';
+    var a = document.getElementById('contact-link');
+    a.href = 'mailto:' + u + '@' + d;
+    a.textContent = u + '@' + d;
+    a.onclick = null;
+  }
+</script>
+
+</body>
+</html>
