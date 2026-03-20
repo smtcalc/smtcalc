@@ -2,73 +2,79 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://smtcalc.com/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/about/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/stencil-coach/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/smt-capacity-calculator/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/msl-bake-calculator/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/reflow-throughput-calculator/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/placement-speed-verifier/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/resistor-code-calculator/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/solder-alloy-reference/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/msl-tracker/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/flux-designator-decoder/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://smtcalc.com/ipc-standards-finder/</loc>
-    <lastmod>2026-03-19</lastmod>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://smtcalc.com/bare-board-bake-calculator/</loc>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
