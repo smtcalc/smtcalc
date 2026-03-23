@@ -30,18 +30,18 @@
   .tool-hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; line-height: 0.95; letter-spacing: -0.01em; margin-bottom: 0.75rem; }
   .tool-hero p { color: var(--muted); font-size: 1rem; max-width: 560px; line-height: 1.6; }
   .tool-main { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
-  .download-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 2rem 2.25rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; overflow: hidden; min-width: 0; }
-  .download-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem; word-break: break-all; overflow-wrap: break-word; }
+  .download-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 1.5rem 1.75rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .download-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1rem, 3.5vw, 1.6rem); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem; overflow-wrap: break-word; word-break: break-word; }
   .download-card-meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0; }
   .download-card-meta span { margin-right: 1.25rem; white-space: nowrap; }
   .download-card-desc { font-size: 0.95rem; color: #5a5550; line-height: 1.65; max-width: 480px; }
   .download-btn { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.85rem 1.75rem; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; align-self: center; }
   .download-btn:hover { background: #a06808; }
   @media (max-width: 600px) {
-    .download-card { flex-direction: column; }
-    .download-card-title { font-size: 1.1rem; }
+    .download-card { padding: 1.25rem; gap: 1rem; }
     .download-card-desc { max-width: 100%; }
     .download-btn { width: 100%; justify-content: center; }
+    .download-card-meta { font-size: 0.72rem; }
   }
   .sheet-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
   @media (max-width: 640px) { .sheet-grid { grid-template-columns: 1fr; } }
@@ -123,7 +123,7 @@
 </div>
 <div class="tool-main">
   <div class="download-card">
-    <div class="download-card-info" style="min-width:0;flex:1;">
+    <div class="download-card-info" style="min-width:0;flex:1 1 240px;">
       <div class="download-card-title">SMT_Line_Capacity_Planner.xlsx</div>
       <div class="download-card-meta"><span>Format: .xlsx</span><span>Sheets: 3</span><span>Compatible: Excel 2016+ &amp; LibreOffice Calc</span><span>Free &mdash; no registration</span></div>
       <div class="download-card-desc">Fill in the blue input cells on the INPUTS sheet. Results update automatically on the RESULTS sheet. No macros. Works offline.</div>
