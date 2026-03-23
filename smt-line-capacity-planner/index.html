@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMT Line Capacity Planner &mdash; SMTCalc</title>
+<meta name="description" content="Free Excel workbook for calculating the realistic maximum capacity of a single SMT line. Models per-machine placer throughput, reflow oven bottleneck, OEE, per-product panelization, changeover losses, and utilisation.">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f7f5f2; --bg2:     #f0ede8; --bg3:     #e8e4de; --bg4:     #dedad3;
+    --accent:  #c07c0a; --accent2: #be2e0a; --green:   #1a8c4e; --yellow:  #c07c0a;
+    --red:     #be2e0a; --text:    #1a1815; --muted:   #6b6560;
+    --border:  #d5d0ca; --border2: #c8c2bb;
+    --mono: 'Share Tech Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 400; min-height: 100vh; }
+  header { position: sticky; top: 0; z-index: 100; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; background: rgba(247,245,242,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.4rem; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; color: var(--text); }
+  .logo span { color: var(--accent); }
+  .tool-badge { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border2); padding: 0.3rem 0.75rem; }
+  .tool-hero { padding: 3rem 2rem 2rem; border-bottom: 1px solid var(--border); background: var(--bg2); position: relative; overflow: hidden; }
+  .tool-hero::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(192,124,10,0.08) 0%, transparent 70%); pointer-events: none; }
+  .tool-hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .tool-eyebrow { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .tool-eyebrow::before { content: ''; display: block; width: 20px; height: 2px; background: var(--accent); }
+  .tool-hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; line-height: 0.95; letter-spacing: -0.01em; margin-bottom: 0.75rem; }
+  .tool-hero p { color: var(--muted); font-size: 1rem; max-width: 560px; line-height: 1.6; }
+  .tool-main { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
+  .download-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 2rem 2.25rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .download-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem; }
+  .download-card-meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.9rem; }
+  .download-card-meta span { margin-right: 1.25rem; }
+  .download-card-desc { font-size: 0.95rem; color: #5a5550; line-height: 1.65; max-width: 480px; }
+  .download-btn { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.85rem 1.75rem; transition: background 0.2s; white-space: nowrap; flex-shrink: 0; align-self: center; }
+  .download-btn:hover { background: #a06808; }
+  .sheet-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
+  @media (max-width: 640px) { .sheet-grid { grid-template-columns: 1fr; } }
+  .sheet-card { background: var(--bg); padding: 1.5rem 1.75rem; }
+  .sheet-tab { display: inline-block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.55rem; border: 1px solid; margin-bottom: 0.75rem; }
+  .sheet-tab.blue { color: #0055a4; border-color: rgba(0,85,164,0.3); background: rgba(0,85,164,0.05); }
+  .sheet-tab.green { color: var(--green); border-color: rgba(26,140,78,0.3); background: rgba(26,140,78,0.05); }
+  .sheet-tab.grey { color: var(--muted); border-color: var(--border2); }
+  .sheet-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .sheet-card-body { font-size: 0.88rem; color: #5a5550; line-height: 1.6; }
+  .inline-guide { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
+  .guide-toggle-btn { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.9rem 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; transition: background 0.2s; }
+  .guide-toggle-btn:hover { background: var(--bg3); }
+  .guide-toggle-label { display: flex; align-items: center; gap: 0.75rem; }
+  .guide-toggle-label svg { flex-shrink: 0; }
+  .guide-toggle-arrow { font-size: 1rem; color: var(--accent); transition: transform 0.25s; display: inline-block; }
+  .guide-toggle-arrow.open { transform: rotate(180deg); }
+  .guide-content { display: none; background: var(--bg2); border: 1px solid var(--border); border-top: none; border-left: 3px solid var(--accent); }
+  .guide-content.open { display: block; }
+  .guide-section { padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border); }
+  .guide-section:last-child { border-bottom: none; }
+  .guide-section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .guide-section-title::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); }
+  .guide-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 600px) { .guide-two-col { grid-template-columns: 1fr; } }
+  .guide-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 700px) { .guide-three-col { grid-template-columns: 1fr; } }
+  .guide-card { background: var(--bg3); border: 1px solid var(--border2); padding: 1rem 1.1rem; }
+  .guide-card-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--text); margin-bottom: 0.4rem; }
+  .guide-card-body { font-size: 0.9rem; color: #5a5550; line-height: 1.6; }
+  .guide-formula { font-family: var(--mono); font-size: 0.85rem; background: var(--bg4); border: 1px solid var(--border2); padding: 0.6rem 0.9rem; color: var(--accent); margin: 0.5rem 0; line-height: 1.7; display: inline-block; width: 100%; white-space: pre-wrap; word-break: break-word; overflow-x: auto; }
+  .guide-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  @media (max-width: 600px) { .guide-steps { grid-template-columns: 1fr; } }
+  .guide-step { display: flex; gap: 0.75rem; align-items: flex-start; background: var(--bg3); border: 1px solid var(--border2); padding: 0.9rem 1rem; }
+  .guide-step-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--accent); line-height: 1; flex-shrink: 0; min-width: 1.5rem; }
+  .guide-step-text h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 0.25rem; }
+  .guide-step-text p { font-size: 0.88rem; color: #6b6560; line-height: 1.55; }
+  .guide-note { background: rgba(192,124,10,0.08); border: 1px solid rgba(192,124,10,0.22); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem; font-size: 0.88rem; color: #6a6560; line-height: 1.55; margin-top: 1rem; }
+  .guide-verdict-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+  .guide-verdict-chip { font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.6rem; border: 1px solid; letter-spacing: 0.05em; }
+  .guide-verdict-chip.pass { color: var(--green); border-color: rgba(26,140,78,0.3); }
+  .guide-verdict-chip.warn { color: var(--yellow); border-color: rgba(192,124,10,0.3); }
+  .guide-verdict-chip.fail { color: var(--red); border-color: rgba(190,46,10,0.3); }
+  .guide-tip { background: var(--bg3); border: 1px solid var(--border2); padding: 1rem 1.1rem; margin-top: 0.75rem; }
+  .guide-tip-num { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .guide-tip-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+  .guide-tip-body { font-size: 0.88rem; color: #5a5550; line-height: 1.6; }
+  .related-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .related-header { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+  .related-header::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); }
+  .related-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  @media (max-width: 640px) { .related-grid { grid-template-columns: 1fr; } }
+  .related-card { background: var(--bg); padding: 1.5rem 1.75rem; text-decoration: none; color: inherit; display: block; transition: background 0.2s; position: relative; overflow: hidden; }
+  .related-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s ease; }
+  .related-card:hover { background: var(--bg3); }
+  .related-card:hover::before { transform: scaleY(1); }
+  .related-tag { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .related-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.25rem; text-transform: uppercase; line-height: 1.1; margin-bottom: 0.5rem; }
+  .related-desc { font-size: 0.85rem; color: #6b6560; line-height: 1.55; margin-bottom: 0.9rem; }
+  .related-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+  .related-card:hover .related-link { color: var(--accent); }
+  footer { padding: 3rem 2rem; border-top: 1px solid var(--border); }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-copy { font-size: 0.9rem; color: var(--muted); }
+  .footer-copy a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">SMT Line Capacity Planner</div>
+</header>
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="tool-eyebrow">Production Planning / Free Download</div>
+    <h1>SMT Line Capacity Planner</h1>
+    <p>Calculate the realistic maximum capacity of a single SMT line. Models each pick-and-place machine individually, checks the reflow oven as a separate bottleneck, accounts for changeover losses, and calculates required hours per product against net available time.</p>
+  </div>
+</div>
+<div class="tool-main">
+  <div class="download-card">
+    <div class="download-card-info">
+      <div class="download-card-title">SMT_Line_Capacity_Planner.xlsx</div>
+      <div class="download-card-meta"><span>Format: .xlsx</span><span>Sheets: 3</span><span>Compatible: Excel 2016+ &amp; LibreOffice Calc</span><span>Free &mdash; no registration</span></div>
+      <div class="download-card-desc">Fill in the blue input cells on the INPUTS sheet. Results update automatically on the RESULTS sheet. No macros. Works offline.</div>
+    </div>
+    <a class="download-btn" href="SMT_Line_Capacity_Planner.xlsx" download>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Free
+    </a>
+  </div>
+  <div class="sheet-grid">
+    <div class="sheet-card"><div class="sheet-tab grey">Cover</div><div class="sheet-card-title">Cover</div><div class="sheet-card-body">Orientation page with sheet guide and input legend. Start here if you are opening the workbook for the first time.</div></div>
+    <div class="sheet-card"><div class="sheet-tab blue">INPUTS</div><div class="sheet-card-title">Inputs</div><div class="sheet-card-body">Five sections: machine table with per-machine CPH and placement share, reflow oven, changeover, shift model, and product mix with per-product panelization.</div></div>
+    <div class="sheet-card"><div class="sheet-tab green">RESULTS</div><div class="sheet-card-title">Results</div><div class="sheet-card-body">Machine summary, available hours breakdown, per-product cycle times and required hours, total utilisation, and line status verdict.</div></div>
+  </div>
+</div>
+<div class="inline-guide">
+  <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
+    <span class="guide-toggle-label">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#c07c0a" stroke-width="1.2"/></svg>
+      Quick Guide &mdash; How the SMT Line Capacity Planner Works
+    </span>
+    <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
+  </button>
+  <div class="guide-content" role="region">
+    <div class="guide-section">
+      <div class="guide-section-title">01 &mdash; How the Model Works</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">Most capacity estimates use a single nameplate CPH figure and one OEE factor. That approach fails on multi-machine lines because it does not account for placement share imbalance between machines, and it ignores the reflow oven as an independent constraint. This workbook models the line properly.</div>
+      <div class="guide-two-col">
+        <div class="guide-card"><div class="guide-card-title">Utilisation-based output</div><div class="guide-card-body">Rather than outputting a single peak PCBs/hour figure, the workbook calculates required machine hours per product and compares the total against your net available hours per year. Products with different panelization and component counts consume very different amounts of line time, and this model makes that visible.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Per-product calculation</div><div class="guide-card-body">Each product in the mix table has its own PCBs per panel, components per PCB, double-sided flag, and panel length. Placer cycle time and oven cycle time are calculated separately per product. The workbook identifies the bottleneck machine per product and derives net PCBs per hour and required hours per year independently for each.</div></div>
+      </div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">02 &mdash; Section 1: Pick-and-Place Machine Table</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">Enter up to five machines. A typical line has one chip shooter for passives and a flexible placer for ICs and connectors. Enter at least one. The line cycle time is determined by the machine with the longest cycle time for its share of the placements.</div>
+      <div class="guide-three-col">
+        <div class="guide-card"><div class="guide-card-title">Nameplate CPH</div><div class="guide-card-body">The theoretical maximum from the machine specification sheet, not your real-world speed. Use the published IPC-9850 or manufacturer figure. Real-world speed is accounted for by the Performance factor in the next column.</div></div>
+        <div class="guide-card"><div class="guide-card-title">OEE Performance %</div><div class="guide-card-body">How fast this specific machine actually runs relative to its nameplate. Accounts for feeder misfeeds, head optimisation gaps, and program efficiency. Enter per machine because a chip shooter and a flexible placer rarely run at the same efficiency. Typical range 80&ndash;92%.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Placement Share %</div><div class="guide-card-body">What percentage of the board's total placements this machine handles. All machines must sum to exactly 100%. Cell E12 shows the running total and flags a warning if the sum is off. The workbook will not produce correct results if shares do not sum to 100%.</div></div>
+      </div>
+      <div class="guide-formula">Line CT = MAX of all machine cycle times
+Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600</div>
+      <div class="guide-note">The bottleneck machine is the one with the longest cycle time for its share of placements. This is product-specific. A chip shooter bottleneck on a passive-heavy board may become a flexible placer bottleneck on a connector-heavy board. The workbook calculates this per product row.</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">03 &mdash; OEE: Three Components</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">Performance is entered per machine in the machine table. Availability and Quality remain line-level inputs because they affect the whole line equally.</div>
+      <div class="guide-three-col">
+        <div class="guide-card"><div class="guide-card-title">Performance (per machine)</div><div class="guide-card-body">In the machine table. How fast each machine actually runs versus nameplate. Typical 80&ndash;92%. Different machines on the same line often have different Performance values.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Availability (line-level)</div><div class="guide-card-body">Planned uptime divided by available time. Unplanned breakdowns and preventive maintenance go here. Changeover is handled separately in section 3 and should not be included in Availability. Typical 75&ndash;90%.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Quality / FPY (line-level)</div><div class="guide-card-body">First-pass yield. Boards that fail and require rework consumed machine time for no productive output. Typical SMT line 95&ndash;99%.</div></div>
+      </div>
+      <div class="guide-formula">Net PCBs/h = Mechanical PCBs/h x Availability% / 100 x Quality% / 100</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">04 &mdash; Section 2: Reflow Oven</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">The oven is modelled as a separate throughput constraint independent of the placer. Tunnel length, dwell time, and load factor are line-level. Panel length is per-product because different assemblies may have different panel sizes.</div>
+      <div class="guide-two-col">
+        <div class="guide-card"><div class="guide-card-title">Heated Tunnel Length</div><div class="guide-card-body">Enter the heated length only, not the overall oven length. Typical values: 5-zone approximately 180 cm, 7-zone approximately 250 cm, 10-zone approximately 360 cm. Always verify against your specific model datasheet.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Required Dwell Time</div><div class="guide-card-body">Total time the board must spend inside the heated tunnel per your paste datasheet. For SAC305 typical range is 240&ndash;300 seconds. This limits how fast the belt can run.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Oven Load Factor</div><div class="guide-card-body">How densely packed the belt is. 90% means a gap of 10% of panel length between panels. Below 85% risks collisions at the conveyor entry. Panel pitch = panel length / load factor.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Panel Length (per product)</div><div class="guide-card-body">Entered in the product mix table. The panel dimension in the direction of belt travel including any tooling frame. Each product can have a different panel length, which directly determines oven throughput for that product.</div></div>
+      </div>
+      <div class="guide-formula">Oven CT (s) = (panel length / load factor) / (tunnel / dwell x 60) x 60</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">05 &mdash; Section 3: Changeover &amp; Planned Stops</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">Changeover time is a planned loss that sits outside OEE. The workbook subtracts it from gross available hours before any capacity calculation. This makes it visible as a separate number rather than buried inside Availability.</div>
+      <div class="guide-three-col">
+        <div class="guide-card"><div class="guide-card-title">Full Changeovers / Week</div><div class="guide-card-body">Complete product changeovers per week: new stencil, full feeder swap, program change, first article inspection. On a short-run mixed line typically 4&ndash;10 per week.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Changeover Duration</div><div class="guide-card-body">Average time per full changeover in minutes. A simple well-organised swap: 45&ndash;60 min. Complex changeover with fixture changes and full first article: 2&ndash;4 hours. Use your real average, not the best case.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Minor Stops Buffer</div><div class="guide-card-body">Small recurring stops per shift: feeder reloads, paste replenishment, stencil wipe cycles. Default 20 minutes per shift. They accumulate. Track your actual data if available.</div></div>
+      </div>
+      <div class="guide-formula">Net hours/week = Gross hours - (changeovers x duration/60) - (minor stops/shift / 60 x shifts x days)</div>
+      <div class="guide-note">A line running 4 full changeovers at 90 minutes each loses 6 hours per week before OEE is applied. On a single-shift 40-hour week that is 15% of capacity gone before the first board is placed.</div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">06 &mdash; Section 5: Product Mix Table</div>
+      <div class="guide-card-body" style="margin-bottom:1rem;">Up to 8 products, each fully independent. Panelization and panel length are entered per product. The workbook calculates placer and oven cycle times separately for each and identifies which is the bottleneck.</div>
+      <div class="guide-two-col">
+        <div class="guide-card"><div class="guide-card-title">PCBs per Panel</div><div class="guide-card-body">How many individual PCBs sit in one production panel. Enter 1 for single boards. Enter 6 for a 2x3 array. Affects placer cycle time: a 6-up panel has 6 times the placements per machine cycle as a single board but also produces 6 PCBs per cycle.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Components per PCB</div><div class="guide-card-body">Total SMT placements on one individual PCB, not per panel. The workbook multiplies by PCBs per panel automatically. Count all SMT placements including passives, ICs, and connectors.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Double-sided (0 or 1)</div><div class="guide-card-body">Enter 1 if the board requires two SMT passes. This doubles the effective machine time consumed per panel and halves PCB output per hour. The most common source of capacity planning errors on mixed assemblies. Enter 0 for single-sided.</div></div>
+        <div class="guide-card"><div class="guide-card-title">Panel Length (cm)</div><div class="guide-card-body">Panel dimension in the direction of belt travel including any tooling frame or break-off tabs. Different products can have different panel sizes. This feeds directly into oven cycle time for this product.</div></div>
+      </div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">07 &mdash; Reading the RESULTS Sheet</div>
+      <div class="guide-steps">
+        <div class="guide-step"><div class="guide-step-num">A</div><div class="guide-step-text"><h4>Pick-and-Place Machines</h4><p>Summary of your machine table: nameplate CPH, Performance %, effective CPH, and placement share per machine. Verify this reflects your actual configuration before reading capacity figures.</p></div></div>
+        <div class="guide-step"><div class="guide-step-num">B</div><div class="guide-step-text"><h4>Changeover &amp; Available Hours</h4><p>Gross hours, changeover loss, minor stops loss, and net productive hours per week and per year. This is the real available time that all products compete for.</p></div></div>
+        <div class="guide-step"><div class="guide-step-num">C</div><div class="guide-step-text"><h4>Per-Product Capacity Analysis</h4><p>For each product: placer cycle time, oven cycle time, which is the bottleneck, net PCBs per hour, required hours per year, and percentage of net annual capacity consumed.</p></div></div>
+        <div class="guide-step"><div class="guide-step-num">D</div><div class="guide-step-text"><h4>Net Capacity Summary</h4><p>Net hours per year, total required hours, available headroom in hours, and total line utilisation as a single large percentage.</p></div></div>
+        <div class="guide-step"><div class="guide-step-num">E</div><div class="guide-step-text"><h4>Line Status Verdict</h4><p>One of three states based on total utilisation. Below 70% the line has comfortable headroom. 70&ndash;85% is achievable but tight. Above 85% the line is overloaded for the current shift model.</p></div></div>
+        <div class="guide-step"><div class="guide-step-num">K&ndash;U</div><div class="guide-step-text"><h4>Hidden Helper Columns</h4><p>Intermediate calculations per product: individual machine cycle times, line CT, oven CT, bottleneck CT, mechanical PCBs/h, net PCBs/h, required hours. Hidden for cleanliness. Unhide to audit the math.</p></div></div>
+      </div>
+      <div class="guide-verdict-row">
+        <div class="guide-verdict-chip pass">FEASIBLE &mdash; below 70%</div>
+        <div class="guide-verdict-chip warn">HIGH LOAD &mdash; 70&ndash;85%</div>
+        <div class="guide-verdict-chip fail">OVERLOADED &mdash; above 85%</div>
+      </div>
+    </div>
+    <div class="guide-section">
+      <div class="guide-section-title">08 &mdash; Common Planning Mistakes</div>
+      <div class="guide-tip"><div class="guide-tip-num">01</div><div class="guide-tip-title">Placement shares that do not sum to 100%</div><div class="guide-tip-body">If shares sum to 80%, 20% of placements are unaccounted for and cycle time is wrong. Cell E12 shows the running total and warns you. Do not proceed until it reads 100%.</div></div>
+      <div class="guide-tip"><div class="guide-tip-num">02</div><div class="guide-tip-title">Confusing panels with individual PCBs</div><div class="guide-tip-body">Components per PCB means one board, not one panel. If running a 4-up panel with 150 components per board, enter 150 for components and 4 for PCBs per panel. The workbook multiplies them internally.</div></div>
+      <div class="guide-tip"><div class="guide-tip-num">03</div><div class="guide-tip-title">Forgetting double-sided assembly</div><div class="guide-tip-body">A double-sided assembly goes through the line twice. Entering 0 when the board is double-sided doubles apparent capacity and halves required hours. If you produce a mix of single and double-sided boards, enter them as separate products.</div></div>
+      <div class="guide-tip"><div class="guide-tip-num">04</div><div class="guide-tip-title">Using nameplate CPH as actual speed</div><div class="guide-tip-body">Nameplate CPH is measured under ideal lab conditions. The Performance OEE per machine adjusts for real conditions. If you leave Performance at 100%, capacity will be overstated by 15&ndash;25% on a typical SMT line.</div></div>
+      <div class="guide-tip"><div class="guide-tip-num">05</div><div class="guide-tip-title">Putting changeover inside Availability</div><div class="guide-tip-body">Changeover is a planned, predictable loss. OEE Availability measures unplanned downtime. If you bury changeover inside Availability it compounds multiplicatively with other OEE losses and becomes invisible as a separate improvement target. Keep it in section 3.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAKE IT YOURS -->
+<div class="tool-main" style="margin-top:0;margin-bottom:0;">
+  <div style="border-top:1px solid var(--border);padding-top:2rem;margin-bottom:2rem;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:block;width:16px;height:2px;background:var(--accent);"></span>Adapt It to Your Line</div>
+    <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;line-height:1;margin-bottom:1rem;">Make It Yours</h2>
+    <p style="font-size:0.95rem;color:#5a5550;line-height:1.75;max-width:720px;margin-bottom:1rem;">
+      The workbook is fully unlocked. No sheet protection, no hidden passwords. Every SMT line is configured differently, and there is no reason to fight a rigid template. Add a line identification header, drop in your company logo, extend the product mix table beyond 8 rows, or add a column for annual revenue per product. If your process needs it, add it.
+    </p>
+    <p style="font-size:0.95rem;color:#5a5550;line-height:1.75;max-width:720px;margin-bottom:1rem;">
+      The one area to leave alone is the hidden helper columns <strong style="color:var(--text);">K through U</strong> on the RESULTS sheet. These compute intermediate values per product row: individual machine cycle times, line cycle time, oven cycle time, bottleneck cycle time, and net PCBs per hour. Every visible cell in the per-product table reads from these columns. You can unhide them to inspect or audit the math, but do not delete or rearrange them. If you extend the product mix table beyond 8 rows, you will need to extend the helper columns to match.
+    </p>
+    <p style="font-size:0.95rem;color:#5a5550;line-height:1.75;max-width:720px;">
+      The workbook is compatible with <strong style="color:var(--text);">Microsoft Excel 2016 and later</strong> and <strong style="color:var(--text);">LibreOffice Calc</strong>. It uses no macros, no VBA, and no external data connections. All formulas are standard worksheet functions that work offline.
+    </p>
+  </div>
+</div>
+
+<div class="related-section">
+  <div class="related-header">Related Online Tools</div>
+  <div class="related-grid">
+    <a href="/smt-capacity-calculator/" class="related-card"><div class="related-tag">Production / Planning</div><div class="related-name">SMT Capacity Calculator</div><div class="related-desc">Quick browser-based line capacity check. Enter line speed, OEE, shift model, and product mix to get utilisation estimates without downloading anything.</div><div class="related-link">Open Tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></a>
+    <a href="/reflow-throughput-calculator/" class="related-card"><div class="related-tag">Reflow / Thermal Process</div><div class="related-name">Reflow Throughput Calculator</div><div class="related-desc">Check whether your reflow oven can keep up with your SMT line, or calculate the minimum heated tunnel length for a target production rate. Includes bottleneck check and oven class reference.</div><div class="related-link">Open Tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></a>
+    <a href="/placement-speed-verifier/" class="related-card"><div class="related-tag">Placement / Performance</div><div class="related-name">Placement Speed Verifier</div><div class="related-desc">Calculate your SMT line's actual derated placement rate from real production data. Use the result to calibrate the Performance OEE inputs in this planner.</div><div class="related-link">Open Tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></a>
+  </div>
+</div>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+<script>
+function toggleGuide(btn) {
+  var content = btn.nextElementSibling;
+  var arrow = btn.querySelector('.guide-toggle-arrow');
+  var isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+function showContact() {
+  var u = 'contact'; var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
+</body>
+</html>
