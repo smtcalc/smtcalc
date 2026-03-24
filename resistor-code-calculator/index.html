@@ -11,7 +11,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/smtcalc.css">
   <style>
-  /* MODE TABS */
+  /* MAIN LAYOUT (page-specific additions) */
+    .main-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+/* MODE TABS */
     .mode-tabs {
       display: flex;
       gap: 0;
@@ -45,6 +52,7 @@
     }
 
     
+
 /* PANEL */
     .panel {
       background: var(--bg2);
@@ -64,6 +72,7 @@
     }
 
     
+
 /* FORM ELEMENTS */
     .field-group {
       display: flex;
@@ -125,6 +134,7 @@
     .btn-calc:active { transform: scale(0.98); }
 
     
+
 /* CODE INPUT STYLING */
     .code-input-wrap {
       position: relative;
@@ -151,6 +161,7 @@
     }
 
     
+
 /* RESULT */
     .result-block {
       display: none;
@@ -215,6 +226,7 @@
     }
 
     
+
 /* REVERSE LOOKUP */
     .unit-group {
       display: flex;
@@ -239,6 +251,7 @@
     }
 
     
+
 /* REVERSE RESULTS TABLE */
     .code-table {
       width: 100%;
@@ -278,6 +291,7 @@
     }
 
     
+
 /* REFERENCE SECTION */
     .reference-grid {
       display: grid;
@@ -332,6 +346,7 @@
     }
 
     
+
 /* HOW IT WORKS */
     .explainer {
       background: var(--bg2);
@@ -382,6 +397,7 @@
     }
 
     
+
 /* SECTION DIVIDER */
     .section-label {
       font-family: 'Barlow Condensed', sans-serif;
@@ -403,6 +419,7 @@
     }
 
     
+
 /* RESISTOR VISUAL */
     .decode-panel-layout {
       display: grid;
@@ -447,6 +464,7 @@
     }
 
     
+
 /* PRINT */
     @media print {
       header, .mode-tabs, .btn-calc, .explainer { display: none; }
