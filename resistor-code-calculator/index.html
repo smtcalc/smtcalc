@@ -9,19 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f7f5f2;
-      --bg2: #f0ede8;
-      --bg3: #e8e4de;
-      --bg4: #dedad3;
-      --accent: #c07c0a;
-      --accent2: #be2e0a;
-      --green: #1a8c4e;
-      --yellow: #c07c0a;
-      --red: #be2e0a;
-      --text: #1a1815;
-      --muted: #6b6560;
-      --border: #d5d0ca;
-      --border2: #c8c2bb;
+      --bg: #faf7f2;
+      --bg2: #f2ece0;
+      --bg3: #e6ddd0;
+      --bg4: #d9cfc0;
+      --accent: #d4720a;
+      --accent2: #c42b08;
+      --green: #167a40;
+      --yellow: #d4720a;
+      --red: #c42b08;
+      --text: #140f0a;
+      --muted: #5c5248;
+      --border: #c8c0b4;
+      --border2: #b8ae9f;
       --mono: 'Share Tech Mono', monospace;
 }
 
@@ -46,7 +46,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(247,245,242,0.95);
+      background: rgba(250,247,242,0.97);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -153,7 +153,7 @@
     .mode-tab:last-child { border-right: none; }
     .mode-tab.active {
       background: var(--accent);
-      color: #1a1815;
+      color: #140f0a;
     }
     .mode-tab:not(.active):hover {
       background: var(--bg3);
@@ -228,7 +228,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       background: var(--accent);
-      color: #1a1815;
+      color: #140f0a;
       border: none;
       padding: 0.72rem 2rem;
       cursor: pointer;
@@ -475,7 +475,7 @@
 
     .explainer-col p {
       font-size: 0.88rem;
-      color: #5a5550;
+      color: #5c5248;
       line-height: 1.7;
     }
 
@@ -534,7 +534,7 @@
       font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #6a6560;
+      color: #5c5248;
       text-align: center;
     }
 
@@ -555,9 +555,9 @@
     /* PRINT */
     @media print {
       header, .mode-tabs, .btn-calc, .explainer { display: none; }
-      body { background: #fff; color: #1a1815; }
+      body { background: #fff; color: #140f0a; }
       .panel, .result-block, .code-table { border-color: #4a4540; }
-      .result-value, .code-pill { color: #1a1815; }
+      .result-value, .code-pill { color: #140f0a; }
     }
 
     @media (max-width: 600px) {
@@ -649,7 +649,7 @@
                 font-family="'Share Tech Mono', monospace"
                 font-size="34"
                 font-weight="bold"
-                fill="#f0ede8"
+                fill="#f2ece0"
                 letter-spacing="4">
               </text>
 
@@ -929,19 +929,19 @@ function updateResistorSVG(val) {
   var hintColor = '#555';
   if (/^[0-9]{3}$/.test(val)) {
     hintText = '3-Digit';
-    hintColor = '#c07c0a';
+    hintColor = '#d4720a';
   } else if (/^[0-9]{4}$/.test(val)) {
     hintText = '4-Digit';
-    hintColor = '#c07c0a';
+    hintColor = '#d4720a';
   } else if (/^[0-9]{2}[A-DXYF]$/i.test(val)) {
     hintText = 'EIA-96';
-    hintColor = '#c07c0a';
+    hintColor = '#d4720a';
   } else if (/^[0-9]*R[0-9]+$/i.test(val)) {
     hintText = 'R-Notation';
-    hintColor = '#c07c0a';
+    hintColor = '#d4720a';
   } else if (val === '0' || val === '00' || val === '000' || val === '0000') {
     hintText = 'Zero Ohm Jumper';
-    hintColor = '#1a8c4e';
+    hintColor = '#167a40';
   } else {
     hintText = 'Entering...';
     hintColor = '#555';
