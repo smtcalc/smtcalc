@@ -6,130 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMT Capacity Calculator - SMTCalc</title>
 <meta name="description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:      #faf7f2;
-    --bg2:     #f2ece0;
-    --bg3:     #e6ddd0;
-    --bg4:     #d9cfc0;
-    --accent:  #d4720a;
-    --accent2: #c42b08;
-    --green:   #167a40;
-    --yellow:  #d4720a;
-    --red:     #c42b08;
-    --text:    #140f0a;
-    --muted:   #5c5248;
-    --border:  #c8c0b4;
-    --border2: #b8ae9f;
-    --mono: 'Share Tech Mono', monospace;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 400;
-    min-height: 100vh;
-  }
-
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0 2rem;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(250,247,242,0.97);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.4rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--text);
-  }
-  .logo span { color: var(--accent); }
-
-  .tool-badge {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--border2);
-    padding: 0.3rem 0.75rem;
-  }
-
-  .tool-hero {
-    padding: 3rem 2rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-    position: relative;
-    overflow: hidden;
-  }
-  .tool-hero::before {
-    content: '';
-    position: absolute;
-    top: -50%; right: -10%;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(212,114,10,0.10) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .tool-hero-inner {
-    max-width: 980px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .tool-eyebrow {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .tool-eyebrow::before {
-    content: '';
-    display: block;
-    width: 20px; height: 2px;
-    background: var(--accent);
-  }
-
-  .tool-hero h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    text-transform: uppercase;
-    line-height: 0.95;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.75rem;
-  }
-
-  .tool-hero p {
-    color: var(--muted);
-    font-size: 1rem;
-    max-width: 580px;
-    line-height: 1.6;
-  }
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/smtcalc.css">
+  <style>
   /* WRAPPER */
   .tool-wrap {
     max-width: 980px;
@@ -137,7 +18,8 @@
     padding: 0 2rem;
   }
 
-  /* PANELS */
+  
+/* PANELS */
   .panel-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -178,61 +60,8 @@
     background: var(--accent);
   }
 
-  /* FIELDS */
-  .field { margin-bottom: 1.1rem; }
-
-  .field label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-
-  .input-wrap { position: relative; }
-
-  .input-wrap input[type=number] {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 1.2rem;
-    padding: 0.65rem 2.5rem 0.65rem 0.9rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -moz-appearance: textfield;
-    appearance: textfield;
-  }
-  .input-wrap input[type=number]::-webkit-outer-spin-button,
-  .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .input-wrap input[type=number]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(212,114,10,0.22);
-  }
-
-  .input-unit {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--muted);
-    pointer-events: none;
-    text-transform: uppercase;
-  }
-
-  .field-note {
-    font-size: 0.85rem;
-    color: #7a7570;
-    line-height: 1.5;
-    margin-top: 0.4rem;
-  }
-
-  /* SHIFT SELECTOR */
+  
+/* SHIFT SELECTOR */
   .shift-toggle {
     display: flex;
     gap: 1.5px;
@@ -261,7 +90,8 @@
     color: #140f0a;
   }
 
-  /* ASSUMPTIONS TOGGLE */
+  
+/* ASSUMPTIONS TOGGLE */
   .assump-toggle {
     display: flex;
     align-items: center;
@@ -299,19 +129,13 @@
   .assump-body.open { display: block; }
   #assumpBtn.open .chevron { transform: rotate(180deg); }
 
-  /* PRODUCT TABLE */
-  .product-table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 1rem;
-  }
-
+  
+/* PRODUCT TABLE */
   .product-table {
     width: 100%;
-    min-width: 420px;
     border-collapse: separate;
     border-spacing: 0 1.5px;
-    margin-bottom: 0;
+    margin-bottom: 1rem;
   }
 
   .product-table thead th {
@@ -405,7 +229,8 @@
     font-family: var(--mono);
   }
 
-  /* RESULTS GRID */
+  
+/* RESULTS GRID */
   .results-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -454,10 +279,10 @@
     margin-top: 0.2rem;
   }
 
-  /* BREAKDOWN TABLE */
+  
+/* BREAKDOWN TABLE */
   .breakdown-table {
     width: 100%;
-    min-width: 480px;
     border-collapse: separate;
     border-spacing: 0 1.5px;
     margin-bottom: 1rem;
@@ -530,7 +355,8 @@
     text-align: right;
   }
 
-  /* UTILIZATION */
+  
+/* UTILIZATION */
   .util-header {
     display: flex;
     justify-content: space-between;
@@ -594,360 +420,7 @@
   .status-msg.ok   { border-left-color: var(--green); color: #5c5248; }
   .status-msg.warn { border-left-color: var(--yellow); color: #5c5248; }
   .status-msg.over { border-left-color: var(--red); color: #5c5248; }
-
-  /* PRINT BAR */
-  .print-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--border);
-    margin-top: 1rem;
-  }
-
-  .print-bar label {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .print-bar input[type=text] {
-    flex: 1;
-    min-width: 200px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    padding: 0.55rem 0.9rem;
-    outline: none;
-  }
-  .print-bar input[type=text]:focus { border-color: var(--accent); }
-
-  .print-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.55rem 1.25rem;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-  }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* INLINE GUIDE */
-  .guide-toggle-btn {
-    width: 100%;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0.9rem 1.25rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    transition: background 0.2s;
-    margin-bottom: 0;
-  }
-  .guide-toggle-btn:hover { background: var(--bg3); }
-  .guide-toggle-label { display: flex; align-items: center; gap: 0.75rem; }
-  .guide-toggle-label svg { flex-shrink: 0; }
-  .guide-toggle-arrow {
-    font-size: 1rem;
-    color: var(--accent);
-    transition: transform 0.25s;
-    display: inline-block;
-  }
-  .guide-toggle-arrow.open { transform: rotate(180deg); }
-
-  .guide-content {
-    display: none;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-top: none;
-    border-left: 3px solid var(--accent);
-    margin-bottom: 1.5rem;
-  }
-  .guide-content.open { display: block; }
-
-  .guide-section {
-    padding: 1.5rem 1.75rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .guide-section:last-child { border-bottom: none; }
-
-  .guide-section-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .guide-section-title::before {
-    content: '';
-    display: block;
-    width: 16px;
-    height: 2px;
-    background: var(--accent);
-  }
-
-  .guide-two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
-  @media (max-width: 600px) { .guide-two-col { grid-template-columns: 1fr; } }
-
-  .guide-card {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    padding: 1rem 1.1rem;
-  }
-  .guide-card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-  .guide-card-body {
-    font-size: 0.9rem;
-    color: #5c5248;
-    line-height: 1.6;
-  }
-
-  .guide-io-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
-  @media (max-width: 600px) { .guide-io-grid { grid-template-columns: 1fr; } }
-
-  .guide-io-col-label {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--border2);
-  }
-  .guide-io-col-label.green { color: var(--green); border-color: rgba(22,122,64,0.2); }
-
-  .guide-io-item {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    padding: 0.55rem 0.75rem;
-    margin-bottom: 0.4rem;
-  }
-  .guide-io-item-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--accent);
-    margin-bottom: 0.1rem;
-  }
-  .guide-io-item-name.green { color: var(--green); }
-  .guide-io-item-desc {
-    font-size: 0.85rem;
-    color: #5c5248;
-    line-height: 1.45;
-  }
-
-  .guide-three-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-  }
-  @media (max-width: 640px) { .guide-three-col { grid-template-columns: 1fr; } }
-
-  .guide-param-card {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    padding: 1rem 1rem 0.9rem;
-  }
-  .guide-param-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--accent);
-    margin-bottom: 0.15rem;
-  }
-  .guide-param-title.blue { color: #5bc8f5; }
-  .guide-param-title.green { color: var(--green); }
-  .guide-param-val {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--border2);
-  }
-  .guide-param-body {
-    font-size: 0.88rem;
-    color: #5c5248;
-    line-height: 1.55;
-  }
-
-  .guide-note {
-    background: rgba(212,114,10,0.10);
-    border: 1px solid rgba(212,114,10,0.22);
-    border-left: 3px solid var(--accent);
-    padding: 0.6rem 0.9rem;
-    font-size: 0.88rem;
-    color: #5c5248;
-    line-height: 1.55;
-    margin-top: 1rem;
-  }
-
-  .guide-field-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  @media (max-width: 600px) { .guide-field-grid { grid-template-columns: 1fr; } }
-
-  .guide-field-item {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-left: 3px solid var(--accent);
-    padding: 0.65rem 0.85rem;
-  }
-  .guide-field-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 0.2rem;
-  }
-  .guide-field-desc {
-    font-size: 0.85rem;
-    color: #5c5248;
-    line-height: 1.5;
-  }
-
-  .guide-verdict-block {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    padding: 0.9rem 1rem;
-    margin-bottom: 0.6rem;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .guide-verdict-badge {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.25rem 0.6rem;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .guide-verdict-badge.ok { background: rgba(22,122,64,0.12); color: var(--green); border: 1px solid rgba(22,122,64,0.3); }
-  .guide-verdict-badge.warn { background: rgba(212,114,10,0.13); color: var(--accent); border: 1px solid rgba(212,114,10,0.40); }
-  .guide-verdict-badge.bad { background: rgba(196,43,8,0.10); color: var(--red); border: 1px solid rgba(196,43,8,0.3); }
-  .guide-verdict-text { flex: 1; }
-  .guide-verdict-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
-  }
-  .guide-verdict-title.ok { color: var(--green); }
-  .guide-verdict-title.warn { color: var(--accent); }
-  .guide-verdict-title.bad { color: var(--red); }
-  .guide-verdict-desc { font-size: 0.85rem; color: #5c5248; line-height: 1.5; }
-
-  .guide-tips-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.75rem;
-  }
-  @media (max-width: 640px) { .guide-tips-grid { grid-template-columns: 1fr; } }
-
-  .guide-tip {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    padding: 0.9rem 1rem;
-  }
-  .guide-tip-num {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.4rem;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-  .guide-tip-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 0.3rem;
-  }
-  .guide-tip-body {
-    font-size: 0.85rem;
-    color: #5c5248;
-    line-height: 1.55;
-  }
-
-  @media print { .guide-toggle-btn, .guide-content { display: none !important; } }
-
-  @media (max-width: 640px) {
-    .tool-wrap { padding: 0 1rem; }
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 3rem 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .footer-copy {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .footer-copy a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-</style>
+  </style>
 </head>
 <body>
 
@@ -1204,7 +677,6 @@
   <!-- PRODUCT MIX -->
   <div class="sc-full">
     <div class="panel-label">Product Mix</div>
-    <div class="product-table-wrap">
     <table class="product-table">
       <thead>
         <tr>
@@ -1218,7 +690,6 @@
       </thead>
       <tbody id="productBody"></tbody>
     </table>
-    </div>
     <button class="add-btn" id="addBtn" onclick="addProduct()">+ Add Product</button>
     <div class="table-note">No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling - not margin analysis.</div>
   </div>
@@ -1577,7 +1048,7 @@
 
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
       '<title>SMT Capacity Calculator' + (title ? ' - ' + title : '') + '</title>' +
-      '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+      '' +
       '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
       '.ph { border-bottom: 3px solid #d4720a; padding-bottom: 12px; margin-bottom: 20px; }' +
       '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
