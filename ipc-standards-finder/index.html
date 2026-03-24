@@ -11,7 +11,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/smtcalc.css">
   <style>
-  /* SEARCH PANEL */
+  /* HERO (page-specific additions) */
+    .hero {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+    .hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(212,114,10,0.13) 0%, transparent 70%);
+  pointer-events: none;
+}
+    .hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+    .eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+    .eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 2px;
+  background: var(--accent);
+}
+
+/* SEARCH PANEL */
 .search-panel {
   max-width: 900px;
   margin: 2rem auto 0;
@@ -107,6 +148,7 @@
 }
 
 
+
 /* RESULTS GRID */
 .results-section {
   max-width: 900px;
@@ -186,8 +228,10 @@
 
 
 
+
 /* HIGHLIGHT MATCH */
 .hl { background: rgba(212,114,10,0.18); color: var(--text); }
+
 
 
 /* NO RESULTS */
@@ -211,6 +255,7 @@
 }
 
 
+
 /* INFO PANEL */
 .info-panel {
   max-width: 900px;
@@ -227,6 +272,16 @@
   line-height: 1.55;
 }
 .info-box strong { color: var(--text); }
+
+
+
+/* FOOTER (page-specific additions) */
+    @media print {
+  header, .print-bar, .search-panel { display: none !important; }
+  .results-section { padding: 0; }
+  .results-grid { border: 1px solid #ccc; }
+  .std-card { break-inside: avoid; }
+}
   </style>
 </head>
 <body>
