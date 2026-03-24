@@ -9,20 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f7f5f2;
-    --bg2: #f0ede8;
-    --bg3: #e8e4de;
-    --bg4: #dedad3;
-    --accent: #c07c0a;
-    --green: #1a8c4e;
-    --yellow: #c07c0a;
-    --red: #be2e0a;
-    --text: #1a1815;
-    --muted: #6b6560;
-    --border: #d5d0ca;
-    --border2: #c8c2bb;
+    --bg: #faf7f2;
+    --bg2: #f2ece0;
+    --bg3: #e6ddd0;
+    --bg4: #d9cfc0;
+    --accent: #d4720a;
+    --green: #167a40;
+    --yellow: #d4720a;
+    --red: #c42b08;
+    --text: #140f0a;
+    --muted: #5c5248;
+    --border: #c8c0b4;
+    --border2: #b8ae9f;
     --mono: 'Share Tech Mono', monospace;
-    --accent2: #be2e0a;
+    --accent2: #c42b08;
 }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,7 +46,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(247,245,242,0.95);
+    background: rgba(250,247,242,0.97);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
@@ -84,7 +84,7 @@
     position: absolute;
     top: -50%; right: -10%;
     width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(192,124,10,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(212,114,10,0.10) 0%, transparent 70%);
     pointer-events: none;
   }
   .tool-hero-inner {
@@ -227,7 +227,7 @@
   .guide-card-title.blue { color: var(--blue); }
   .guide-card-body {
     font-size: 0.9rem;
-    color: #5a5550;
+    color: #5c5248;
     line-height: 1.6;
   }
   .guide-card-border-green { border-left: 3px solid var(--green); }
@@ -235,12 +235,12 @@
   .guide-card-border-blue { border-left: 3px solid var(--blue); }
   .guide-card-border-red { border-left: 3px solid var(--red); }
   .guide-note {
-    background: rgba(192,124,10,0.08);
-    border: 1px solid rgba(192,124,10,0.22);
+    background: rgba(212,114,10,0.10);
+    border: 1px solid rgba(212,114,10,0.22);
     border-left: 3px solid var(--accent);
     padding: 0.6rem 0.9rem;
     font-size: 0.88rem;
-    color: #6a6560;
+    color: #5c5248;
     line-height: 1.55;
     margin-top: 1rem;
   }
@@ -279,7 +279,7 @@
     color: var(--muted);
     margin-bottom: 0.5rem;
   }
-  .guide-verdict-body { font-size: 0.88rem; color: #5a5550; line-height: 1.55; }
+  .guide-verdict-body { font-size: 0.88rem; color: #5c5248; line-height: 1.55; }
   .guide-tips-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -307,7 +307,7 @@
     color: var(--text);
     margin-bottom: 0.35rem;
   }
-  .guide-tip-body { font-size: 0.85rem; color: #6b6560; line-height: 1.55; }
+  .guide-tip-body { font-size: 0.85rem; color: #5c5248; line-height: 1.55; }
 
   @media print {
     header, .guide-toggle-btn, .guide-content { display: none !important; }
@@ -352,7 +352,7 @@
     color: var(--accent);
     border-bottom: 2px solid var(--accent);
   }
-  .mode-toggle button.active .mode-sub { color: #6b6560; }
+  .mode-toggle button.active .mode-sub { color: #5c5248; }
 
   /* PANELS */
   .panel-grid {
@@ -421,11 +421,11 @@
   .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   .input-wrap input[type=number]:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(192,124,10,0.22);
+    box-shadow: 0 0 0 2px rgba(212,114,10,0.22);
   }
   .input-wrap input[type=number].optional {
     border-style: dashed;
-    color: #5a5550;
+    color: #5c5248;
   }
   .input-wrap input[type=number].optional:focus {
     border-style: solid;
@@ -453,7 +453,7 @@
   .optional-label {
     font-family: var(--mono);
     font-size: 0.58rem;
-    color: #6a6560;
+    color: #5c5248;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-left: 0.5rem;
@@ -482,7 +482,7 @@
   }
   .unit-toggle button.active {
     background: var(--accent);
-    color: #1a1815;
+    color: #140f0a;
   }
 
   /* RESULTS GRID */
@@ -551,7 +551,7 @@
   .status-indicator.ok     { color: var(--green); }
   .status-indicator.warn   { color: var(--yellow); }
   .status-indicator.bad    { color: var(--red); }
-  .status-indicator.idle   { color: #6a6560; }
+  .status-indicator.idle   { color: #5c5248; }
   .status-margin {
     font-family: var(--mono);
     font-size: 0.82rem;
@@ -562,13 +562,13 @@
     background: var(--bg);
     font-family: var(--mono);
     font-size: 0.82rem;
-    color: #6a6560;
+    color: #5c5248;
     line-height: 1.65;
     border-left: 3px solid var(--border2);
   }
-  .status-msg.ok   { border-left-color: var(--green);  color: #5a5550; }
-  .status-msg.warn { border-left-color: var(--yellow); color: #5a5550; }
-  .status-msg.bad  { border-left-color: var(--red);    color: #5a5550; }
+  .status-msg.ok   { border-left-color: var(--green);  color: #5c5248; }
+  .status-msg.warn { border-left-color: var(--yellow); color: #5c5248; }
+  .status-msg.bad  { border-left-color: var(--red);    color: #5c5248; }
 
   /* SPEED COMPARE BAR */
   .speed-compare {
@@ -594,7 +594,7 @@
   .speed-bar-name {
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: #6b6560;
+    color: #5c5248;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     white-space: nowrap;
@@ -644,7 +644,7 @@
     padding: 0.6rem 0.75rem;
     font-family: var(--mono);
     font-size: 0.82rem;
-    color: #6b6560;
+    color: #5c5248;
     text-align: right;
     transition: background 0.2s;
   }
@@ -654,11 +654,11 @@
     font-family: 'Barlow', sans-serif;
     font-weight: 500;
   }
-  .ref-table tbody tr.match td { background: rgba(26,140,78,0.10); }
+  .ref-table tbody tr.match td { background: rgba(22,122,64,0.10); }
   .ref-table tbody tr.match td:first-child { color: var(--green); }
   .ref-table-note {
     font-size: 0.82rem;
-    color: #6a6560;
+    color: #5c5248;
     font-family: var(--mono);
     margin-top: 0.6rem;
     line-height: 1.55;
@@ -770,7 +770,7 @@
   <!-- INLINE GUIDE -->
   <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
     <span class="guide-toggle-label">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#c07c0a" stroke-width="1.2"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#d4720a" stroke-width="1.2"/></svg>
       Quick Guide &mdash; How the Reflow Throughput Calculator Works
     </span>
     <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
@@ -1076,9 +1076,9 @@ cooling + load/unload conveyor</div>
           <div class="field-note" style="margin-top:0.5rem">
             <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
               <!-- Background -->
-              <rect width="320" height="110" fill="#f7f5f2" stroke="#d5d0ca" stroke-width="1"/>
+              <rect width="320" height="110" fill="#faf7f2" stroke="#c8c0b4" stroke-width="1"/>
               <!-- Cooling zone shaded region (peak x=210 to cooldown end x=290, from y=8 to baseline y=82) -->
-              <rect x="210" y="8" width="80" height="74" fill="#e8e4de"/>
+              <rect x="210" y="8" width="80" height="74" fill="#e6ddd0"/>
               <!-- Cooling zone divider line -->
               <line x1="210" y1="8" x2="210" y2="82" stroke="#b0a89f" stroke-width="1" stroke-dasharray="3,2"/>
               <!-- Axes -->
@@ -1088,7 +1088,7 @@ cooling + load/unload conveyor</div>
               <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
               <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
               <!-- Profile curve heated section: ramp, soak, reflow peak -->
-              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#c07c0a" stroke-width="2" stroke-linejoin="round"/>
+              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#d4720a" stroke-width="2" stroke-linejoin="round"/>
               <!-- Profile curve cooling section: dimmed -->
               <polyline points="210,14 290,72" fill="none" stroke="#7a5010" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,2"/>
               <!-- Zone labels -->
@@ -1096,12 +1096,15 @@ cooling + load/unload conveyor</div>
               <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
               <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
               <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#444" text-anchor="middle">COOL</text>
+              <!-- TAL marker: short segment near peak above liquidus line -->
+              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
               <!-- Dwell bracket: heated zone only, entry to peak -->
-              <line x1="32" y1="95" x2="210" y2="95" stroke="#1a8c4e" stroke-width="1.5"/>
-              <line x1="32" y1="91" x2="32" y2="99" stroke="#1a8c4e" stroke-width="1.5"/>
-              <line x1="210" y1="91" x2="210" y2="99" stroke="#1a8c4e" stroke-width="1.5"/>
+              <line x1="32" y1="95" x2="210" y2="95" stroke="#167a40" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#167a40" stroke-width="1.5"/>
+              <line x1="210" y1="91" x2="210" y2="99" stroke="#167a40" stroke-width="1.5"/>
               <!-- Cooling zone: no bracket (not included in dwell) -->
-              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#1a8c4e" text-anchor="middle">Dwell time = heated zone duration only</text>
+              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#167a40" text-anchor="middle">Dwell time = heated zone duration only</text>
             </svg>
             Use the heated zone profile duration from your paste datasheet: preheat entry to reflow peak. This is the total time the PCB travels through the heating zones. For SAC305 typically 250&ndash;360 s. TAL (time above liquidus, 45&ndash;60 s) is too short. Do not include cooling zone time.
           </div>
@@ -1258,9 +1261,9 @@ cooling + load/unload conveyor</div>
           </div>
           <div class="field-note" style="margin-top:0.5rem">
             <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
-              <rect width="320" height="110" fill="#f7f5f2" stroke="#d5d0ca" stroke-width="1"/>
+              <rect width="320" height="110" fill="#faf7f2" stroke="#c8c0b4" stroke-width="1"/>
               <!-- Cooling zone shaded region -->
-              <rect x="210" y="8" width="80" height="74" fill="#e8e4de"/>
+              <rect x="210" y="8" width="80" height="74" fill="#e6ddd0"/>
               <!-- Cooling zone divider line -->
               <line x1="210" y1="8" x2="210" y2="82" stroke="#b0a89f" stroke-width="1" stroke-dasharray="3,2"/>
               <line x1="28" y1="8" x2="28" y2="82" stroke="#b0a89f" stroke-width="1"/>
@@ -1268,19 +1271,21 @@ cooling + load/unload conveyor</div>
               <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
               <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
               <!-- Heated section of profile -->
-              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#c07c0a" stroke-width="2" stroke-linejoin="round"/>
+              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#d4720a" stroke-width="2" stroke-linejoin="round"/>
               <!-- Cooling section: dimmed and dashed -->
               <polyline points="210,14 290,72" fill="none" stroke="#7a5010" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,2"/>
               <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">RAMP</text>
               <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
               <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
               <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#444" text-anchor="middle">COOL</text>
+              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
               <!-- Dwell bracket: heated zone only, entry to peak -->
-              <line x1="32" y1="95" x2="210" y2="95" stroke="#1a8c4e" stroke-width="1.5"/>
-              <line x1="32" y1="91" x2="32" y2="99" stroke="#1a8c4e" stroke-width="1.5"/>
-              <line x1="210" y1="91" x2="210" y2="99" stroke="#1a8c4e" stroke-width="1.5"/>
+              <line x1="32" y1="95" x2="210" y2="95" stroke="#167a40" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#167a40" stroke-width="1.5"/>
+              <line x1="210" y1="91" x2="210" y2="99" stroke="#167a40" stroke-width="1.5"/>
               <!-- Cooling zone: no bracket (not included in dwell) -->
-              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#1a8c4e" text-anchor="middle">Dwell time = heated zone duration only</text>
+              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#167a40" text-anchor="middle">Dwell time = heated zone duration only</text>
             </svg>
             Use the heated zone profile duration from your paste datasheet: preheat entry to reflow peak. This is the total time the PCB travels through the heating zones. For SAC305 typically 250&ndash;360 s. TAL (time above liquidus, 45&ndash;60 s) is too short. Do not include cooling zone time.
           </div>
@@ -1546,7 +1551,7 @@ function calcA() {
       sm.textContent = '[OK] Process speed (' + fmtN(fromMmSpeed(processSpeedMm), 1) + ') exceeds required speed (' + fmtN(fromMmSpeed(reqSpeedMm), 1) + ') by ' + fmtN(marginPct, 1) + '%. The oven is not the bottleneck. Board spacing on the belt at process speed: ' + fmtN(dispSpacing, 1) + ' ' + (currentUnit === 'in' ? 'in' : 'cm') + '.';
     } else if (marginPct >= 0) {
       si.className += ' warn';
-      si.textContent = 'Marginal — tight headroom';
+      si.textContent = 'Marginal - tight headroom';
       sm.className += ' warn';
       smg.textContent = '+' + fmtN(marginPct, 1) + '% margin';
       sm.textContent = '[!] Process speed is only ' + fmtN(marginPct, 1) + '% above what the line requires. Any profile adjustment that demands a lower belt speed will make the oven the bottleneck. Consider verifying with a longer dwell margin or evaluating a longer-tunnel oven model.';
@@ -1642,9 +1647,9 @@ function printReportA() {
   var siEl = document.getElementById('A_statusIndicator');
   var statusTxt = siEl ? siEl.textContent : '';
   var statusCls = siEl ? siEl.className : '';
-  var statusColor = '#1a8c4e';
-  if (statusCls.indexOf('warn') !== -1) statusColor = '#c07c0a';
-  if (statusCls.indexOf('bad')  !== -1) statusColor = '#be2e0a';
+  var statusColor = '#167a40';
+  if (statusCls.indexOf('warn') !== -1) statusColor = '#d4720a';
+  if (statusCls.indexOf('bad')  !== -1) statusColor = '#c42b08';
   if (statusCls.indexOf('idle') !== -1) statusColor = '#555';
   var msgTxt = document.getElementById('A_statusMsg') ? document.getElementById('A_statusMsg').textContent : '';
 
@@ -1759,17 +1764,17 @@ function printBase(title, mode, dateStr) {
     '<title>Reflow Throughput Calculator' + (title ? ' - ' + title : '') + '</title>' +
     '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
     '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
-    '.ph { border-bottom: 3px solid #c07c0a; padding-bottom: 12px; margin-bottom: 20px; }' +
+    '.ph { border-bottom: 3px solid #d4720a; padding-bottom: 12px; margin-bottom: 20px; }' +
     '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
     '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
     '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
-    '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c07c0a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+    '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #d4720a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
     '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 8px; }' +
     '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
-    '.pprimary { border-top: 3px solid #c07c0a; }' +
+    '.pprimary { border-top: 3px solid #d4720a; }' +
     '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
     '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 20px; font-weight: 900; color: #222; }' +
-    '.paccent { color: #c07c0a; }' +
+    '.paccent { color: #d4720a; }' +
     '.pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }' +
     '.pm-row { display: flex; justify-content: space-between; background: #f9f9f9; padding: 6px 10px; border-bottom: 1px solid #eee; }' +
     '.pm-label { font-family: "Share Tech Mono", monospace; font-size: 9px; text-transform: uppercase; color: #888; }' +
