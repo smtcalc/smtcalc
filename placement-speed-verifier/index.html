@@ -53,6 +53,7 @@
     }
 
     
+
 /* METHODOLOGY TOGGLE */
     .assump-toggle {
       display: flex;
@@ -92,6 +93,7 @@
     #methBtn.open .chevron { transform: rotate(180deg); }
 
     
+
 /* PRODUCT TABLE */
     .product-table {
       width: 100%;
@@ -202,6 +204,7 @@
     }
 
     
+
 /* RESULTS GRID */
     .results-grid {
       display: grid;
@@ -252,6 +255,7 @@
     }
 
     
+
 /* DERATING GAUGE */
     .derating-section {
       margin-top: 1.5rem;
@@ -309,6 +313,7 @@
     .bar-fill.poor { background: var(--red); }
 
     
+
 /* nameplate marker on bar */
     .bar-marker {
       position: absolute;
@@ -341,6 +346,7 @@
     .status-msg.poor { border-left-color: var(--red); color: #5c5248; }
 
     
+
 /* BREAKDOWN TABLE */
     .breakdown-table {
       width: 100%;
@@ -413,6 +419,26 @@
       color: var(--muted);
       min-width: 36px;
       text-align: right;
+    }
+
+    
+
+/* PRINT BAR (page-specific additions) */
+    @media (max-width: 640px) {
+      .tool-wrap { padding: 0 1rem; }
+    }
+    @media print {
+      header, .print-bar { display: none !important; }
+      body { background: #fff; color: #140f0a; }
+      .tool-hero { background: #f5f5f5; }
+      .sc-full, .panel { border: 1px solid #ccc; background: #fff; }
+      .result-box { background: #f5f5f5; }
+      .result-box.primary { background: #eee; }
+      :root {
+        --bg: #fff; --bg2: #f5f5f5; --bg3: #f0f0f0; --bg4: #e8e8e8;
+        --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
+        --accent: #c07000;
+      }
     }
   </style>
 </head>
