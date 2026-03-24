@@ -19,6 +19,76 @@
   }
 
   
+
+/* INLINE GUIDE (page-specific additions) */
+    .guide-three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+    @media (max-width: 680px) {
+    .guide-two-col, .guide-three-col { grid-template-columns: 1fr; }
+  }
+    .guide-card-title.green { color: var(--green); }
+    .guide-card-title.accent { color: var(--accent); }
+    .guide-card-title.blue { color: var(--blue); }
+    .guide-card-border-green { border-left: 3px solid var(--green); }
+    .guide-card-border-accent { border-left: 3px solid var(--accent); }
+    .guide-card-border-blue { border-left: 3px solid var(--blue); }
+    .guide-card-border-red { border-left: 3px solid var(--red); }
+    .guide-formula-unit {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--blue);
+  }
+    .guide-verdict {
+    border: 1px solid var(--border2);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+    .guide-verdict:last-child { margin-bottom: 0; }
+    .guide-verdict-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+    .guide-verdict-when {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+    .guide-verdict-body { font-size: 0.88rem; color: #5c5248; line-height: 1.55; }
+    .guide-tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+  }
+    @media (max-width: 680px) { .guide-tips-grid { grid-template-columns: 1fr; } }
+    .guide-tip {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-top: 2px solid var(--accent);
+    padding: 0.9rem 0.9rem;
+  }
+    .guide-tip-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+    .guide-tip-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+    .guide-tip-body { font-size: 0.85rem; color: #5c5248; line-height: 1.55; }
+
 /* MODE TOGGLE */
   .mode-toggle {
     display: flex;
@@ -61,6 +131,7 @@
   .mode-toggle button.active .mode-sub { color: #5c5248; }
 
   
+
 /* PANELS */
   .panel-grid {
     display: grid;
@@ -100,6 +171,25 @@
   }
 
   
+
+/* FIELDS (page-specific additions) */
+    .input-wrap input[type=number].optional {
+    border-style: dashed;
+    color: #5c5248;
+  }
+    .input-wrap input[type=number].optional:focus {
+    border-style: solid;
+    color: var(--text);
+  }
+    .optional-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    color: #5c5248;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: 0.5rem;
+  }
+
 /* UNIT TOGGLE */
   .unit-toggle {
     display: flex;
@@ -127,6 +217,7 @@
   }
 
   
+
 /* RESULTS GRID */
   .results-grid {
     display: grid;
@@ -171,6 +262,7 @@
   }
 
   
+
 /* STATUS */
   .status-block {
     border: 1px solid var(--border);
@@ -214,6 +306,7 @@
   .status-msg.bad  { border-left-color: var(--red);    color: #5c5248; }
 
   
+
 /* SPEED COMPARE BAR */
   .speed-compare {
     padding: 1rem 1.25rem 1.25rem;
@@ -265,6 +358,7 @@
   }
 
   
+
 /* REFERENCE TABLE */
   .ref-table-wrap { overflow-x: auto; margin-top: 1rem; }
   .ref-table {
@@ -310,11 +404,13 @@
   }
 
   
+
 /* SECTION HIDE */
   .mode-section { display: none; }
   .mode-section.active { display: block; }
 
   
+
 /* RESPONSIVE */
   @media (max-width: 640px) {
     .tool-wrap { padding: 0 1rem; }
