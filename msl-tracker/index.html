@@ -6,84 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MSL Tracker - Free Excel Workbook | SMTCalc</title>
   <meta name="description" content="Free Excel workbook for tracking moisture-sensitive component floor life per J-STD-033D. Color-coded dashboard, bake log, RH correction, and auto-status. Download free." />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/smtcalc.css">
   <style>
-    :root {
-      --bg: #faf7f2;
-      --bg2: #f2ece0;
-      --bg3: #e6ddd0;
-      --accent: #d4720a;
-      --accent2: #c42b08;
-      --text: #140f0a;
-      --muted: #5c5248;
-      --border: #c8c0b4;
-      --bg4: #d9cfc0;
-      --green: #167a40;
-      --yellow: #d4720a;
-      --red: #c42b08;
-      --border2: #b8ae9f;
-      --mono: 'Share Tech Mono', monospace;
-}
+    /* Page uses fixed (not sticky) header */
+  header { position: fixed; top: 0; left: 0; right: 0; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(250,247,242,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.5rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .logo span { color: var(--accent); }
-
-    .tool-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-      padding: 0.3rem 0.75rem;
-    }
-
-    /* PAGE HERO */
+/* PAGE HERO */
     .page-hero {
       padding: 3rem 2rem 2rem;
       border-bottom: 1px solid var(--border);
@@ -144,7 +75,8 @@
       margin-bottom: 2rem;
     }
 
-    /* DOWNLOAD BOX */
+    
+/* DOWNLOAD BOX */
     .download-box {
       display: inline-flex;
       flex-direction: column;
@@ -201,14 +133,16 @@
     }
     .req-note strong { color: var(--text); }
 
-    /* CONTENT AREA */
+    
+/* CONTENT AREA */
     .content-area {
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 2rem 100px;
     }
 
-    /* SHEET OVERVIEW */
+    
+/* SHEET OVERVIEW */
     .sheets-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
@@ -254,7 +188,8 @@
       line-height: 1.6;
     }
 
-    /* SECTION TITLES */
+    
+/* SECTION TITLES */
     .section-label {
       font-size: 0.85rem;
       font-weight: 500;
@@ -284,7 +219,8 @@
       margin-bottom: 1.5rem;
     }
 
-    /* FEATURE LIST */
+    
+/* FEATURE LIST */
     .feature-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
@@ -325,7 +261,8 @@
     }
     .feature-text span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 
-    /* USAGE STEPS */
+    
+/* USAGE STEPS */
     .steps {
       display: flex;
       flex-direction: column;
@@ -365,7 +302,8 @@
     }
     .step-content p { font-size: 0.88rem; color: #5c5248; line-height: 1.6; }
 
-    /* STATUS LEGEND */
+    
+/* STATUS LEGEND */
     .status-legend {
       display: flex;
       flex-direction: column;
@@ -402,7 +340,8 @@
 
     .legend-desc { font-size: 0.95rem; color: #5c5248; }
 
-    /* STANDARDS NOTE */
+    
+/* STANDARDS NOTE */
     .standards-note {
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -412,40 +351,7 @@
     }
     .standards-note p { font-size: 0.88rem; color: #5c5248; line-height: 1.7; }
     .standards-note strong { color: var(--text); }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    .footer-copy a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    @media (max-width: 768px) {
-      .sheets-grid { grid-template-columns: 1fr; }
-      .feature-list { grid-template-columns: 1fr; }
-      .page-hero { padding: 2rem 1.25rem 1.5rem; }
-      .content-area { padding: 0 1.25rem 60px; }
-      .download-box { min-width: unset; width: 100%; }
-      .legend-badge { min-width: 110px; }
-    }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 </head>
 <body>
 
