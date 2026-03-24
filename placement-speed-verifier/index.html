@@ -9,19 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f7f5f2;
-      --bg2: #f0ede8;
-      --bg3: #e8e4de;
-      --bg4: #dedad3;
-      --accent: #c07c0a;
-      --accent2: #be2e0a;
-      --green: #1a8c4e;
-      --yellow: #c07c0a;
-      --red: #be2e0a;
-      --text: #1a1815;
-      --muted: #6b6560;
-      --border: #d5d0ca;
-      --border2: #c8c2bb;
+      --bg: #faf7f2;
+      --bg2: #f2ece0;
+      --bg3: #e6ddd0;
+      --bg4: #d9cfc0;
+      --accent: #d4720a;
+      --accent2: #c42b08;
+      --green: #167a40;
+      --yellow: #d4720a;
+      --red: #c42b08;
+      --text: #140f0a;
+      --muted: #5c5248;
+      --border: #c8c0b4;
+      --border2: #b8ae9f;
       --mono: 'Share Tech Mono', monospace;
 }
 
@@ -45,7 +45,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(247,245,242,0.95);
+      background: rgba(250,247,242,0.97);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -84,7 +84,7 @@
       position: absolute;
       top: -50%; right: -10%;
       width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(192,124,10,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(212,114,10,0.10) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -209,7 +209,7 @@
     .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
     .input-wrap input[type=number]:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(192,124,10,0.22);
+      box-shadow: 0 0 0 2px rgba(212,114,10,0.22);
     }
 
     .input-unit {
@@ -333,7 +333,7 @@
     .product-row .row-subtotal {
       font-family: var(--mono);
       font-size: 0.82rem;
-      color: #6a6560;
+      color: #5c5248;
       text-align: right;
       padding-right: 0.6rem;
       white-space: nowrap;
@@ -366,12 +366,12 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
-    .add-btn:hover { background: rgba(192,124,10,0.10); border-color: var(--accent); }
+    .add-btn:hover { background: rgba(212,114,10,0.13); border-color: var(--accent); }
     .add-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .table-note {
       font-size: 0.82rem;
-      color: #6a6560;
+      color: #5c5248;
       line-height: 1.55;
       padding: 0.6rem 0;
       border-top: 1px solid var(--border);
@@ -462,7 +462,7 @@
       justify-content: space-between;
       font-family: var(--mono);
       font-size: 0.7rem;
-      color: #6a6560;
+      color: #5c5248;
       margin-bottom: 0.3rem;
     }
 
@@ -507,12 +507,12 @@
       padding: 0.85rem 1rem;
       font-family: var(--mono);
       font-size: 0.82rem;
-      color: #6a6560;
+      color: #5c5248;
       line-height: 1.6;
     }
-    .status-msg.ok   { border-left-color: var(--green); color: #5a5550; }
-    .status-msg.warn { border-left-color: var(--yellow); color: #5a5550; }
-    .status-msg.poor { border-left-color: var(--red); color: #5a5550; }
+    .status-msg.ok   { border-left-color: var(--green); color: #5c5248; }
+    .status-msg.warn { border-left-color: var(--yellow); color: #5c5248; }
+    .status-msg.poor { border-left-color: var(--red); color: #5c5248; }
 
     /* BREAKDOWN TABLE */
     .breakdown-table {
@@ -539,7 +539,7 @@
       padding: 0.6rem 0.75rem;
       font-family: var(--mono);
       font-size: 0.82rem;
-      color: #5a5550;
+      color: #5c5248;
       text-align: right;
     }
     .breakdown-table tbody td:first-child {
@@ -643,7 +643,7 @@
 
     @media print {
       header, .print-bar { display: none !important; }
-      body { background: #fff; color: #1a1815; }
+      body { background: #fff; color: #140f0a; }
       .tool-hero { background: #f5f5f5; }
       .sc-full, .panel { border: 1px solid #ccc; background: #fff; }
       .result-box { background: #f5f5f5; }
@@ -1098,9 +1098,9 @@
       var statusEl  = document.getElementById('statusMsg');
       var statusTxt = statusEl ? statusEl.textContent : '';
       var statusCls = statusEl ? statusEl.className : '';
-      var statusColor = '#1a8c4e';
-      if (statusCls.indexOf('warn') !== -1) statusColor = '#c07c0a';
-      if (statusCls.indexOf('poor') !== -1) statusColor = '#be2e0a';
+      var statusColor = '#167a40';
+      if (statusCls.indexOf('warn') !== -1) statusColor = '#d4720a';
+      if (statusCls.indexOf('poor') !== -1) statusColor = '#c42b08';
       deratingHtml =
         '<div class="section-label" style="margin-top:20px">Derating vs. Nameplate</div>' +
         '<div class="util-head"><span class="util-label">Globally Derated Rate</span><span class="util-pct">' + derPct + '</span></div>' +
@@ -1116,17 +1116,17 @@
       '<title>Placement Speed Verifier' + (title ? ' - ' + title : '') + '</title>' +
       '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
       '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
-      '.ph { border-bottom: 3px solid #c07c0a; padding-bottom: 12px; margin-bottom: 20px; }' +
+      '.ph { border-bottom: 3px solid #d4720a; padding-bottom: 12px; margin-bottom: 20px; }' +
       '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
       '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
       '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
-      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c07c0a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #d4720a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
       '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }' +
       '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
-      '.pprimary { border-top: 3px solid #c07c0a; }' +
+      '.pprimary { border-top: 3px solid #d4720a; }' +
       '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
       '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
-      '.paccent { color: #c07c0a; }' +
+      '.paccent { color: #d4720a; }' +
       '.pstat-sub { font-size: 10px; color: #888; margin-top: 2px; }' +
       '.util-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }' +
       '.util-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #888; }' +
@@ -1143,7 +1143,7 @@
       '.pt-name { text-align: left; font-weight: 600; color: #222; }' +
       '.pt-num  { text-align: right; font-family: "Share Tech Mono", monospace; font-size: 10px; }' +
       '.pt-foot td { border-top: 2px solid #eee; font-weight: 700; color: #222; padding: 6px 8px; }' +
-      '.pt-foot .pt-num { color: #c07c0a; }' +
+      '.pt-foot .pt-num { color: #d4720a; }' +
       '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
       '</style></head><body>' +
       '<div class="ph"><div class="ph-tool">Placement Speed Verifier \u2014 SMTCalc.com</div>' +
