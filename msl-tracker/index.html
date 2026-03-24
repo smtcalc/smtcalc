@@ -76,6 +76,7 @@
     }
 
     
+
 /* DOWNLOAD BOX */
     .download-box {
       display: inline-flex;
@@ -134,6 +135,7 @@
     .req-note strong { color: var(--text); }
 
     
+
 /* CONTENT AREA */
     .content-area {
       max-width: 1100px;
@@ -142,6 +144,7 @@
     }
 
     
+
 /* SHEET OVERVIEW */
     .sheets-grid {
       display: grid;
@@ -189,6 +192,7 @@
     }
 
     
+
 /* SECTION TITLES */
     .section-label {
       font-size: 0.85rem;
@@ -220,6 +224,7 @@
     }
 
     
+
 /* FEATURE LIST */
     .feature-list {
       display: grid;
@@ -262,6 +267,7 @@
     .feature-text span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 
     
+
 /* USAGE STEPS */
     .steps {
       display: flex;
@@ -303,6 +309,7 @@
     .step-content p { font-size: 0.88rem; color: #5c5248; line-height: 1.6; }
 
     
+
 /* STATUS LEGEND */
     .status-legend {
       display: flex;
@@ -341,6 +348,7 @@
     .legend-desc { font-size: 0.95rem; color: #5c5248; }
 
     
+
 /* STANDARDS NOTE */
     .standards-note {
       background: var(--bg2);
@@ -351,6 +359,18 @@
     }
     .standards-note p { font-size: 0.88rem; color: #5c5248; line-height: 1.7; }
     .standards-note strong { color: var(--text); }
+
+    
+
+/* FOOTER (page-specific additions) */
+    @media (max-width: 768px) {
+      .sheets-grid { grid-template-columns: 1fr; }
+      .feature-list { grid-template-columns: 1fr; }
+      .page-hero { padding: 2rem 1.25rem 1.5rem; }
+      .content-area { padding: 0 1.25rem 60px; }
+      .download-box { min-width: unset; width: 100%; }
+      .legend-badge { min-width: 110px; }
+    }
   </style>
 </head>
 <body>
