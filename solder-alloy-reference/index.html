@@ -11,7 +11,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/smtcalc.css">
   <style>
-  /* FILTER PANEL */
+  /* INLINE GUIDE (page-specific additions) */
+    .guide-three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 600px) { .guide-three-col { grid-template-columns: 1fr; } }
+    .guide-verdict-chip.plain  { color: var(--muted);  border-color: var(--border2); }
+
+/* MAIN LAYOUT (page-specific additions) */
+    .tool-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+/* FILTER PANEL */
     .filter-row {
       display: flex;
       gap: 0.75rem;
@@ -62,6 +78,7 @@
     .search-wrap input::placeholder { color: #3a3a3a; }
 
     
+
 /* TABLE */
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .alloy-table {
@@ -158,11 +175,13 @@
     .alloy-row.expanded .expand-btn { transform: rotate(90deg); color: var(--accent); }
 
     
+
 /* HIDE ON SMALL SCREENS */
     @media (max-width: 720px) { .hide-md { display: none !important; } }
     @media (max-width: 520px) { .hide-sm { display: none !important; } }
 
     
+
 /* MOBILE */
     @media (max-width: 680px) {
       /* Kill the hero glow entirely on narrow viewports. Its centre lands
@@ -193,6 +212,7 @@
     }
 
     
+
 /* DETAIL ROW */
     .detail-row td {
       padding: 0;
@@ -257,6 +277,7 @@
     .detail-app-val { font-size: 0.82rem; color: #4a4540; line-height: 1.55; }
 
     
+
 /* COMPARISON PANEL */
     .compare-header {
       display: flex;
@@ -351,6 +372,7 @@
     }
 
     
+
 /* HINT BELOW TABLE */
     .compare-hint {
       font-family: var(--mono);
@@ -362,6 +384,7 @@
     }
 
     
+
 /* DISCLAIMER */
     .disclaimer {
       font-size: 0.71rem;
@@ -373,6 +396,7 @@
     }
 
     
+
 /* NO RESULTS */
     .no-results {
       text-align: center;
