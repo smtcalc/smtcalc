@@ -4,24 +4,24 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMT Capacity Calculator — SMTCalc</title>
+<title>SMT Capacity Calculator - SMTCalc</title>
 <meta name="description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:      #f7f5f2;
-    --bg2:     #f0ede8;
-    --bg3:     #e8e4de;
-    --bg4:     #dedad3;
-    --accent:  #c07c0a;
-    --accent2: #be2e0a;
-    --green:   #1a8c4e;
-    --yellow:  #c07c0a;
-    --red:     #be2e0a;
-    --text:    #1a1815;
-    --muted:   #6b6560;
-    --border:  #d5d0ca;
-    --border2: #c8c2bb;
+    --bg:      #faf7f2;
+    --bg2:     #f2ece0;
+    --bg3:     #e6ddd0;
+    --bg4:     #d9cfc0;
+    --accent:  #d4720a;
+    --accent2: #c42b08;
+    --green:   #167a40;
+    --yellow:  #d4720a;
+    --red:     #c42b08;
+    --text:    #140f0a;
+    --muted:   #5c5248;
+    --border:  #c8c0b4;
+    --border2: #b8ae9f;
     --mono: 'Share Tech Mono', monospace;
   }
 
@@ -45,7 +45,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(247,245,242,0.95);
+    background: rgba(250,247,242,0.97);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
@@ -84,7 +84,7 @@
     position: absolute;
     top: -50%; right: -10%;
     width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(192,124,10,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(212,114,10,0.10) 0%, transparent 70%);
     pointer-events: none;
   }
 
@@ -210,7 +210,7 @@
   .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   .input-wrap input[type=number]:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(192,124,10,0.22);
+    box-shadow: 0 0 0 2px rgba(212,114,10,0.22);
   }
 
   .input-unit {
@@ -258,7 +258,7 @@
   }
   .shift-toggle button.active {
     background: var(--accent);
-    color: #1a1815;
+    color: #140f0a;
   }
 
   /* ASSUMPTIONS TOGGLE */
@@ -386,12 +386,12 @@
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
   }
-  .add-btn:hover { background: rgba(192,124,10,0.10); border-color: var(--accent); }
+  .add-btn:hover { background: rgba(212,114,10,0.13); border-color: var(--accent); }
   .add-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .table-note {
     font-size: 0.82rem;
-    color: #6a6560;
+    color: #5c5248;
     line-height: 1.55;
     padding: 0.6rem 0;
     border-top: 1px solid var(--border);
@@ -472,7 +472,7 @@
     padding: 0.6rem 0.75rem;
     font-family: var(--mono);
     font-size: 0.82rem;
-    color: #5a5550;
+    color: #5c5248;
     text-align: right;
   }
   .breakdown-table tbody td:first-child {
@@ -553,7 +553,7 @@
     justify-content: space-between;
     font-family: var(--mono);
     font-size: 0.7rem;
-    color: #6a6560;
+    color: #5c5248;
     margin-bottom: 0.3rem;
   }
 
@@ -580,12 +580,12 @@
     padding: 0.85rem 1rem;
     font-family: var(--mono);
     font-size: 0.82rem;
-    color: #6a6560;
+    color: #5c5248;
     line-height: 1.6;
   }
-  .status-msg.ok   { border-left-color: var(--green); color: #5a5550; }
-  .status-msg.warn { border-left-color: var(--yellow); color: #5a5550; }
-  .status-msg.over { border-left-color: var(--red); color: #5a5550; }
+  .status-msg.ok   { border-left-color: var(--green); color: #5c5248; }
+  .status-msg.warn { border-left-color: var(--yellow); color: #5c5248; }
+  .status-msg.over { border-left-color: var(--red); color: #5c5248; }
 
   /* PRINT BAR */
   .print-bar {
@@ -725,7 +725,7 @@
   }
   .guide-card-body {
     font-size: 0.9rem;
-    color: #5a5550;
+    color: #5c5248;
     line-height: 1.6;
   }
 
@@ -746,7 +746,7 @@
     padding-bottom: 0.4rem;
     border-bottom: 1px solid var(--border2);
   }
-  .guide-io-col-label.green { color: var(--green); border-color: rgba(26,140,78,0.2); }
+  .guide-io-col-label.green { color: var(--green); border-color: rgba(22,122,64,0.2); }
 
   .guide-io-item {
     background: var(--bg3);
@@ -764,7 +764,7 @@
   .guide-io-item-name.green { color: var(--green); }
   .guide-io-item-desc {
     font-size: 0.85rem;
-    color: #6b6560;
+    color: #5c5248;
     line-height: 1.45;
   }
 
@@ -799,17 +799,17 @@
   }
   .guide-param-body {
     font-size: 0.88rem;
-    color: #6b6560;
+    color: #5c5248;
     line-height: 1.55;
   }
 
   .guide-note {
-    background: rgba(192,124,10,0.08);
-    border: 1px solid rgba(192,124,10,0.22);
+    background: rgba(212,114,10,0.10);
+    border: 1px solid rgba(212,114,10,0.22);
     border-left: 3px solid var(--accent);
     padding: 0.6rem 0.9rem;
     font-size: 0.88rem;
-    color: #6a6560;
+    color: #5c5248;
     line-height: 1.55;
     margin-top: 1rem;
   }
@@ -836,7 +836,7 @@
   }
   .guide-field-desc {
     font-size: 0.85rem;
-    color: #6b6560;
+    color: #5c5248;
     line-height: 1.5;
   }
 
@@ -860,9 +860,9 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .guide-verdict-badge.ok { background: rgba(26,140,78,0.12); color: var(--green); border: 1px solid rgba(26,140,78,0.3); }
-  .guide-verdict-badge.warn { background: rgba(192,124,10,0.12); color: var(--accent); border: 1px solid rgba(192,124,10,0.35); }
-  .guide-verdict-badge.bad { background: rgba(190,46,10,0.10); color: var(--red); border: 1px solid rgba(190,46,10,0.3); }
+  .guide-verdict-badge.ok { background: rgba(22,122,64,0.12); color: var(--green); border: 1px solid rgba(22,122,64,0.3); }
+  .guide-verdict-badge.warn { background: rgba(212,114,10,0.13); color: var(--accent); border: 1px solid rgba(212,114,10,0.40); }
+  .guide-verdict-badge.bad { background: rgba(196,43,8,0.10); color: var(--red); border: 1px solid rgba(196,43,8,0.3); }
   .guide-verdict-text { flex: 1; }
   .guide-verdict-title {
     font-family: 'Barlow Condensed', sans-serif;
@@ -873,7 +873,7 @@
   .guide-verdict-title.ok { color: var(--green); }
   .guide-verdict-title.warn { color: var(--accent); }
   .guide-verdict-title.bad { color: var(--red); }
-  .guide-verdict-desc { font-size: 0.85rem; color: #6b6560; line-height: 1.5; }
+  .guide-verdict-desc { font-size: 0.85rem; color: #5c5248; line-height: 1.5; }
 
   .guide-tips-grid {
     display: grid;
@@ -904,7 +904,7 @@
   }
   .guide-tip-body {
     font-size: 0.85rem;
-    color: #6b6560;
+    color: #5c5248;
     line-height: 1.55;
   }
 
@@ -960,7 +960,7 @@
 
   <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
     <span class="guide-toggle-label">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#c07c0a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#c07c0a" stroke-width="1.2"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#d4720a" stroke-width="1.2"/></svg>
       Quick Guide &mdash; How SMT Capacity Calculator Works
     </span>
     <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
@@ -1168,7 +1168,7 @@
           <input type="number" id="oeeFactor" value="65" min="10" max="95" step="5" oninput="calculate()">
           <span class="input-unit">%</span>
         </div>
-        <div class="field-note">Overall Equipment Effectiveness. Typical SMT lines run 55–75%. Accounts for availability, performance, and quality losses.</div>
+        <div class="field-note">Overall Equipment Effectiveness. Typical SMT lines run 55?75%. Accounts for availability, performance, and quality losses.</div>
       </div>
     </div>
 
@@ -1182,13 +1182,13 @@
       <div style="height:1rem"></div>
       <div class="assump-toggle" id="assumpBtn" onclick="toggleAssump()">
         <span>Calculation Assumptions</span>
-        <span class="chevron">▼</span>
+        <span class="chevron">?</span>
       </div>
       <div class="assump-body" id="assumpBody">
-        Capacity is calculated using 50 working weeks × 5 days/week × selected hours/day.<br><br>
-        Effective line speed = Nameplate speed × OEE factor.<br><br>
-        PCBs/hour per product = Effective speed ÷ components per PCB.<br><br>
-        No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling — not margin analysis.
+        Capacity is calculated using 50 working weeks ? 5 days/week ? selected hours/day.<br><br>
+        Effective line speed = Nameplate speed ? OEE factor.<br><br>
+        PCBs/hour per product = Effective speed ? components per PCB.<br><br>
+        No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling - not margin analysis.
       </div>
     </div>
   </div>
@@ -1202,7 +1202,7 @@
           <th style="width:28px">#</th>
           <th style="text-align:left">Product Name</th>
           <th class="col-num-input r">PCBs / Year</th>
-          <th class="col-price r">Price / PCB (€)</th>
+          <th class="col-price r">Price / PCB (?)</th>
           <th class="col-comps r">Components / PCB</th>
           <th class="col-del"></th>
         </tr>
@@ -1210,7 +1210,7 @@
       <tbody id="productBody"></tbody>
     </table>
     <button class="add-btn" id="addBtn" onclick="addProduct()">+ Add Product</button>
-    <div class="table-note">No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling — not margin analysis.</div>
+    <div class="table-note">No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling - not margin analysis.</div>
   </div>
 
   <!-- RESULTS -->
@@ -1219,32 +1219,32 @@
     <div class="results-grid">
       <div class="result-box primary">
         <div class="result-label">Total Revenue / Week</div>
-        <div class="result-value" id="revWeek">—</div>
+        <div class="result-value" id="revWeek">-</div>
         <div class="result-sub">EUR / week</div>
       </div>
       <div class="result-box primary">
         <div class="result-label">Total Revenue / Year</div>
-        <div class="result-value" id="revYear">—</div>
+        <div class="result-value" id="revYear">-</div>
         <div class="result-sub">EUR / year</div>
       </div>
       <div class="result-box">
         <div class="result-label">Max Capacity / Year</div>
-        <div class="result-value" id="maxCapacity">—</div>
+        <div class="result-value" id="maxCapacity">-</div>
         <div class="result-sub">PCBs at current shift</div>
       </div>
       <div class="result-box">
         <div class="result-label">Total PCBs / Year</div>
-        <div class="result-value" id="totalPcbsYear">—</div>
+        <div class="result-value" id="totalPcbsYear">-</div>
         <div class="result-sub">all products combined</div>
       </div>
       <div class="result-box">
         <div class="result-label">Total PCBs / Week</div>
-        <div class="result-value" id="pcbsPerWeek">—</div>
+        <div class="result-value" id="pcbsPerWeek">-</div>
         <div class="result-sub">PCBs / week</div>
       </div>
       <div class="result-box">
         <div class="result-label">Required Run Time / Week</div>
-        <div class="result-value" id="reqRuntime">—</div>
+        <div class="result-value" id="reqRuntime">-</div>
         <div class="result-sub">hours / week</div>
       </div>
     </div>
@@ -1272,7 +1272,7 @@
     <div class="panel-label" style="margin-top:1.5rem">Line Utilization</div>
     <div class="util-header">
       <span class="util-label">Required Utilization / Shift</span>
-      <span class="util-pct" id="utilPct">—</span>
+      <span class="util-pct" id="utilPct">-</span>
     </div>
     <div class="bar-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
@@ -1285,7 +1285,7 @@
     <div class="print-bar">
       <label>Report Title</label>
       <input type="text" id="reportTitle" placeholder="e.g. Q2 2026 Capacity Plan">
-      <button class="print-btn" onclick="printReport()">⎙ Print Report</button>
+      <button class="print-btn" onclick="printReport()">? Print Report</button>
     </div>
   </div>
 
@@ -1374,7 +1374,7 @@
         '<td class="col-num-input"><input type="number" id="ppcbs_' + p.id + '" min="1" step="100" oninput="calculate()"></td>' +
         '<td class="col-price"><input type="number" id="pprice_' + p.id + '" min="0.01" step="1" oninput="calculate()"></td>' +
         '<td class="col-comps"><input type="number" id="pcomps_' + p.id + '" min="1" step="1" oninput="calculate()"></td>' +
-        '<td class="col-del"><button class="del-btn" onclick="removeProduct(' + p.id + ')" title="Remove">×</button></td>';
+        '<td class="col-del"><button class="del-btn" onclick="removeProduct(' + p.id + ')" title="Remove">?</button></td>';
       tbody.appendChild(tr);
       document.getElementById('pname_'  + p.id).value = p.savedName  !== undefined ? p.savedName  : '';
       document.getElementById('ppcbs_'  + p.id).value = p.savedPcbs  !== undefined ? p.savedPcbs  : 5000;
@@ -1482,15 +1482,15 @@
     if (utilPct > 100) {
       uEl.classList.add('over'); bEl.classList.add('over'); mEl.classList.add('over');
       var def = fmt((utilPct - 100) / 100 * hpw, 1);
-      mEl.textContent = '[!!] OVERLOADED — ' + fmt(utilPct, 1) + '% utilization required. You are ' + def + ' h/week short of capacity. Add a shift, increase line speed, reduce volume targets, or improve OEE.';
+      mEl.textContent = '[!!] OVERLOADED - ' + fmt(utilPct, 1) + '% utilization required. You are ' + def + ' h/week short of capacity. Add a shift, increase line speed, reduce volume targets, or improve OEE.';
     } else if (utilPct > 85) {
       uEl.classList.add('warn'); bEl.classList.add('warn'); mEl.classList.add('warn');
       var slack = fmt((100 - utilPct) / 100 * hpw, 1);
-      mEl.textContent = '[!] HIGH LOAD — ' + fmt(utilPct, 1) + '% utilization required. Only ' + slack + ' h/week of slack. Any unplanned downtime or changeover overrun creates schedule risk.';
+      mEl.textContent = '[!] HIGH LOAD - ' + fmt(utilPct, 1) + '% utilization required. Only ' + slack + ' h/week of slack. Any unplanned downtime or changeover overrun creates schedule risk.';
     } else {
       uEl.classList.add('good'); bEl.classList.add('good'); mEl.classList.add('ok');
       var slack = fmt((100 - utilPct) / 100 * hpw, 1);
-      mEl.textContent = '[OK] FEASIBLE — ' + fmt(utilPct, 1) + '% utilization required. ' + slack + ' h/week of headroom available for changeovers, maintenance, and ramp-up.';
+      mEl.textContent = '[OK] FEASIBLE - ' + fmt(utilPct, 1) + '% utilization required. ' + slack + ' h/week of headroom available for changeovers, maintenance, and ramp-up.';
     }
   }
 
@@ -1554,9 +1554,9 @@
     var statusEl  = document.getElementById('statusMsg');
     var statusTxt = statusEl ? statusEl.textContent : '';
     var statusCls = statusEl ? statusEl.className : '';
-    var statusColor = '#1a8c4e';
-    if (statusCls.indexOf('warn') !== -1) statusColor = '#c07c0a';
-    if (statusCls.indexOf('over') !== -1) statusColor = '#be2e0a';
+    var statusColor = '#167a40';
+    if (statusCls.indexOf('warn') !== -1) statusColor = '#d4720a';
+    if (statusCls.indexOf('over') !== -1) statusColor = '#c42b08';
 
     var statsHtml = stats.map(function(s) {
       return '<div class="pstat' + (s.primary ? ' pprimary' : '') + '">' +
@@ -1569,17 +1569,17 @@
       '<title>SMT Capacity Calculator' + (title ? ' - ' + title : '') + '</title>' +
       '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
       '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
-      '.ph { border-bottom: 3px solid #c07c0a; padding-bottom: 12px; margin-bottom: 20px; }' +
+      '.ph { border-bottom: 3px solid #d4720a; padding-bottom: 12px; margin-bottom: 20px; }' +
       '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
       '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
       '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
-      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c07c0a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
+      '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #d4720a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 12px; }' +
       '.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 20px; }' +
       '.pstat { border: 1px solid #eee; padding: 10px 14px; }' +
-      '.pprimary { border-top: 3px solid #c07c0a; }' +
+      '.pprimary { border-top: 3px solid #d4720a; }' +
       '.pstat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
       '.pstat-value { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 900; color: #222; }' +
-      '.paccent { color: #c07c0a; }' +
+      '.paccent { color: #d4720a; }' +
       '.pstat-sub { font-size: 10px; color: #888; margin-top: 2px; }' +
       '.util-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }' +
       '.util-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #888; }' +
@@ -1596,10 +1596,10 @@
       '.pt-name { text-align: left; font-weight: 600; color: #222; }' +
       '.pt-num  { text-align: right; font-family: "Share Tech Mono", monospace; font-size: 10px; }' +
       '.pt-foot td { border-top: 2px solid #eee; font-weight: 700; color: #222; padding: 6px 8px; }' +
-      '.pt-foot .pt-num { color: #c07c0a; }' +
+      '.pt-foot .pt-num { color: #d4720a; }' +
       '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
       '</style></head><body>' +
-      '<div class="ph"><div class="ph-tool">SMT Capacity Calculator — SMTCalc.com</div>' +
+      '<div class="ph"><div class="ph-tool">SMT Capacity Calculator - SMTCalc.com</div>' +
       (title ? '<div class="ph-title">' + title + '</div>' : '') +
       '<div class="ph-meta">Printed: ' + dateStr + '<br>Line Speed: ' + speed + ' cph  |  OEE: ' + oee + '%  |  Shift: ' + shiftText + '</div></div>' +
       '<div class="section-label">Total Line Summary</div>' +
