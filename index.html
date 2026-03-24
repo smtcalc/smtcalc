@@ -6,15 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMTCalc - SMT Tools & Calculators</title>
   <meta name="description" content="Free, practical tools and calculators for electronics manufacturing professionals. SMT process tools built by industry experts." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/smtcalc.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    /* Page uses fixed (not sticky) header */
-  header { position: fixed; top: 0; left: 0; right: 0; }
+    :root {
+      --bg:      #faf7f2;
+      --bg2:     #f2ece0;
+      --bg3:     #e6ddd0;
+      --bg4:     #d9cfc0;
+      --accent:  #d4720a;
+      --accent2: #c42b08;
+      --text:    #140f0a;
+      --muted:   #5c5248;
+      --border:  #c8c0b4;
+      --border2: #b8ae9f;
+      --green:   #167a40;
+      --yellow:  #d4720a;
+      --red:     #c42b08;
+      --mono: 'Share Tech Mono', monospace;
+}
 
-/* NOISE OVERLAY */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
     body::before {
       content: '';
       position: fixed;
@@ -25,9 +49,54 @@
       opacity: 0.4;
     }
 
-    
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250,247,242,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* HERO (page-specific additions) */
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    /* HERO */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -36,6 +105,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .hero-grid {
       position: absolute;
       inset: 0;
@@ -45,6 +115,7 @@
       background-size: 60px 60px;
       mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
     }
+
     .hero-accent {
       position: absolute;
       top: 20%;
@@ -54,6 +125,7 @@
       background: radial-gradient(circle, rgba(196,43,8,0.14) 0%, transparent 70%);
       pointer-events: none;
     }
+
     .hero-accent2 {
       position: absolute;
       bottom: 0;
@@ -63,6 +135,7 @@
       background: radial-gradient(circle, rgba(212,114,10,0.13) 0%, transparent 70%);
       pointer-events: none;
     }
+
     .hero-content {
       max-width: 1100px;
       margin: 0 auto;
@@ -70,6 +143,7 @@
       position: relative;
       z-index: 2;
     }
+
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -83,6 +157,7 @@
       opacity: 0;
       animation: fadeUp 0.6s 0.1s forwards;
     }
+
     .hero-eyebrow::before {
       content: '';
       display: block;
@@ -90,16 +165,31 @@
       height: 2px;
       background: var(--accent);
     }
+
+    h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
     h1 .line2 {
       color: var(--accent);
       display: block;
     }
+
     h1 .line3 {
       color: var(--muted);
       display: block;
       font-size: 0.6em;
       letter-spacing: 0.02em;
     }
+
     .hero-desc {
       max-width: 520px;
       font-size: 1.05rem;
@@ -108,6 +198,7 @@
       opacity: 0;
       animation: fadeUp 0.6s 0.35s forwards;
     }
+
     .hero-cta {
       display: flex;
       gap: 1rem;
@@ -115,6 +206,7 @@
       opacity: 0;
       animation: fadeUp 0.6s 0.45s forwards;
     }
+
     .btn-primary {
       display: inline-flex;
       align-items: center;
@@ -130,10 +222,12 @@
       padding: 0.85rem 2rem;
       transition: background 0.2s, transform 0.15s;
     }
+
     .btn-primary:hover {
       background: #f0880e;
       transform: translateY(-2px);
     }
+
     .btn-secondary {
       display: inline-flex;
       align-items: center;
@@ -150,12 +244,13 @@
       border: 1px solid var(--border);
       transition: border-color 0.2s, transform 0.15s;
     }
+
     .btn-secondary:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
     }
 
-/* STATS BAR */
+    /* STATS BAR */
     .stats-bar {
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
@@ -192,9 +287,7 @@
       margin-top: 0.25rem;
     }
 
-    
-
-/* TOOLS SECTION */
+    /* TOOLS SECTION */
     .tools-section {
       padding: 100px 2rem;
       max-width: 1100px;
@@ -239,9 +332,7 @@
       letter-spacing: -0.01em;
     }
 
-    
-
-/* TOOL CARDS */
+    /* TOOL CARDS */
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -366,9 +457,7 @@
       transform: translateX(3px);
     }
 
-    
-
-/* ABOUT STRIP */
+    /* ABOUT STRIP */
     .about-strip {
       background: var(--bg2);
       border-top: 1px solid var(--border);
@@ -436,17 +525,39 @@
       color: var(--muted);
     }
 
-    
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
 
-/* ANIMATIONS */
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .footer-copy a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ANIMATIONS */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    
-
-/* RESPONSIVE */
+    /* RESPONSIVE */
     @media (max-width: 768px) {
       .tools-grid { grid-template-columns: 1fr; }
       .tools-grid .tool-card,

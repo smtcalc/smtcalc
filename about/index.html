@@ -6,15 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About - SMTCalc</title>
   <meta name="description" content="About SMTCalc - free, practical tools for electronics manufacturing professionals, built by an industry veteran with nearly 30 years of SMT experience." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/smtcalc.css">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    /* Page uses fixed (not sticky) header */
-  header { position: fixed; top: 0; left: 0; right: 0; }
+    :root {
+      --bg: #faf7f2;
+      --bg2: #f2ece0;
+      --bg3: #e6ddd0;
+      --accent: #d4720a;
+      --accent2: #c42b08;
+      --text: #140f0a;
+      --muted: #5c5248;
+      --border: #c8c0b4;
+      --bg4: #d9cfc0;
+      --green: #167a40;
+      --yellow: #d4720a;
+      --red: #c42b08;
+      --border2: #b8ae9f;
+      --mono: 'Share Tech Mono', monospace;
+}
 
-/* NOISE OVERLAY */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
     body::before {
       content: '';
       position: fixed;
@@ -25,18 +49,60 @@
       opacity: 0.4;
     }
 
-    
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250,247,242,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* PAGE WRAPPER */
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo span { color: var(--accent); }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--text); }
+    nav a.active { color: var(--accent); }
+
+    /* PAGE WRAPPER */
     .page {
       max-width: 800px;
       margin: 0 auto;
       padding: 120px 2rem 100px;
     }
 
-    
-
-/* PAGE EYEBROW */
+    /* PAGE EYEBROW */
     .page-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -73,18 +139,14 @@
 
     h1 span { color: var(--accent); display: block; }
 
-    
-
-/* DIVIDER */
+    /* DIVIDER */
     .divider {
       height: 1px;
       background: var(--border);
       margin: 3rem 0;
     }
 
-    
-
-/* SECTION LABEL */
+    /* SECTION LABEL */
     .section-label {
       font-size: 0.8rem;
       font-weight: 600;
@@ -105,9 +167,7 @@
       background: var(--accent);
     }
 
-    
-
-/* CONTENT BLOCKS */
+    /* CONTENT BLOCKS */
     .content-block {
       opacity: 0;
       animation: fadeUp 0.5s forwards;
@@ -136,9 +196,7 @@
     .body-text p { margin-bottom: 1rem; }
     .body-text p:last-child { margin-bottom: 0; }
 
-    
-
-/* CERT LIST */
+    /* CERT LIST */
     .cert-list {
       margin-top: 1.5rem;
       display: flex;
@@ -170,9 +228,7 @@
       letter-spacing: 0.04em;
     }
 
-    
-
-/* BACK LINK */
+    /* BACK LINK */
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -191,17 +247,39 @@
 
     .back-link:hover { color: var(--accent); gap: 0.75rem; }
 
-    
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
 
-/* ANIMATIONS */
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .footer-copy a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ANIMATIONS */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    
-
-/* RESPONSIVE */
+    /* RESPONSIVE */
     @media (max-width: 768px) {
       nav { display: none; }
       .page { padding: 100px 1.25rem 80px; }

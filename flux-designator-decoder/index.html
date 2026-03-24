@@ -6,12 +6,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flux Designator Decoder -- SMTCalc</title>
   <meta name="description" content="Decode J-STD-004B flux designators instantly. Look up base material, activity level, and halide content from any four-character flux code. Reverse lookup also available. Free tool for SMT process engineers.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/smtcalc.css">
   <style>
-  /* HERO (page-specific additions) */
+    :root {
+      --bg: #faf7f2;
+      --bg2: #f2ece0;
+      --bg3: #e6ddd0;
+      --bg4: #d9cfc0;
+      --accent: #d4720a;
+      --accent2: #c42b08;
+      --green: #167a40;
+      --yellow: #d4720a;
+      --red: #c42b08;
+      --text: #140f0a;
+      --muted: #5c5248;
+      --border: #c8c0b4;
+      --border2: #b8ae9f;
+      --mono: 'Share Tech Mono', monospace;
+}
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250,247,242,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    .tool-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.75rem;
+    }
+
+    /* HERO */
+    .tool-hero {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(212,114,10,0.10) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .tool-hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .tool-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .tool-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--accent);
+    }
+
     .tool-hero h1 {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 900;
@@ -22,14 +126,21 @@
       margin-bottom: 0.75rem;
     }
 
-/* MAIN LAYOUT (page-specific additions) */
+    .tool-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 680px;
+      line-height: 1.65;
+    }
+
+    /* MAIN LAYOUT */
     .main-wrap {
       max-width: 900px;
       margin: 0 auto;
       padding: 2.5rem 2rem 4rem;
     }
 
-/* MODE TABS */
+    /* MODE TABS */
     .mode-tabs {
       display: flex;
       gap: 0;
@@ -62,9 +173,7 @@
       color: var(--text);
     }
 
-    
-
-/* PANELS */
+    /* PANELS */
     .panel {
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -82,9 +191,7 @@
       margin-bottom: 1.5rem;
     }
 
-    
-
-/* FORM ELEMENTS */
+    /* FORM ELEMENTS */
     .field-group {
       display: flex;
       gap: 1rem;
@@ -138,9 +245,7 @@
       margin-top: 0.4rem;
     }
 
-    
-
-/* RESULT BLOCK */
+    /* RESULT BLOCK */
     .result-block {
       display: none;
       margin-top: 1.5rem;
@@ -221,9 +326,7 @@
       margin-top: 0.75rem;
     }
 
-    
-
-/* ERROR */
+    /* ERROR */
     .error-block {
       display: none;
       margin-top: 1.5rem;
@@ -238,9 +341,7 @@
     }
     .error-block.show { display: block; }
 
-    
-
-/* REFERENCE TABLE */
+    /* REFERENCE TABLE */
     .ref-table-wrap {
       overflow-x: auto;
     }
@@ -337,9 +438,7 @@
       margin-bottom: 1rem;
     }
 
-    
-
-/* GUIDE ACCORDION */
+    /* GUIDE ACCORDION */
     .inline-guide {
       margin-bottom: 2rem;
     }
@@ -504,9 +603,82 @@
       color: var(--muted);
     }
 
-    
+    /* PRINT BAR */
+    .print-bar {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
 
-/* PRINT */
+    .print-bar label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .print-bar input[type=text] {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      padding: 0.55rem 0.9rem;
+      outline: none;
+      text-transform: none;
+      letter-spacing: normal;
+      font-size: 0.95rem;
+    }
+    .print-bar input[type=text]:focus { border-color: var(--accent); }
+
+    .print-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .footer-copy a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* PRINT */
     @media print {
       header, .guide-toggle-btn, .print-bar { display: none !important; }
     }
@@ -1019,7 +1191,7 @@ function printReport() {
   var html = '<!DOCTYPE html><html><head>' +
     '<meta charset="UTF-8">' +
     '<title>' + title + ' -- SMTCalc</title>' +
-    '' +
+    '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">' +
     '<style>' +
     '@page { size: A4 portrait; margin: 0; }' +
     '* { box-sizing: border-box; margin: 0; padding: 0; }' +
