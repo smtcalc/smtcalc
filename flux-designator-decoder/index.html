@@ -11,7 +11,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/smtcalc.css">
   <style>
-  /* MODE TABS */
+  /* HERO (page-specific additions) */
+    .tool-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      line-height: 1.0;
+      margin-bottom: 0.75rem;
+    }
+
+/* MAIN LAYOUT (page-specific additions) */
+    .main-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+/* MODE TABS */
     .mode-tabs {
       display: flex;
       gap: 0;
@@ -45,6 +63,7 @@
     }
 
     
+
 /* PANELS */
     .panel {
       background: var(--bg2);
@@ -64,6 +83,7 @@
     }
 
     
+
 /* FORM ELEMENTS */
     .field-group {
       display: flex;
@@ -119,6 +139,7 @@
     }
 
     
+
 /* RESULT BLOCK */
     .result-block {
       display: none;
@@ -201,6 +222,7 @@
     }
 
     
+
 /* ERROR */
     .error-block {
       display: none;
@@ -217,6 +239,7 @@
     .error-block.show { display: block; }
 
     
+
 /* REFERENCE TABLE */
     .ref-table-wrap {
       overflow-x: auto;
@@ -315,6 +338,7 @@
     }
 
     
+
 /* GUIDE ACCORDION */
     .inline-guide {
       margin-bottom: 2rem;
@@ -481,6 +505,7 @@
     }
 
     
+
 /* PRINT */
     @media print {
       header, .guide-toggle-btn, .print-bar { display: none !important; }
