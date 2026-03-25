@@ -702,6 +702,34 @@
     </p>
   </div>
 
+  <!-- TEMPERATURE EFFECT CHART -->
+  <div class="panel-full" id="chartPanel">
+    <div class="section-label">Temperature vs. Bake Time</div>
+    <p style="font-size:0.87rem; line-height:1.6; color:var(--muted); margin-bottom:1rem;">
+      The chart below shows how bake time changes with temperature for all three material groups, using your current storage duration and target PPM selection. The curve is exponential: dropping from 120&#176;C to 80&#176;C multiplies bake time by roughly 5 to 6. At 60&#176;C bake time is already measured in days. At 40&#176;C it ranges from 7 days for a standard FR-4 board with short storage up to 21 days for a high-absorption board with long storage. A 40&#176;C bake is not physically impossible, it is just so slow that it is operationally useless. The oven temperature is by far the most important variable in the process.
+    </p>
+    <div style="position:relative; width:100%; overflow-x:auto;">
+      <canvas id="bakeChart" style="display:block; width:100%; max-width:820px; height:320px;"></canvas>
+    </div>
+    <div style="display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:0.85rem;">
+      <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; color:var(--muted);">
+        <span style="display:inline-block; width:28px; height:3px; background:#d4720a;"></span>Group 1 &ndash; Low Absorption
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; color:var(--muted);">
+        <span style="display:inline-block; width:28px; height:3px; background:#2a7ab5;"></span>Group 2 &ndash; Standard FR-4
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; color:var(--muted);">
+        <span style="display:inline-block; width:28px; height:3px; background:#c42b08;"></span>Group 3 &ndash; High Absorption
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.72rem; text-transform:uppercase; color:var(--muted);">
+        <span style="display:inline-block; width:16px; height:2px; background:var(--border2); border-top: 2px dashed var(--border2);"></span>Active selection
+      </div>
+    </div>
+    <p style="font-size:0.78rem; color:var(--muted); margin-top:0.6rem; line-height:1.45;">
+      Range shown: 40&#176;C to 120&#176;C. The calculator only offers 80&#176;C as its minimum, but 40&#176;C and 60&#176;C are included here to illustrate the severity of the penalty. Groups or PPM combinations that require no baking are not plotted. Dashed vertical line marks your current temperature selection.
+    </p>
+  </div>
+
   <!-- ACCORDION GUIDE -->
   <div class="accordion">
 
@@ -990,7 +1018,208 @@
       document.getElementById('floorLifeDryCab').textContent = fmtDry.val;
       document.getElementById('floorLifeDryCabSub').textContent = fmtDry.sub || ('below 5% RH / 23&#176;C');
     }
+
+    drawChart();
   }
+
+  function drawChart() {
+    var canvas = document.getElementById('bakeChart');
+    if (!canvas || !canvas.getContext) return;
+
+    // Set physical pixel size for sharpness
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = canvas.parentElement.clientWidth;
+    if (cssW > 820) cssW = 820;
+    var cssH = 320;
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    var W = cssW;
+    var H = cssH;
+    var PAD_L = 72;
+    var PAD_R = 20;
+    var PAD_T = 18;
+    var PAD_B = 44;
+    var plotW = W - PAD_L - PAD_R;
+    var plotH = H - PAD_T - PAD_B;
+
+    // Colors matching design system
+    var COLORS = { 1: '#d4720a', 2: '#2a7ab5', 3: '#c42b08' };
+    var BG     = '#faf7f2';
+    var BG2    = '#f2ece0';
+    var BORDER = '#c8c0b4';
+    var MUTED  = '#5c5248';
+    var TEXT   = '#140f0a';
+    var ACCENT = '#d4720a';
+
+    // Temperature points 40..120 in 2-degree steps
+    var temps = [];
+    for (var tt = 40; tt <= 120; tt += 2) temps.push(tt);
+
+    // Compute curves for all three groups
+    var curves = {};
+    var maxVal = 0;
+    for (var g = 1; g <= 3; g++) {
+      curves[g] = temps.map(function(t) {
+        var a = A_TABLE[g][String(state.storageLong)][state.ppm];
+        if (a === 0) return null;
+        var T = t + 273.15;
+        return a * 1.92e-6 * Math.exp(5726 / T);
+      });
+      curves[g].forEach(function(v) { if (v !== null && v > maxVal) maxVal = v; });
+    }
+
+    // Cap display at 500 hrs; values above get clipped with arrow indicator
+    var YMAX_DISPLAY = Math.min(maxVal * 1.08, 500);
+    // Round up to a nice number
+    var niceMax = 10;
+    var steps = [10,20,25,50,100,200,250,500];
+    for (var si = 0; si < steps.length; si++) {
+      if (steps[si] >= YMAX_DISPLAY) { niceMax = steps[si]; break; }
+      niceMax = steps[si];
+    }
+    if (niceMax < YMAX_DISPLAY) niceMax = Math.ceil(YMAX_DISPLAY / 50) * 50;
+
+    function xPos(t)   { return PAD_L + (t - 40) / 80 * plotW; }
+    function yPos(val) {
+      var clamped = Math.min(val, niceMax);
+      return PAD_T + plotH - (clamped / niceMax) * plotH;
+    }
+
+    // Clear
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = BORDER;
+    ctx.lineWidth = 0.5;
+    var yGridCount = 5;
+    for (var yi = 0; yi <= yGridCount; yi++) {
+      var gVal = niceMax * yi / yGridCount;
+      var gy = yPos(gVal);
+      ctx.beginPath();
+      ctx.moveTo(PAD_L, gy);
+      ctx.lineTo(W - PAD_R, gy);
+      ctx.stroke();
+      // Y axis labels
+      var labelStr = gVal >= 48 ? (gVal / 24).toFixed(gVal % 24 === 0 ? 0 : 1) + 'd' : (gVal < 1 ? Math.round(gVal * 60) + 'm' : gVal.toFixed(0) + 'h');
+      ctx.fillStyle = MUTED;
+      ctx.font = '500 10px Barlow, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(labelStr, PAD_L - 7, gy);
+    }
+
+    // X grid and labels
+    var xTemps = [40, 50, 60, 70, 80, 90, 100, 110, 120];
+    xTemps.forEach(function(t) {
+      var gx = xPos(t);
+      ctx.strokeStyle = BORDER;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(gx, PAD_T);
+      ctx.lineTo(gx, PAD_T + plotH);
+      ctx.stroke();
+      ctx.fillStyle = MUTED;
+      ctx.font = '500 10px Barlow, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(t + '\u00b0C', gx, PAD_T + plotH + 8);
+    });
+
+    // Axis border
+    ctx.strokeStyle = BORDER;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(PAD_L, PAD_T, plotW, plotH);
+
+    // Dashed vertical line for selected temp
+    var selX = xPos(state.temp);
+    ctx.save();
+    ctx.strokeStyle = TEXT;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath();
+    ctx.moveTo(selX, PAD_T);
+    ctx.lineTo(selX, PAD_T + plotH);
+    ctx.stroke();
+    ctx.restore();
+
+    // Draw curves
+    for (var cg = 1; cg <= 3; cg++) {
+      var data = curves[cg];
+      var clipped = false;
+      ctx.save();
+      ctx.strokeStyle = COLORS[cg];
+      ctx.lineWidth = cg === state.group ? 2.5 : 1.5;
+      ctx.globalAlpha = cg === state.group ? 1 : 0.45;
+      ctx.beginPath();
+      var started = false;
+      for (var ti = 0; ti < temps.length; ti++) {
+        if (data[ti] === null) continue;
+        var px = xPos(temps[ti]);
+        var py = yPos(data[ti]);
+        if (data[ti] > niceMax) {
+          py = PAD_T;
+          clipped = true;
+        }
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Arrow heads at top if clipped
+      if (clipped) {
+        for (var ti2 = 0; ti2 < temps.length; ti2++) {
+          if (data[ti2] !== null && data[ti2] > niceMax) {
+            var ax = xPos(temps[ti2]);
+            ctx.fillStyle = COLORS[cg];
+            ctx.beginPath();
+            ctx.moveTo(ax, PAD_T - 6);
+            ctx.lineTo(ax - 4, PAD_T + 2);
+            ctx.lineTo(ax + 4, PAD_T + 2);
+            ctx.closePath();
+            ctx.fill();
+            break; // one arrow per group is enough
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    // Selected temp dot for active group
+    var selData = curves[state.group];
+    var selIdx = temps.indexOf(state.temp);
+    if (selIdx >= 0 && selData[selIdx] !== null) {
+      var dotY = yPos(selData[selIdx]);
+      if (dotY <= PAD_T + plotH && dotY >= PAD_T) {
+        ctx.save();
+        ctx.fillStyle = COLORS[state.group];
+        ctx.beginPath();
+        ctx.arc(selX, dotY, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Y axis title
+    ctx.save();
+    ctx.fillStyle = MUTED;
+    ctx.font = '500 10px Barlow, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.translate(13, PAD_T + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('BAKE TIME', 0, 0);
+    ctx.restore();
+  }
+
+  window.addEventListener('resize', drawChart);
 
   function toggleAccordion(btn) {
     var item = btn.parentElement;
@@ -1061,6 +1290,12 @@
 
   // Init
   calculate();
+  // Draw chart after fonts are likely loaded
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(drawChart);
+  } else {
+    setTimeout(drawChart, 400);
+  }
 </script>
 
 <footer>
