@@ -735,6 +735,20 @@
 
     <div class="accordion-item">
       <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Why Moisture in PCBs Is a Problem, and When Baking Is Actually Needed</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>A bare PCB sitting in ambient air is continuously absorbing moisture into its laminate. Under normal storage conditions this is a slow process, and the amount absorbed is small enough that most boards can go straight to assembly without any issue. The problem arises when a board has absorbed more moisture than the laminate can safely release during the rapid temperature ramp of a soldering process.</p>
+        <p><strong>What happens during soldering:</strong> reflow soldering drives a board from room temperature to peak temperatures of 230 to 260&#176;C in a matter of minutes, depending on the profile. At these temperatures, moisture trapped inside the laminate converts to steam. Steam expands with considerable force. If the vapor pressure inside the laminate exceeds the mechanical strength of the resin-to-glass fiber bond, the laminate delaminates. In less severe cases, the result is measling, crazing, or blistering visible on the board surface. In the worst case, inner layer separation compromises electrical integrity and cannot be repaired. The same risk applies to wave soldering, where the board underside contacts liquid solder at around 250 to 260&#176;C, and to selective soldering. Hand soldering with a well-controlled iron on individual joints is generally not a significant risk for bulk laminate moisture.</p>
+        <p><strong>The risk is proportional to moisture content and heating rate:</strong> a board at 1500 PPM going through a well-tuned reflow profile with a gradual preheat will typically survive without damage. A board at 4000 PPM going through a fast profile with a steep ramp is at real risk. This is why the Aquaboard study tested multiple PPM thresholds rather than a single pass/fail limit. The 800 PPM target recommended by IPC-HDBK-001 is a conservative safe level for standard production. The 2400 PPM limit found acceptable in three successive reflow passes in the same study shows that there is engineering margin, not a cliff edge.</p>
+        <p><strong>When baking is actually warranted:</strong> baking should be a triggered response to a specific condition, not a standing procedure applied to every board that arrives. Conditions that justify baking include: boards that have been stored without dry packaging for longer than their floor life allows, boards returned from the field or pulled from long-term storage, boards with known high-absorption materials such as polyimide flex or paper-phenol substrates, or boards where a previous assembly attempt produced delamination or blistering and moisture is the suspected cause. If boards arrive from a qualified fabricator in sealed moisture-barrier packaging with desiccant, and are used within a reasonable time after opening, baking adds no value and only introduces the risk of solderability degradation from the heat cycle.</p>
+        <p><strong>Baking is a corrective measure, not a process step:</strong> every bake cycle applies thermal stress to the surface finish and the laminate. HASL and immersion tin finishes degrade measurably with each bake. OSP coatings are directly damaged by baking. The correct strategy is to prevent moisture absorption through proper dry packaging from the fabricator through to the point of assembly, so that baking is never necessary in the first place. A process that requires routine pre-bake of every board has a storage or procurement problem that should be solved at the source.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
         <span class="accordion-title">What Is Diffusion and Why Does Temperature Matter?</span>
         <span class="accordion-icon">+</span>
       </button>
