@@ -588,8 +588,59 @@
   }
 
   @media print {
-    header, .guide-toggle-btn, .guide-content { display: none !important; }
+    header, .guide-toggle-btn, .guide-content, .accordion { display: none !important; }
   }
+
+  /* ACCORDION */
+  .accordion {
+    border: 1px solid var(--border);
+    margin-top: 2rem;
+    margin-bottom: 1.5px;
+  }
+  .accordion-item { border-bottom: 1px solid var(--border); }
+  .accordion-item:last-child { border-bottom: none; }
+  .accordion-header {
+    width: 100%;
+    background: var(--bg);
+    border: none;
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: var(--bg2); }
+  .accordion-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .accordion-icon {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); }
+  .accordion-body {
+    display: none;
+    padding: 1.25rem 1.5rem 1.5rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+  .accordion-body p { margin-bottom: 0.9rem; }
+  .accordion-body p:last-child { margin-bottom: 0; }
+  .accordion-body strong { font-weight: 600; color: var(--text); }
 
   /* INLINE GUIDE */
   .guide-toggle-btn {
@@ -1280,6 +1331,65 @@
     <p><strong style="color:var(--yellow);">Elevated humidity exposure noted:</strong> J-STD-033D Table 4-1 Note 1 states that if components have been exposed above 60% RH, the tabled bake times may not be sufficient. Track actual desorption data (weigh the component lot periodically during baking) to confirm dryness rather than relying solely on the timed values.</p>
   </div>
 
+  <!-- ACCORDION GUIDE -->
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Why Plastic IC Packages Absorb Moisture and Why It Matters</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Plastic IC packages are encapsulated in epoxy mold compound, a thermoset polymer chosen for its electrical insulation, mechanical strength, and cost. That same polymer is permeable to water vapor. Moisture diffuses slowly through the mold compound and accumulates at internal interfaces: between the mold compound and the die, between the compound and the die attach paddle, and along bond wire interfaces. This is not a manufacturing defect. It is an inherent material property of polymer chemistry.</p>
+        <p><strong>What happens during reflow:</strong> a reflow oven drives the board from room temperature to a peak of 220 to 260&#176;C in a matter of minutes. At around 100&#176;C, absorbed water starts converting to steam. The steam needs to go somewhere. As temperature rises further and vapor pressure increases, that steam is trying to escape through a solid polymer enclosure. If the vapor pressure exceeds the adhesion strength at an internal interface, the interface delaminates. The rapid, violent version of this is called popcorning: an audible pop as the package ruptures. The quieter version is internal delamination that is only visible under acoustic microscopy or X-ray. Bond wires break, die attach lifts, the die cracks. The component functions normally during in-circuit test and fails in the field weeks later.</p>
+        <p><strong>The risk is proportional to moisture content and thermal ramp rate:</strong> a component at MSL 3 with 30 hours of floor life used is at very low risk. The same component with 200 hours used, stored at 70% RH, going through a fast ramp profile without preheat, is at real risk. This is why J-STD-033D defines bake times as a function of both MSL level and the amount of floor life already consumed, not simply a fixed duration per MSL level. The standard encodes engineering margin, not a binary pass/fail cliff.</p>
+        <p><strong>When baking is actually warranted:</strong> baking is a corrective measure, not a routine process step. Bake when floor life has been exceeded, when the bag was opened and no exposure tracking was done, when components were stored in uncontrolled conditions, or when a previous assembly run produced confirmed popcorning. If components arrive in sealed moisture-barrier bags with a desiccant pack and a fresh humidity indicator card, and they are used within their floor life, baking provides no benefit and introduces unnecessary thermal stress to the package and its surface finish.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">What Is Diffusion and Why Does Temperature Drive Bake Time?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Diffusion is the movement of molecules from a region of high concentration to a region of low concentration, without any external force. A drop of ink in still water spreads on its own. The same process governs how moisture moves in and out of an IC package mold compound.</p>
+        <p>When a component sits in humid factory air, water molecules slowly work their way inward through the polymer surface. When the same component is placed in a hot, dry oven, the process reverses: moisture migrates from the interior toward the surface and evaporates off. The direction of movement is controlled by the concentration gradient. The speed of movement is controlled by temperature.</p>
+        <p><strong>Why temperature is the dominant variable:</strong> the diffusion rate through a polymer increases exponentially with temperature, following the Arrhenius relationship. This is the same relationship that governs chemical reaction rates and is why every 10&#176;C increase in temperature roughly doubles a reaction rate in many systems. For IC mold compounds, the effect is dramatic: the J-STD-033D bake times show that going from 125&#176;C to 40&#176;C multiplies required bake time by a factor of around 200 for a standard component. A 4-hour bake at 125&#176;C becomes roughly 33 days at 40&#176;C. Lowering the oven humidity to zero does not change this. The moisture is already inside the polymer. Temperature is the only lever that moves it out at a practical rate.</p>
+        <p><strong>Package thickness matters for the same reason:</strong> a thicker package body means moisture must diffuse a greater distance to reach the surface. Because time scales with the square of diffusion distance (Fick's second law), a component with twice the body thickness needs roughly four times the bake time at the same temperature. This is why J-STD-033D Table 4-1 breaks bake times into multiple thickness ranges. When in doubt, measure the actual package body thickness with calipers rather than relying on the nominal datasheet dimension.</p>
+        <p>The humidity indicator card (HIC) in the moisture-barrier bag tells you whether the bag was compromised during storage. It does not tell you how much moisture the component has absorbed. A yellow card means the contents saw elevated humidity at some point. It does not mean they are wet enough to cause popcorning. The bake time tables cover the worst-case scenario: a component that was in an opened bag for its full allowable floor life at 30&#176;C / 60% RH before being sealed. A component that only briefly saw a yellow-card condition may need less than the full tabled bake time, but unless you have desorption data, using the full table value is the safe call.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Baking at 60&#176;C: Arrhenius-Derived Times and When They Apply</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>J-STD-033D Table 4-1 provides bake times at 125&#176;C, 90&#176;C, and 40&#176;C. There is no 60&#176;C column in the standard. The 60&#176;C bake times shown in this calculator are derived from the Arrhenius relationship using an activation energy of 0.445 eV, consistent with the activation energy used for the 40&#176;C column in J-STD-033D Annex B.</p>
+        <p><strong>Why 60&#176;C is useful in practice:</strong> 40&#176;C bake times are often impractically long, particularly for high MSL components with significant floor life consumed. A simple laboratory convection oven or a controlled drying cabinet can maintain 60&#176;C reliably, and the bake times at that temperature are shorter by a factor of roughly 5 compared to 40&#176;C while still staying well below the 80&#176;C threshold that begins to stress some component packages and surface finishes.</p>
+        <p><strong>The tradeoff compared to 125&#176;C:</strong> every elevated-temperature bake applies some thermal stress to the component. At 125&#176;C, the stress is sufficient to affect plastic packaging over multiple bake cycles, and repeated 125&#176;C bakes are explicitly limited by J-STD-033D. At 60&#176;C, the thermal stress is far lower. This makes 60&#176;C a reasonable operating point for facilities that regularly need to bake components but want to minimize cumulative thermal exposure.</p>
+        <p><strong>Important caveat:</strong> because the 60&#176;C times are calculated rather than empirically validated in J-STD-033D, they should be treated as engineering estimates rather than certified standard values. For critical applications or customer-traceable work, the standard 125&#176;C, 90&#176;C, or 40&#176;C values are the defensible choices. For routine production baking where 40&#176;C is too slow and 125&#176;C is unnecessarily aggressive, 60&#176;C offers a practical middle ground.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <span class="accordion-title">Package Degradation and Bake Cycle Limits</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Baking is not free. Every bake cycle at elevated temperature applies thermal stress to the component, its lead finish, and any internal adhesive bonds. J-STD-033D limits repeated baking explicitly and requires an engineering review before a component is baked more than the allowed number of times.</p>
+        <p><strong>At 125&#176;C,</strong> J-STD-033D allows a maximum of three bake cycles before the component must be scrapped or submitted for engineering disposition. This limit reflects the cumulative intermetallic growth and adhesive degradation that occurs at that temperature. Sn-Pb HASL leads and pure tin finishes are measurably degraded by repeated 125&#176;C exposure. SnAgCu (SAC) alloys are somewhat more tolerant but are still affected.</p>
+        <p><strong>At 40&#176;C,</strong> the standard does not impose a bake cycle limit, because the thermal stress at that temperature is negligible. In principle a component could be baked indefinitely at 40&#176;C without thermal damage. The practical constraint at 40&#176;C is not package integrity but time: bake durations of five to ten days are operationally disruptive for most production schedules.</p>
+        <p><strong>Solderability degradation:</strong> immersion tin and OSP lead finishes are particularly sensitive. Immersion tin undergoes Cu-Sn intermetallic growth with each bake cycle, and the solderable tin layer is only a few microns thick. OSP (organic solderability preservative) coatings on component leads are partially volatilized by baking. Components with OSP lead finish should be soldered as soon as possible after baking, and baking should be avoided unless there is no alternative.</p>
+        <p><strong>The right preventive strategy</strong> is moisture-barrier packaging from receipt through kitting, with a fresh desiccant pack and a properly calibrated humidity indicator card, so that floor life is never exceeded and baking is never needed. A facility that routinely bakes components has an inventory management or storage problem that should be addressed at the source.</p>
+      </div>
+    </div>
+
+  </div><!-- end accordion -->
+
   <!-- PRINT BAR -->
   <div class="print-bar">
     <label>Report Reference</label>
@@ -1290,6 +1400,11 @@
 </div><!-- end tool-wrap -->
 
 <script>
+function toggleAccordion(btn) {
+  var item = btn.parentElement;
+  item.classList.toggle('open');
+}
+
 function toggleGuide(btn) {
   var content = btn.nextElementSibling;
   var arrow = btn.querySelector('.guide-toggle-arrow');
