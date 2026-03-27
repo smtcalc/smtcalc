@@ -1227,6 +1227,14 @@
         <div class="field-note">Total cumulative time the component has been exposed to uncontrolled factory atmosphere since the moisture-barrier bag was opened.</div>
       </div>
 
+      <label class="check-field" for="exposureUnknown">
+        <input type="checkbox" id="exposureUnknown" onchange="toggleExposureUnknown(); calculate()">
+        <div class="check-text">
+          Floor Life Exposure Unknown
+          <div class="check-sub">Use when exposure time cannot be determined -- damaged packaging, missing label, or no bag-open record. Assumes worst-case: floor life fully consumed and excess over 72h. Calculates from the over-72h column of Table 4-1.</div>
+        </div>
+      </label>
+
       <div class="field">
         <label>Exposure Condition</label>
         <select id="exposureRH" onchange="calculate()">
@@ -1414,6 +1422,13 @@ function toggleGuide(btn) {
   btn.setAttribute('aria-expanded', String(!isOpen));
 }
 
+function toggleExposureUnknown() {
+  var cb = document.getElementById('exposureUnknown');
+  var inp = document.getElementById('timeOut');
+  inp.disabled = cb.checked;
+  inp.style.opacity = cb.checked ? '0.4' : '1';
+}
+
 // ============================================================
 // J-STD-033D TABLE 4-1 BAKE DATA
 // Structure: bakeTimes[thickness][mslLevel][exceedance]
@@ -1569,6 +1584,7 @@ function calculate() {
   var timeOut   = parseFloat(document.getElementById('timeOut').value) || 0;
   var largeBga  = document.getElementById('largeBga').checked;
   var elevRH    = document.getElementById('exposureRH').value === 'elevated';
+  var expUnknown = document.getElementById('exposureUnknown').checked;
 
   var fl        = FLOOR_LIFE[msl];
   var flLabel   = floorLifeLabel(msl);
@@ -1580,7 +1596,7 @@ function calculate() {
   if (msl === '1') {
     showStatus('no-bake', 'NO BAKE REQUIRED', 'MSL 1 components have unlimited floor life and are not moisture-sensitive. No drying is ever required regardless of exposure time.');
     hideResults();
-    updateExcessDisplay(null, null, 0);
+    updateExcessDisplay(null, null, 0, false);
     document.getElementById('excessVal').textContent = 'Not applicable';
     document.getElementById('excessSub').textContent = 'MSL 1 has unlimited floor life.';
     showInfoGrid();
@@ -1591,10 +1607,61 @@ function calculate() {
   if (msl === '6') {
     showStatus('warn', 'MANDATORY BAKE REQUIRED', 'MSL 6 components must be baked immediately before every use. Bake time is determined by the component supplier -- consult the supplier datasheet. J-STD-033D does not provide a standard table for MSL 6.');
     hideResults();
-    updateExcessDisplay(null, null, 0);
+    updateExcessDisplay(null, null, 0, false);
     document.getElementById('excessVal').textContent = 'Always bake';
     document.getElementById('excessSub').textContent = 'MSL 6: supplier specifies bake conditions.';
     showInfoGrid();
+    return;
+  }
+
+  // ---- Exposure unknown: force worst case ----
+  if (expUnknown) {
+    // Lock toggles to over72 state
+    document.getElementById('btnUnder72').className = '';
+    document.getElementById('btnOver72').className = 'active';
+    document.getElementById('excessVal').className = 'excess-display excess-over72';
+    document.getElementById('excessVal').textContent = 'Unknown -- worst case';
+    document.getElementById('excessSub').textContent = 'Exposure time not available. Over-72h column of Table 4-1 applied.';
+
+    // Large BGA override still applies
+    if (largeBga) {
+      showStatus('warn', 'BAKE REQUIRED -- LARGE BGA / STACKED DIE',
+        'Exposure time unknown. J-STD-033D Table 4-1 Note 2 applies. Fixed bake of 96 hours at 125\u00b0C regardless of package thickness or excess exposure duration. Verify with component supplier for stacked die packages as actual bake time may be longer.');
+      showBgaResults();
+      showInfoGrid();
+      showCalcNote();
+      if (elevRH) showElevatedNote(); else hideElevatedNote();
+      return;
+    }
+
+    // MSL 2 thin package: even with unknown exposure, J-STD-033D Note 4 still applies
+    if ((msl === '2') && (thick === 'lt05' || thick === '05to08' || thick === '08to14')) {
+      showStatus('no-bake', 'BAKE NOT REQUIRED (MSL 2, THIN PACKAGE)',
+        'J-STD-033D Table 4-1 Note 4: baking is not required for MSL 2 devices with package thickness below 1.4 mm, regardless of floor life exceedance. Exposure time unknown but this exemption is unconditional for thin MSL 2 packages.');
+      hideResults();
+      showInfoGrid();
+      hideElevatedNote();
+      return;
+    }
+
+    var dataUnk = TABLE_4_1[thick] && TABLE_4_1[thick][msl] ? TABLE_4_1[thick][msl]['over72'] : null;
+    if (!dataUnk) {
+      showStatus('warn', 'BAKE REQUIRED -- CONSULT SUPPLIER',
+        'Exposure time unknown. No standard table entry for this combination. Consult the component supplier for bake conditions.');
+      hideResults();
+      showInfoGrid();
+      return;
+    }
+    var h125u = dataUnk[0];
+    var h90u  = dataUnk[1];
+    var h40u  = dataUnk[2];
+    var h60u  = bakeTimeAt60(h125u);
+    showStatus('warn', 'BAKE REQUIRED -- EXPOSURE UNKNOWN',
+      'Floor life exposure time is unknown. Worst-case assumed: floor life fully consumed, over-72h excess. Bake times from the over-72h column of J-STD-033D Table 4-1. All temperatures require less than 5% RH.');
+    showTableResults(h125u, h90u, h60u, h40u, true);
+    showInfoGrid();
+    showCalcNote();
+    if (elevRH) showElevatedNote(); else hideElevatedNote();
     return;
   }
 
@@ -1604,7 +1671,7 @@ function calculate() {
   var over72h   = excess > 72;
 
   // Update excess display
-  updateExcessDisplay(excess, overBudget, timeOut);
+  updateExcessDisplay(excess, overBudget, timeOut, false);
 
   // Auto-toggle the 72h indicator
   document.getElementById('btnUnder72').className = (!over72h && overBudget) ? 'active' : '';
@@ -1637,7 +1704,7 @@ function calculate() {
     showStatus('no-bake', 'BAKE NOT REQUIRED (MSL 2, THIN PACKAGE)',
       'J-STD-033D Table 4-1 Note 4: baking is not required for MSL 2 devices with package thickness below 1.4 mm, regardless of floor life exceedance. This is due to the moisture diffusion behaviour of thin packages which saturate and dry rapidly.');
     hideResults();
-    updateExcessDisplay(excess, true, timeOut);
+    updateExcessDisplay(excess, true, timeOut, false);
     showInfoGrid();
     hideElevatedNote();
     return;
@@ -1669,7 +1736,7 @@ function calculate() {
   if (elevRH) showElevatedNote(); else hideElevatedNote();
 }
 
-function updateExcessDisplay(excess, overBudget, timeOut) {
+function updateExcessDisplay(excess, overBudget, timeOut, expUnknown) {
   var el    = document.getElementById('excessVal');
   var subEl = document.getElementById('excessSub');
 
@@ -1790,6 +1857,7 @@ function printReport() {
   var timeOut = document.getElementById('timeOut').value || '0';
   var largeBga = document.getElementById('largeBga').checked;
   var elevRH  = document.getElementById('exposureRH').value === 'elevated';
+  var expUnknown = document.getElementById('exposureUnknown').checked;
   var now     = new Date();
   var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
 
@@ -1891,7 +1959,7 @@ function printReport() {
         'Package Thickness: ' + (thickLabels[thick] || thick) +
         (largeBga ? '  |  Large BGA / Stacked Die: YES' : '') +
         (elevRH ? '  |  Exposure: Elevated (above 60% RH)' : '  |  Exposure: Standard (up to 30C / 60% RH)') + '<br>' +
-        'Time Out of Bag: ' + timeOut + ' hours' +
+        (expUnknown ? 'Time Out of Bag: UNKNOWN -- worst-case assumed (over-72h column)' : 'Time Out of Bag: ' + timeOut + ' hours') +
       '</div>' +
     '</div>' +
 
