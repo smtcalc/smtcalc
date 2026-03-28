@@ -92,6 +92,10 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       transition: color 0.2s;
+      padding: 0.75rem 0.5rem;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
     }
 
     nav a:hover { color: var(--text); }
@@ -549,6 +553,12 @@
     .footer-copy a {
       color: var(--accent);
       text-decoration: none;
+      padding: 0.5rem 0;
+      display: inline-block;
+    }
+
+    .footer-sep {
+      padding: 0 0.5rem;
     }
 
     /* ANIMATIONS */
@@ -564,12 +574,25 @@
       .tools-grid .tool-card[style] { grid-column: span 1 !important; }
       .tool-card { padding: 1.75rem 1.5rem; }
       .about-inner { grid-template-columns: 1fr; gap: 3rem; }
-      nav { gap: 1rem; }
-      nav a.hide-mobile { display: none; }
+      nav { gap: 0.5rem; }
+      nav a { font-size: 0.85rem; }
       .stats-inner { gap: 2rem; }
       .hero { padding: 100px 1.25rem 60px; }
       .tools-section { padding: 60px 1.25rem; }
       .hero-accent, .hero-accent2 { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 0 1rem; }
+      .hero { padding-top: 80px; }
+      .about-strip { padding: 40px 1rem; }
+      footer { padding: 2rem 1rem; }
+      .stats-bar { padding: 1rem; }
     }
   </style>
 </head>
@@ -897,7 +920,7 @@
     <div class="footer-inner">
       <div class="footer-copy">
         &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <span class="footer-sep">|</span>
         <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
       </div>
     </div>

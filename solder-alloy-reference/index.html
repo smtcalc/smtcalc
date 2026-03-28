@@ -295,7 +295,7 @@
     }
     .filter-label {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -312,7 +312,8 @@
       border: 1px solid var(--border2);
       background: var(--bg3);
       color: var(--muted);
-      padding: 0.3rem 0.7rem;
+      padding: 0.45rem 0.75rem;
+      min-height: 36px;
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
       user-select: none;
@@ -348,7 +349,7 @@
     }
     .alloy-table th {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -360,7 +361,7 @@
     .alloy-table th.sortable { cursor: pointer; }
     .alloy-table th.sortable:hover { color: var(--text); }
     .alloy-table th.sort-active { color: var(--accent); }
-    .sort-icon { font-size: 0.55rem; margin-left: 0.25rem; }
+    .sort-icon { font-size: 0.75rem; margin-left: 0.25rem; }
 
     .alloy-table td {
       padding: 0.75rem 0.75rem;
@@ -382,7 +383,7 @@
     .cat-tag {
       display: inline-block;
       font-family: var(--mono);
-      font-size: 0.53rem;
+      font-size: 0.75rem;
       letter-spacing: 0.07em;
       text-transform: uppercase;
       padding: 0.12rem 0.4rem;
@@ -398,7 +399,7 @@
       color: #5c5248;
     }
     .temp-val { font-family: var(--mono); font-size: 0.95rem; }
-    .temp-unit { font-size: 0.72rem; color: var(--muted); margin-left: 0.1rem; }
+    .temp-unit { font-size: 0.75rem; color: var(--muted); margin-left: 0.1rem; }
 
     .range-ok   { font-family: var(--mono); font-size: 0.82rem; color: var(--green); }
     .range-warn { font-family: var(--mono); font-size: 0.82rem; color: var(--yellow); }
@@ -407,10 +408,10 @@
     .process-chips { display: flex; gap: 0.25rem; flex-wrap: wrap; }
     .proc-chip {
       font-family: var(--mono);
-      font-size: 0.52rem;
+      font-size: 0.75rem;
       letter-spacing: 0.07em;
       text-transform: uppercase;
-      padding: 0.15rem 0.4rem;
+      padding: 0.3rem 0.5rem;
       border: 1px solid var(--border2);
       color: var(--muted);
     }
@@ -418,8 +419,8 @@
     .proc-chip.wave     { border-color: rgba(80,140,220,0.35); color: #6a9ad0; }
     .proc-chip.selective { border-color: rgba(80,190,100,0.35); color: #60b870; }
 
-    .col-compare { width: 36px; }
-    .compare-check { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+    .col-compare { width: 44px; }
+    .compare-check { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
 
     .expand-btn {
       font-size: 0.75rem;
@@ -488,7 +489,7 @@
     .d-stat { background: var(--bg3); padding: 0.55rem 0.7rem; }
     .d-stat-label {
       font-family: var(--mono);
-      font-size: 0.53rem;
+      font-size: 0.75rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
@@ -518,7 +519,7 @@
     }
     .detail-app-label {
       font-family: var(--mono);
-      font-size: 0.55rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -537,7 +538,7 @@
     }
     .compare-count {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -551,7 +552,8 @@
       color: var(--muted);
       border: 1px solid var(--border2);
       background: transparent;
-      padding: 0.35rem 0.8rem;
+      padding: 0.55rem 1rem;
+      min-height: 44px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
@@ -577,7 +579,7 @@
     }
     .cmp-comp {
       font-family: var(--mono);
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       color: #5c5248;
       margin-bottom: 0.6rem;
       word-break: break-word;
@@ -593,7 +595,7 @@
     .cmp-datum { background: var(--bg); padding: 0.5rem 0.65rem; }
     .cmp-datum-label {
       font-family: var(--mono);
-      font-size: 0.53rem;
+      font-size: 0.75rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
@@ -609,7 +611,7 @@
       display: flex;
       justify-content: space-between;
       font-family: var(--mono);
-      font-size: 0.52rem;
+      font-size: 0.75rem;
       color: #5c5248;
       margin-top: 0.2rem;
     }
@@ -622,7 +624,7 @@
     /* HINT BELOW TABLE */
     .compare-hint {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.07em;
       text-transform: uppercase;
       color: #3a3a3a;
@@ -678,12 +680,20 @@
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 0.55rem 1.25rem;
+      padding: 0.7rem 1.25rem;
+      min-height: 44px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
       white-space: nowrap;
     }
     .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 480px) {
+      header { padding: 0 1rem; }
+      footer { padding: 2rem 1rem; }
+      .guide-section { padding: 1.25rem 1rem; }
+      .print-bar { padding: 0 1rem; }
+    }
 
     /* FOOTER */
     footer {
@@ -917,8 +927,8 @@
   <div class="footer-inner">
     <div class="footer-copy">
       &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+      <span style="padding:0 0.5rem">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;" style="padding:0.5rem 0;display:inline-block">Contact the author</a>
     </div>
   </div>
 </footer>

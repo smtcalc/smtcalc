@@ -218,7 +218,7 @@
       top: 50%;
       transform: translateY(-50%);
       font-family: var(--mono);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--muted);
       pointer-events: none;
       text-transform: uppercase;
@@ -279,7 +279,7 @@
 
     .product-table thead th {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -319,7 +319,8 @@
       color: var(--text);
       font-family: var(--mono);
       font-size: 0.9rem;
-      padding: 0.4rem 0.6rem;
+      padding: 0.6rem 0.6rem;
+      min-height: 44px;
       outline: none;
       transition: border-color 0.2s;
       -moz-appearance: textfield;
@@ -344,7 +345,7 @@
       border: 1px solid var(--border2);
       color: var(--muted);
       font-size: 0.9rem;
-      width: 24px; height: 24px;
+      width: 36px; height: 36px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -362,7 +363,8 @@
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 0.5rem 1.25rem;
+      padding: 0.7rem 1.25rem;
+      min-height: 44px;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
@@ -393,6 +395,17 @@
       .panel-grid { grid-template-columns: 1fr; }
     }
 
+    @media (max-width: 480px) {
+      header { padding: 0 1rem; }
+      footer { padding: 2rem 1rem; }
+      .panel { padding: 1.25rem; }
+      .sc-full { padding: 1.25rem; }
+    }
+
+    @media (max-width: 400px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
     .result-box {
       background: var(--bg3);
       padding: 1.1rem 1.25rem;
@@ -404,7 +417,7 @@
 
     .result-label {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -451,7 +464,7 @@
 
     .derating-label {
       font-family: var(--mono);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -461,7 +474,7 @@
       display: flex;
       justify-content: space-between;
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: #5c5248;
       margin-bottom: 0.3rem;
     }
@@ -496,7 +509,7 @@
       top: -18px;
       transform: translateX(-50%);
       font-family: var(--mono);
-      font-size: 0.55rem;
+      font-size: 0.75rem;
       color: #7a7570;
       white-space: nowrap;
     }
@@ -524,7 +537,7 @@
 
     .breakdown-table thead th {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -630,7 +643,8 @@
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 0.55rem 1.25rem;
+      padding: 0.7rem 1.25rem;
+      min-height: 44px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
       white-space: nowrap;
@@ -1173,8 +1187,8 @@
   <div class="footer-inner">
     <div class="footer-copy">
       &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+      <span style="padding:0 0.5rem">|</span>
+      <a id="contact-link" href="#" style="padding:0.5rem 0;display:inline-block" onclick="showContact(); return false;">Contact the author</a>
     </div>
   </div>
 </footer>

@@ -34,6 +34,7 @@
       font-family: 'Barlow', sans-serif;
       font-weight: 400;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     /* HEADER */
@@ -125,6 +126,7 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 2.5rem 2rem 4rem;
+      overflow-x: hidden;
     }
 
     /* MODE TABS */
@@ -142,7 +144,8 @@
       font-size: 0.9rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 0.6rem 1.5rem;
+      padding: 0.75rem 1.5rem;
+      min-height: 44px;
       background: transparent;
       color: var(--muted);
       border: none;
@@ -231,6 +234,7 @@
       color: #140f0a;
       border: none;
       padding: 0.72rem 2rem;
+      min-height: 44px;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       white-space: nowrap;
@@ -271,6 +275,7 @@
       border-left: 3px solid var(--accent);
       padding: 1.5rem 2rem;
       margin-top: 1.5rem;
+      overflow-x: auto;
     }
     .result-block.show { display: block; }
     .result-block.error-block { border-left-color: var(--red); }
@@ -307,7 +312,7 @@
 
     .meta-label {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
@@ -390,7 +395,7 @@
     /* REFERENCE SECTION */
     .reference-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
@@ -419,7 +424,7 @@
     }
     .ref-table th {
       color: var(--muted);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.4rem 0.5rem;
@@ -531,7 +536,7 @@
 
     .resistor-marking-hint {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #5c5248;
@@ -562,7 +567,13 @@
 
     @media (max-width: 600px) {
       .field-group { flex-direction: column; align-items: stretch; }
-      .mode-tab { padding: 0.6rem 0.9rem; font-size: 0.82rem; }
+      .mode-tab { padding: 0.75rem 0.9rem; font-size: 0.82rem; }
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 0 1rem; }
+      .explainer { padding: 1.25rem; }
+      footer { padding: 2rem 1rem !important; }
     }
   </style>
 </head>
@@ -821,8 +832,8 @@
     <div style="font-size: 0.8rem; color: var(--muted);">
       &copy; 2026 <a href="/" style="color: var(--accent); text-decoration: none;">SMTCalc.com</a>
       -- Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a id="contact-link" href="#" onclick="showContact(); return false;" style="color: var(--accent); text-decoration: none;">Contact the author</a>
+      <span style="padding:0 0.5rem">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;" style="color: var(--accent); text-decoration: none; padding:0.5rem 0; display:inline-block;">Contact the author</a>
     </div>
     <div style="font-size: 0.75rem; color: #555; font-family: var(--mono);">
       EIA-96 / IEC 60062
