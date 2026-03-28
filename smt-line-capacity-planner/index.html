@@ -86,7 +86,7 @@
   .guide-verdict-chip.warn { color: var(--yellow); border-color: rgba(212,114,10,0.3); }
   .guide-verdict-chip.fail { color: var(--red); border-color: rgba(196,43,8,0.3); }
   .guide-tip { background: var(--bg3); border: 1px solid var(--border2); padding: 1rem 1.1rem; margin-top: 0.75rem; }
-  .guide-tip-num { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .guide-tip-num { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
   .guide-tip-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
   .guide-tip-body { font-size: 0.88rem; color: #5c5248; line-height: 1.6; }
   .related-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 2rem; }
@@ -98,7 +98,7 @@
   .related-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s ease; }
   .related-card:hover { background: var(--bg3); }
   .related-card:hover::before { transform: scaleY(1); }
-  .related-tag { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .related-tag { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
   .related-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.25rem; text-transform: uppercase; line-height: 1.1; margin-bottom: 0.5rem; }
   .related-desc { font-size: 0.85rem; color: #5c5248; line-height: 1.55; margin-bottom: 0.9rem; }
   .related-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
@@ -106,7 +106,30 @@
   footer { padding: 3rem 2rem; border-top: 1px solid var(--border); }
   .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
   .footer-copy { font-size: 0.9rem; color: var(--muted); }
-  .footer-copy a { color: var(--accent); text-decoration: none; }
+  .footer-copy a { color: var(--accent); text-decoration: none; padding: 0.5rem 0; display: inline-block; }
+  .tool-badge { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50vw; }
+  .download-btn { min-height: 44px; }
+  .customize-section-wrap { margin-top: 0; margin-bottom: 0; }
+  .customize-section { border-top: 1px solid var(--border); padding-top: 2rem; margin-bottom: 2rem; }
+  .customize-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+  .customize-eyebrow-line { display: block; width: 16px; height: 2px; background: var(--accent); }
+  .customize-heading { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
+  .customize-body { font-size: 0.95rem; color: #5c5248; line-height: 1.75; max-width: 720px; }
+  .customize-body-mb { margin-bottom: 1rem; }
+  .customize-strong { color: var(--text); }
+  @media (max-width: 480px) {
+    header { padding: 0 1rem; }
+    .tool-hero { padding: 2rem 1rem 1.5rem; }
+    .tool-main { padding: 0 1rem; }
+    .inline-guide { padding: 0 1rem; }
+    .related-section { padding: 0 1rem; }
+    footer { padding: 2rem 1rem; }
+    .guide-section { padding: 1.25rem 1rem; }
+    .sheet-card { padding: 1.25rem 1rem; }
+    .related-card { padding: 1.25rem 1rem; }
+    .customize-heading { font-size: 1.5rem; }
+    .customize-body { font-size: 0.88rem; max-width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -238,18 +261,18 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
 </div>
 
 <!-- MAKE IT YOURS -->
-<div class="tool-main" style="margin-top:0;margin-bottom:0;">
-  <div style="border-top:1px solid var(--border);padding-top:2rem;margin-bottom:2rem;">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:block;width:16px;height:2px;background:var(--accent);"></span>Adapt It to Your Line</div>
-    <h2 style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;line-height:1;margin-bottom:1rem;">Make It Yours</h2>
-    <p style="font-size:0.95rem;color:#5c5248;line-height:1.75;max-width:720px;margin-bottom:1rem;">
+<div class="tool-main customize-section-wrap">
+  <div class="customize-section">
+    <div class="customize-eyebrow"><span class="customize-eyebrow-line"></span>Adapt It to Your Line</div>
+    <h2 class="customize-heading">Make It Yours</h2>
+    <p class="customize-body customize-body-mb">
       The workbook is fully unlocked. No sheet protection, no hidden passwords. Every SMT line is configured differently, and there is no reason to fight a rigid template. Add a line identification header, drop in your company logo, extend the product mix table beyond 8 rows, or add a column for annual revenue per product. If your process needs it, add it.
     </p>
-    <p style="font-size:0.95rem;color:#5c5248;line-height:1.75;max-width:720px;margin-bottom:1rem;">
-      The one area to leave alone is the hidden helper columns <strong style="color:var(--text);">K through U</strong> on the RESULTS sheet. These compute intermediate values per product row: individual machine cycle times, line cycle time, oven cycle time, bottleneck cycle time, and net PCBs per hour. Every visible cell in the per-product table reads from these columns. You can unhide them to inspect or audit the math, but do not delete or rearrange them. If you extend the product mix table beyond 8 rows, you will need to extend the helper columns to match.
+    <p class="customize-body customize-body-mb">
+      The one area to leave alone is the hidden helper columns <strong class="customize-strong">K through U</strong> on the RESULTS sheet. These compute intermediate values per product row: individual machine cycle times, line cycle time, oven cycle time, bottleneck cycle time, and net PCBs per hour. Every visible cell in the per-product table reads from these columns. You can unhide them to inspect or audit the math, but do not delete or rearrange them. If you extend the product mix table beyond 8 rows, you will need to extend the helper columns to match.
     </p>
-    <p style="font-size:0.95rem;color:#5c5248;line-height:1.75;max-width:720px;">
-      The workbook is compatible with <strong style="color:var(--text);">Microsoft Excel 2016 and later</strong> and <strong style="color:var(--text);">LibreOffice Calc</strong>. It uses no macros, no VBA, and no external data connections. All formulas are standard worksheet functions that work offline.
+    <p class="customize-body">
+      The workbook is compatible with <strong class="customize-strong">Microsoft Excel 2016 and later</strong> and <strong class="customize-strong">LibreOffice Calc</strong>. It uses no macros, no VBA, and no external data connections. All formulas are standard worksheet functions that work offline.
     </p>
   </div>
 </div>
@@ -266,7 +289,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
   <div class="footer-inner">
     <div class="footer-copy">
       &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <span style="padding:0 0.5rem">|</span>
       <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
     </div>
   </div>

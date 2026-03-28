@@ -437,7 +437,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-family: var(--mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--muted);
     pointer-events: none;
     text-transform: uppercase;
@@ -452,7 +452,7 @@
   }
   .optional-label {
     font-family: var(--mono);
-    font-size: 0.58rem;
+    font-size: 0.75rem;
     color: #5c5248;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -476,7 +476,8 @@
     font-size: 0.8rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.4rem 1rem;
+    padding: 0.7rem 1rem;
+    min-height: 44px;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
   }
@@ -507,7 +508,7 @@
   }
   .result-label {
     font-family: var(--mono);
-    font-size: 0.58rem;
+    font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
@@ -593,7 +594,7 @@
   }
   .speed-bar-name {
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: #5c5248;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -629,7 +630,7 @@
   }
   .ref-table thead th {
     font-family: var(--mono);
-    font-size: 0.58rem;
+    font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
@@ -703,7 +704,8 @@
     font-size: 0.9rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.55rem 1.25rem;
+    padding: 0.7rem 1.25rem;
+    min-height: 44px;
     cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
     white-space: nowrap;
@@ -721,6 +723,27 @@
     .results-grid { grid-template-columns: 1fr 1fr; }
     .result-box.wide { grid-column: span 1; }
     .speed-bar-row { grid-template-columns: 100px 1fr 60px; }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 0 1rem; }
+    .tool-hero { padding: 2rem 1rem 1.5rem; }
+    footer { padding: 2rem 1rem; }
+  }
+
+  @media (max-width: 400px) {
+    .results-grid { grid-template-columns: 1fr; }
+    .result-box.wide { grid-column: span 1; }
+    .speed-bar-row {
+      grid-template-columns: 1fr 60px;
+      grid-template-rows: auto auto;
+    }
+    .speed-bar-name {
+      grid-column: 1 / -1;
+    }
+    .speed-bar-track {
+      grid-column: 1;
+    }
   }
 
   /* FOOTER */
@@ -783,7 +806,7 @@
       <div class="guide-section-title">01 &mdash; How the Tool Works</div>
       <div class="guide-two-col">
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Enter</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">You Enter</div>
           <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
             <div class="guide-card-title">Heated Tunnel Length</div>
             <div class="guide-card-body">Heated zone only, not overall machine length.</div>
@@ -806,7 +829,7 @@
           </div>
         </div>
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Get</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">You Get</div>
           <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
             <div class="guide-card-title green">Max Process Speed</div>
             <div class="guide-card-body">Max belt speed the oven can run while still delivering the required dwell time. This is the hard ceiling.</div>
@@ -836,7 +859,7 @@
       <div class="guide-section-title">02 &mdash; Mode A &mdash; Input Parameters</div>
       <div class="guide-three-col">
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Oven Parameters</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">Oven Parameters</div>
           <div class="guide-card guide-card-border-accent" style="margin-bottom:0.6rem;">
             <div class="guide-card-title">Heated Tunnel Length</div>
             <div class="guide-card-body">e.g. 250 cm. Heated zone only, not total machine footprint.</div>
@@ -851,7 +874,7 @@
           </div>
         </div>
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Board &amp; Line</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">Board &amp; Line</div>
           <div class="guide-card guide-card-border-blue">
             <div class="guide-card-title">Board Length</div>
             <div class="guide-card-body">e.g. 20 cm in direction of travel. For panels, use the full panel dimension including any tooling frame.</div>
@@ -859,7 +882,7 @@
           <div class="guide-note" style="margin-top:0.6rem;">The unit toggle (cm / inches) at the top converts all inputs and outputs simultaneously.</div>
         </div>
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">Optional</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">Optional</div>
           <div class="guide-card guide-card-border-blue">
             <div class="guide-card-title blue">P&amp;P Cycle Time</div>
             <div class="guide-card-body">e.g. 40 s. Cycle time of your slowest placement machine. Leave blank to skip the bottleneck check. When filled, the tool compares oven process speed against the speed the line demands.</div>
@@ -921,7 +944,7 @@
       <div class="guide-section-title">05 &mdash; Mode B &mdash; Size an Oven for a Target Throughput</div>
       <div class="guide-two-col">
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Enter</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">You Enter</div>
           <div class="guide-card guide-card-border-blue" style="margin-bottom:0.6rem;">
             <div class="guide-card-title">Target Throughput</div>
             <div class="guide-card-body">e.g. 180 boards/h. The output rate your line needs to hit.</div>
@@ -932,7 +955,7 @@
           </div>
         </div>
         <div>
-          <div class="guide-section-title" style="font-size:0.6rem; margin-bottom:0.6rem;">You Get</div>
+          <div class="guide-section-title" style="font-size:0.75rem; margin-bottom:0.6rem;">You Get</div>
           <div class="guide-card guide-card-border-green" style="margin-bottom:0.6rem;">
             <div class="guide-card-title green">Min. Heated Length</div>
             <div class="guide-card-body">The shortest heated tunnel that can deliver the required dwell at the speed the throughput target demands. Shown in cm, m, and mm.</div>
@@ -1811,8 +1834,8 @@ calcB();
   <div class="footer-inner">
     <div class="footer-copy">
       &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+      <span style="padding:0 0.5rem">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;" style="padding:0.25rem 0">Contact the author</a>
     </div>
   </div>
 </footer>

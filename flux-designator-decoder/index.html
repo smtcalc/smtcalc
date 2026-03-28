@@ -155,7 +155,8 @@
       font-size: 0.9rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 0.6rem 1.5rem;
+      padding: 0.75rem 1.5rem;
+      min-height: 44px;
       background: transparent;
       color: var(--muted);
       border: none;
@@ -288,7 +289,7 @@
 
     .prop-label {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.78rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -354,7 +355,7 @@
 
     table.ref-table th {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--accent);
@@ -366,7 +367,7 @@
     }
 
     table.ref-table td {
-      padding: 0.6rem 1rem;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--border);
       vertical-align: middle;
       white-space: nowrap;
@@ -404,7 +405,7 @@
     .halide-badge {
       display: inline-block;
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.15rem 0.5rem;
@@ -431,7 +432,7 @@
 
     .ref-click-hint {
       font-family: var(--mono);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: #7a7570;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -566,6 +567,7 @@
       line-height: 1.9;
       display: block;
       width: 100%;
+      overflow-x: auto;
     }
 
     .guide-type-row {
@@ -648,12 +650,21 @@
       font-size: 0.9rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 0.55rem 1.25rem;
+      padding: 0.7rem 1.25rem;
+      min-height: 44px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
       white-space: nowrap;
     }
     .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 480px) {
+      header { padding: 0 1rem; }
+      .main-wrap { padding: 2rem 1rem 3rem; }
+      .guide-section { padding: 1.25rem 1rem; }
+      .print-bar { padding: 0 1rem; }
+      footer { padding: 2rem 1rem; }
+    }
 
     /* FOOTER */
     footer {
@@ -954,8 +965,8 @@ Example:  R O M 1
   <div class="footer-inner">
     <div class="footer-copy">
       &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+      <span style="padding:0 0.5rem">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;" style="padding:0.5rem 0;display:inline-block">Contact the author</a>
     </div>
   </div>
 </footer>
