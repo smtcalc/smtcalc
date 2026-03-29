@@ -228,6 +228,48 @@
       letter-spacing: 0.04em;
     }
 
+    /* AUTHOR PHOTO LAYOUT */
+    .author-intro {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 1.75rem;
+    }
+
+    .author-photo-wrap {
+      position: relative;
+    }
+
+    .author-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: center top;
+      filter: sepia(18%) contrast(1.06);
+      border: 1px solid var(--border);
+    }
+
+    .author-photo-caption {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      .author-intro {
+        grid-template-columns: 1fr;
+      }
+      .author-photo {
+        aspect-ratio: 4/3;
+        object-position: center 20%;
+      }
+    }
+
     /* BACK LINK */
     .back-link {
       display: inline-flex;
@@ -306,10 +348,19 @@
     <!-- ABOUT THE AUTHOR -->
     <div class="content-block">
       <div class="section-label">About the Author</div>
-      <div class="body-text">
-        <p>
-          The author has been working in electronics manufacturing since 1997, with close to 30 years of hands-on experience in SMT process engineering, IPC standards compliance, quality inspection, and PCB cleaning and coating processes. He holds current GEA certifications in Manufacturing Engineering for Electronics Assembly and has maintained IPC-A-610 and J-STD-001 certifications over more than a decade.
-        </p>
+      <div class="author-intro">
+        <div class="author-photo-wrap">
+          <img src="/author1.webp" alt="Kimmo - SMTCalc author" class="author-photo" width="200" height="267" />
+          <div class="author-photo-caption">Kimmo &middot; Pietarsaari, Finland</div>
+        </div>
+        <div class="body-text">
+          <p>
+            The author has been working in electronics manufacturing since 1997, with close to 30 years of hands-on experience in SMT process engineering, IPC standards compliance, quality inspection, and PCB cleaning and coating processes.
+          </p>
+          <p>
+            He holds current GEA certifications in Manufacturing Engineering for Electronics Assembly and has maintained IPC-A-610 and J-STD-001 certifications over more than a decade.
+          </p>
+        </div>
       </div>
 
       <div class="cert-list">
