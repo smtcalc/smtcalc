@@ -721,7 +721,7 @@
           <input type="number" id="nameplateSpeed" value="" min="1" step="500" placeholder="optional" oninput="calculate()">
           <span class="input-unit">cph</span>
         </div>
-        <div class="field-note">Manufacturer-rated maximum CPH for your placement system. Optional. If entered, derating percentage is shown against this figure.</div>
+        <div class="field-note">Combined nameplate CPH of all placers on the line. For a multi-machine line, sum all placer ratings. Optional. If entered, derating percentage is shown against this figure.</div>
       </div>
 
       <div class="assump-toggle" id="methBtn" onclick="toggleMeth()">
@@ -732,7 +732,7 @@
         Global derated CPH = total components placed across all products, divided by the total elapsed time in hours.<br><br>
         Total components per product = boards produced x components per board.<br><br>
         This mirrors the method described in section 5.9 of the SMTA Handbook of Electronic Assembly. It accounts for all system-wide stops and slow-downs automatically because they are baked into the elapsed time denominator.<br><br>
-        Derating % = (actual CPH / nameplate CPH) x 100. Typical real-world values range from 30% to 60% of nameplate speed.
+        Derating % = (actual CPH / nameplate CPH) x 100. For a multi-machine line, use combined nameplate CPH so the comparison is meaningful. Typical real-world values range from 30% to 60% of nameplate speed.
       </div>
     </div>
   </div>
@@ -791,7 +791,7 @@
       <div class="result-box" id="nameplateBox">
         <div class="result-label">Nameplate Speed</div>
         <div class="result-value" id="nameplateVal">--</div>
-        <div class="result-sub">manufacturer rated CPH</div>
+        <div class="result-sub">combined nameplate CPH</div>
       </div>
     </div>
 
