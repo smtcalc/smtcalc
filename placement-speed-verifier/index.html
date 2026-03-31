@@ -4,8 +4,15 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Placement Speed Verifier &mdash; SMTCalc</title>
+  <title>Placement Speed Verifier - SMT Pick and Place Tool | SMTCalc</title>
   <meta name="description" content="Verify actual placement speed of your SMT line using real production data. Calculate globally derated CPH across mixed product runs per IPC/SMTA methodology.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/placement-speed-verifier/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/placement-speed-verifier/">
+  <meta property="og:title" content="Placement Speed Verifier - SMT Pick and Place Tool | SMTCalc">
+  <meta property="og:description" content="Verify actual placement speed of your SMT line using real production data. Calculate globally derated CPH across mixed product runs per IPC/SMTA methodology.">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -721,7 +728,7 @@
           <input type="number" id="nameplateSpeed" value="" min="1" step="500" placeholder="optional" oninput="calculate()">
           <span class="input-unit">cph</span>
         </div>
-        <div class="field-note">Manufacturer-rated maximum CPH for your placement system. Optional. If entered, derating percentage is shown against this figure.</div>
+        <div class="field-note">Combined nameplate CPH of all placers on the line. For a multi-machine line, sum all placer ratings. Optional. If entered, derating percentage is shown against this figure.</div>
       </div>
 
       <div class="assump-toggle" id="methBtn" onclick="toggleMeth()">
@@ -732,7 +739,7 @@
         Global derated CPH = total components placed across all products, divided by the total elapsed time in hours.<br><br>
         Total components per product = boards produced x components per board.<br><br>
         This mirrors the method described in section 5.9 of the SMTA Handbook of Electronic Assembly. It accounts for all system-wide stops and slow-downs automatically because they are baked into the elapsed time denominator.<br><br>
-        Derating % = (actual CPH / nameplate CPH) x 100. Typical real-world values range from 30% to 60% of nameplate speed.
+        Derating % = (actual CPH / nameplate CPH) x 100. For a multi-machine line, use combined nameplate CPH so the comparison is meaningful. Typical real-world values range from 30% to 60% of nameplate speed.
       </div>
     </div>
   </div>
@@ -791,7 +798,7 @@
       <div class="result-box" id="nameplateBox">
         <div class="result-label">Nameplate Speed</div>
         <div class="result-value" id="nameplateVal">--</div>
-        <div class="result-sub">manufacturer rated CPH</div>
+        <div class="result-sub">combined nameplate CPH</div>
       </div>
     </div>
 

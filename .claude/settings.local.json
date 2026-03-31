@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for file:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/Kimmo/Documents/GitHub/smtcalc/**)",
+      "Bash(/dev/null echo:*)",
+      "Bash(grep -E href=\"\"\"\" /c/Users/Kimmo/Documents/GitHub/smtcalc/*.html /c/Users/Kimmo/Documents/GitHub/smtcalc/*/index.html)",
+      "Bash(python3:*)",
+      "Bash(/tmp/seo_audit.txt:*)",
+      "Read(//tmp/**)"
+    ]
+  }
+}

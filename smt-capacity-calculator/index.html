@@ -4,8 +4,15 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMT Capacity Calculator - SMTCalc</title>
+<title>SMT Capacity Calculator - Line Throughput Tool | SMTCalc</title>
 <meta name="description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://smtcalc.com/smt-capacity-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SMTCalc">
+<meta property="og:url" content="https://smtcalc.com/smt-capacity-calculator/">
+<meta property="og:title" content="SMT Capacity Calculator - Line Throughput Tool | SMTCalc">
+<meta property="og:description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -982,7 +989,7 @@
       <div class="guide-io-grid">
         <div>
           <div class="guide-io-col-label">You Enter</div>
-          <div class="guide-io-item"><div class="guide-io-item-name">Line Speed</div><div class="guide-io-item-desc">Theoretical max CPH from your pick-and-place nameplate</div></div>
+          <div class="guide-io-item"><div class="guide-io-item-name">Line Speed</div><div class="guide-io-item-desc">Combined nameplate CPH of all pick-and-place machines on the line</div></div>
           <div class="guide-io-item"><div class="guide-io-item-name">OEE Factor</div><div class="guide-io-item-desc">Real-world efficiency (default 65%)</div></div>
           <div class="guide-io-item"><div class="guide-io-item-name">Shift Model</div><div class="guide-io-item-desc">1, 2 or 3 shifts (8 / 16 / 24 h per day)</div></div>
           <div class="guide-io-item"><div class="guide-io-item-name">Product Name</div><div class="guide-io-item-desc">Free text label for each product</div></div>
@@ -1010,7 +1017,7 @@
         <div class="guide-param-card">
           <div class="guide-param-title">Line Speed</div>
           <div class="guide-param-val">e.g. 15&thinsp;000 CPH</div>
-          <div class="guide-param-body">Enter the nameplate speed of your pick-and-place in Components Per Hour. This is the theoretical maximum from the spec sheet, not what you actually achieve day-to-day.</div>
+          <div class="guide-param-body">Enter the combined nameplate CPH of all pick-and-place machines on the line. Machines work in parallel on the same board, so sum all placer ratings. For a single machine, use its spec sheet value. OEE is applied on top of this number to get realistic throughput.</div>
         </div>
         <div class="guide-param-card">
           <div class="guide-param-title blue">OEE Factor</div>
@@ -1168,7 +1175,7 @@
           <input type="number" id="lineSpeed" value="15000" min="1" step="500" oninput="calculate()">
           <span class="input-unit">cph</span>
         </div>
-        <div class="field-note">Placer nameplate capacity in components per hour. Use the slowest machine on the line.</div>
+        <div class="field-note">Combined nameplate CPH of all placers on the line. Machines work in parallel, so sum all placer ratings.</div>
       </div>
       <div class="field">
         <label>OEE Factor</label>
@@ -1176,7 +1183,7 @@
           <input type="number" id="oeeFactor" value="65" min="10" max="95" step="5" oninput="calculate()">
           <span class="input-unit">%</span>
         </div>
-        <div class="field-note">Overall Equipment Effectiveness. Typical SMT lines run 55?75%. Accounts for availability, performance, and quality losses.</div>
+        <div class="field-note">Overall Equipment Effectiveness. Typical SMT lines run 55-75%. Accounts for availability, performance, and quality losses.</div>
       </div>
     </div>
 
