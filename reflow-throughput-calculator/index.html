@@ -1076,35 +1076,36 @@ cooling + load/unload conveyor</div>
           <div class="field-note" style="margin-top:0.5rem">
             <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
               <!-- Background -->
-              <rect width="320" height="110" fill="#faf7f2" stroke="#c8c0b4" stroke-width="1"/>
-              <!-- Cooling zone shaded region (peak x=210 to cooldown end x=290, from y=8 to baseline y=82) -->
-              <rect x="210" y="8" width="80" height="74" fill="#e6ddd0"/>
+              <rect width="320" height="110" fill="#1e2530" stroke="#28323e" stroke-width="1"/>
+              <!-- Cooling zone shaded region -->
+              <rect x="210" y="8" width="80" height="74" fill="#262e3c"/>
               <!-- Cooling zone divider line -->
-              <line x1="210" y1="8" x2="210" y2="82" stroke="#b0a89f" stroke-width="1" stroke-dasharray="3,2"/>
+              <line x1="210" y1="8" x2="210" y2="82" stroke="#303c4a" stroke-width="1" stroke-dasharray="3,2"/>
               <!-- Axes -->
-              <line x1="28" y1="8" x2="28" y2="82" stroke="#b0a89f" stroke-width="1"/>
-              <line x1="28" y1="82" x2="308" y2="82" stroke="#b0a89f" stroke-width="1"/>
+              <line x1="28" y1="8" x2="28" y2="82" stroke="#303c4a" stroke-width="1"/>
+              <line x1="28" y1="82" x2="308" y2="82" stroke="#303c4a" stroke-width="1"/>
               <!-- Axis labels -->
-              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
-              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
+              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#8fa6be" text-anchor="middle">Temp</text>
+              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#8fa6be" text-anchor="end">Time</text>
               <!-- Profile curve heated section: ramp, soak, reflow peak -->
-              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#d4720a" stroke-width="2" stroke-linejoin="round"/>
+              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#e08318" stroke-width="2" stroke-linejoin="round"/>
               <!-- Profile curve cooling section: dimmed -->
               <polyline points="210,14 290,72" fill="none" stroke="#7a5010" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,2"/>
               <!-- Zone labels -->
-              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">RAMP</text>
-              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
-              <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
-              <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#444" text-anchor="middle">COOL</text>
-              <!-- TAL marker: short segment near peak above liquidus line -->
-              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
-              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
+              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">RAMP</text>
+              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">SOAK</text>
+              <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">REFLOW</text>
+              <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">COOL</text>
+              <!-- TAL marker: from liquidus crossing on ascending side (~x=164) to crossing on cooling side (~x=233) -->
+              <line x1="164" y1="31" x2="233" y2="31" stroke="#8fa6be" stroke-width="1" stroke-dasharray="3,2"/>
+              <!-- TAL label: centered on the line, above it, straddling both sides of peak -->
+              <text x="158" y="26" font-family="Share Tech Mono,monospace" font-size="6" fill="#8fa6be" text-anchor="end">TAL (not this)</text>
               <!-- Dwell bracket: heated zone only, entry to peak -->
-              <line x1="32" y1="95" x2="210" y2="95" stroke="#167a40" stroke-width="1.5"/>
-              <line x1="32" y1="91" x2="32" y2="99" stroke="#167a40" stroke-width="1.5"/>
-              <line x1="210" y1="91" x2="210" y2="99" stroke="#167a40" stroke-width="1.5"/>
-              <!-- Cooling zone: no bracket (not included in dwell) -->
-              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#167a40" text-anchor="middle">Dwell time = heated zone duration only</text>
+              <line x1="32" y1="95" x2="210" y2="95" stroke="#1fa855" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#1fa855" stroke-width="1.5"/>
+              <line x1="210" y1="91" x2="210" y2="99" stroke="#1fa855" stroke-width="1.5"/>
+              <!-- Dwell label -->
+              <text x="121" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#1fa855" text-anchor="middle">Dwell time = heated zone duration only</text>
             </svg>
             Use the heated zone profile duration from your paste datasheet: preheat entry to reflow peak. This is the total time the PCB travels through the heating zones. For SAC305 typically 250&ndash;360 s. TAL (time above liquidus, 45&ndash;60 s) is too short. Do not include cooling zone time.
           </div>
@@ -1261,31 +1262,33 @@ cooling + load/unload conveyor</div>
           </div>
           <div class="field-note" style="margin-top:0.5rem">
             <svg viewBox="0 0 320 110" width="100%" style="display:block;max-width:340px;margin-bottom:0.35rem" aria-label="Reflow profile diagram showing dwell time">
-              <rect width="320" height="110" fill="#faf7f2" stroke="#c8c0b4" stroke-width="1"/>
+              <rect width="320" height="110" fill="#1e2530" stroke="#28323e" stroke-width="1"/>
               <!-- Cooling zone shaded region -->
-              <rect x="210" y="8" width="80" height="74" fill="#e6ddd0"/>
+              <rect x="210" y="8" width="80" height="74" fill="#262e3c"/>
               <!-- Cooling zone divider line -->
-              <line x1="210" y1="8" x2="210" y2="82" stroke="#b0a89f" stroke-width="1" stroke-dasharray="3,2"/>
-              <line x1="28" y1="8" x2="28" y2="82" stroke="#b0a89f" stroke-width="1"/>
-              <line x1="28" y1="82" x2="308" y2="82" stroke="#b0a89f" stroke-width="1"/>
-              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="middle">Temp</text>
-              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#555" text-anchor="end">Time</text>
+              <line x1="210" y1="8" x2="210" y2="82" stroke="#303c4a" stroke-width="1" stroke-dasharray="3,2"/>
+              <line x1="28" y1="8" x2="28" y2="82" stroke="#303c4a" stroke-width="1"/>
+              <line x1="28" y1="82" x2="308" y2="82" stroke="#303c4a" stroke-width="1"/>
+              <text x="14" y="12" font-family="Share Tech Mono,monospace" font-size="7" fill="#8fa6be" text-anchor="middle">Temp</text>
+              <text x="308" y="89" font-family="Share Tech Mono,monospace" font-size="7" fill="#8fa6be" text-anchor="end">Time</text>
               <!-- Heated section of profile -->
-              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#d4720a" stroke-width="2" stroke-linejoin="round"/>
+              <polyline points="32,76 100,40 140,40 210,14" fill="none" stroke="#e08318" stroke-width="2" stroke-linejoin="round"/>
               <!-- Cooling section: dimmed and dashed -->
               <polyline points="210,14 290,72" fill="none" stroke="#7a5010" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,2"/>
-              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">RAMP</text>
-              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">SOAK</text>
-              <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#555" text-anchor="middle">REFLOW</text>
-              <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#444" text-anchor="middle">COOL</text>
-              <line x1="174" y1="28" x2="248" y2="28" stroke="#444" stroke-width="1" stroke-dasharray="3,2"/>
-              <text x="211" y="25" font-family="Share Tech Mono,monospace" font-size="6" fill="#666" text-anchor="middle">TAL (not this)</text>
+              <text x="66" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">RAMP</text>
+              <text x="120" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">SOAK</text>
+              <text x="175" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">REFLOW</text>
+              <text x="252" y="78" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#8fa6be" text-anchor="middle">COOL</text>
+              <!-- TAL marker: from liquidus crossing on ascending side (~x=164) to crossing on cooling side (~x=233) -->
+              <line x1="164" y1="31" x2="233" y2="31" stroke="#8fa6be" stroke-width="1" stroke-dasharray="3,2"/>
+              <!-- TAL label: centered on the line, above it, straddling both sides of peak -->
+              <text x="158" y="26" font-family="Share Tech Mono,monospace" font-size="6" fill="#8fa6be" text-anchor="end">TAL (not this)</text>
               <!-- Dwell bracket: heated zone only, entry to peak -->
-              <line x1="32" y1="95" x2="210" y2="95" stroke="#167a40" stroke-width="1.5"/>
-              <line x1="32" y1="91" x2="32" y2="99" stroke="#167a40" stroke-width="1.5"/>
-              <line x1="210" y1="91" x2="210" y2="99" stroke="#167a40" stroke-width="1.5"/>
-              <!-- Cooling zone: no bracket (not included in dwell) -->
-              <text x="161" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#167a40" text-anchor="middle">Dwell time = heated zone duration only</text>
+              <line x1="32" y1="95" x2="210" y2="95" stroke="#1fa855" stroke-width="1.5"/>
+              <line x1="32" y1="91" x2="32" y2="99" stroke="#1fa855" stroke-width="1.5"/>
+              <line x1="210" y1="91" x2="210" y2="99" stroke="#1fa855" stroke-width="1.5"/>
+              <!-- Dwell label -->
+              <text x="121" y="107" font-family="Share Tech Mono,monospace" font-size="6.5" fill="#1fa855" text-anchor="middle">Dwell time = heated zone duration only</text>
             </svg>
             Use the heated zone profile duration from your paste datasheet: preheat entry to reflow peak. This is the total time the PCB travels through the heating zones. For SAC305 typically 250&ndash;360 s. TAL (time above liquidus, 45&ndash;60 s) is too short. Do not include cooling zone time.
           </div>
