@@ -324,16 +324,7 @@
 }
 .print-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* FOOTER */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 1.5rem 2rem;
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-footer a { color: var(--muted); text-decoration: none; padding: 0.5rem 0; display: inline-block; }
-footer a:hover { color: var(--accent); }
+/* FOOTER - shared styles from style.css */
 
 @media (max-width: 480px) {
   header { padding: 0 1rem; }
@@ -415,9 +406,14 @@ footer a:hover { color: var(--accent); }
 </div>
 
 <footer>
-  &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-  <span style="padding:0 0.5rem">|</span>
-  <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+    </div>
+    <div class="footer-copy">
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
 </footer>
 
 <script>

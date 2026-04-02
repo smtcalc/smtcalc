@@ -89,11 +89,7 @@
   .related-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.55; margin-bottom: 0.9rem; }
   .related-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
   .related-card:hover .related-link { color: var(--accent); }
-  footer { padding: 3rem 2rem; border-top: 1px solid var(--border); }
-  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-  .footer-copy { font-size: 0.9rem; color: var(--muted); }
-  .footer-copy a { color: var(--accent); text-decoration: none; padding: 0.5rem 0; display: inline-block; }
-  .download-btn { min-height: 44px; }
+.download-btn { min-height: 44px; }
   .customize-section-wrap { margin-top: 0; margin-bottom: 0; }
   .customize-section { border-top: 1px solid var(--border); padding-top: 2rem; margin-bottom: 2rem; }
   .customize-eyebrow { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
@@ -271,10 +267,11 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
   </div>
 </div>
 <footer>
-  <div class="footer-inner">
+    <div class="footer-inner">
     <div class="footer-copy">
-      &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-      <span style="padding:0 0.5rem">|</span>
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+    </div>
+    <div class="footer-copy">
       <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
     </div>
   </div>
