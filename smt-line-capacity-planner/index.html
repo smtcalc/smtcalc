@@ -15,7 +15,7 @@
 <meta property="og:description" content="Free Excel workbook for SMT line capacity planning. Models placer throughput, reflow oven bottleneck, OEE, panelization, changeover losses, and utilisation.">
 <link rel="stylesheet" href="/style.css">
 <style>
-  .tool-main { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
+  .tool-main { max-width: 900px; margin: 2rem auto; padding: 0 2rem; display: block; }
   .download-card { background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 1.5rem 1.75rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
   .download-card-title { font-family: 'Inter', sans-serif; font-weight: 800; font-size: clamp(1rem, 3.5vw, 1.6rem); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.5rem; overflow-wrap: break-word; word-break: break-word; }
   .download-card-meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0; }
@@ -129,7 +129,7 @@
   <div class="download-card">
     <div class="download-card-info" style="min-width:0;flex:1 1 240px;">
       <div class="download-card-title">SMT_Line_Capacity_Planner.xlsx</div>
-      <div class="download-card-meta"><span>Format: .xlsx</span><span>Sheets: 3</span><span>Compatible: Excel 2016+ &amp; LibreOffice Calc</span><span>Free &mdash; no registration</span></div>
+      <div class="download-card-meta"><span>Format: .xlsx</span><span>Sheets: 3</span><span>Compatible: Excel 2016+ &amp; LibreOffice Calc</span><span>Free -- no registration</span></div>
       <div class="download-card-desc">Fill in the blue input cells on the INPUTS sheet. Results update automatically on the RESULTS sheet. No macros. Works offline.</div>
     </div>
     <a class="download-btn" href="SMT_Line_Capacity_Planner.xlsx" download>
@@ -147,13 +147,13 @@
   <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
     <span class="guide-toggle-label">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#d4720a" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#d4720a" stroke-width="1.2"/></svg>
-      Quick Guide &mdash; How the SMT Line Capacity Planner Works
+      Quick Guide -- How the SMT Line Capacity Planner Works
     </span>
     <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
   </button>
   <div class="guide-content" role="region">
     <div class="guide-section">
-      <div class="guide-section-title">01 &mdash; How the Model Works</div>
+      <div class="guide-section-title">01 -- How the Model Works</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">Most capacity estimates use a single nameplate CPH figure and one OEE factor. That approach fails on multi-machine lines because it does not account for placement share imbalance between machines, and it ignores the reflow oven as an independent constraint. This workbook models the line properly.</div>
       <div class="guide-two-col">
         <div class="guide-card"><div class="guide-card-title">Utilisation-based output</div><div class="guide-card-body">Rather than outputting a single peak PCBs/hour figure, the workbook calculates required machine hours per product and compares the total against your net available hours per year. Products with different panelization and component counts consume very different amounts of line time, and this model makes that visible.</div></div>
@@ -161,7 +161,7 @@
       </div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">02 &mdash; Section 1: Pick-and-Place Machine Table</div>
+      <div class="guide-section-title">02 -- Section 1: Pick-and-Place Machine Table</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">Enter up to five machines. A typical line has one chip shooter for passives and a flexible placer for ICs and connectors. Enter at least one. The line cycle time is determined by the machine with the longest cycle time for its share of the placements.</div>
       <div class="guide-three-col">
         <div class="guide-card"><div class="guide-card-title">Nameplate CPH</div><div class="guide-card-body">The theoretical maximum from the machine specification sheet, not your real-world speed. Use the published IPC-9850 or manufacturer figure. Real-world speed is accounted for by the Performance factor in the next column.</div></div>
@@ -173,7 +173,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
       <div class="guide-note">The bottleneck machine is the one with the longest cycle time for its share of placements. This is product-specific. A chip shooter bottleneck on a passive-heavy board may become a flexible placer bottleneck on a connector-heavy board. The workbook calculates this per product row.</div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">03 &mdash; OEE: Three Components</div>
+      <div class="guide-section-title">03 -- OEE: Three Components</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">Performance is entered per machine in the machine table. Availability and Quality remain line-level inputs because they affect the whole line equally.</div>
       <div class="guide-three-col">
         <div class="guide-card"><div class="guide-card-title">Performance (per machine)</div><div class="guide-card-body">In the machine table. How fast each machine actually runs versus nameplate. Typical 80&ndash;92%. Different machines on the same line often have different Performance values.</div></div>
@@ -183,7 +183,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
       <div class="guide-formula">Net PCBs/h = Mechanical PCBs/h x Availability% / 100 x Quality% / 100</div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">04 &mdash; Section 2: Reflow Oven</div>
+      <div class="guide-section-title">04 -- Section 2: Reflow Oven</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">The oven is modelled as a separate throughput constraint independent of the placer. Tunnel length, dwell time, and load factor are line-level. Panel length is per-product because different assemblies may have different panel sizes.</div>
       <div class="guide-two-col">
         <div class="guide-card"><div class="guide-card-title">Heated Tunnel Length</div><div class="guide-card-body">Enter the heated length only, not the overall oven length. Typical values: 5-zone approximately 180 cm, 7-zone approximately 250 cm, 10-zone approximately 360 cm. Always verify against your specific model datasheet.</div></div>
@@ -194,7 +194,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
       <div class="guide-formula">Oven CT (s) = (panel length / load factor) / (tunnel / dwell x 60) x 60</div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">05 &mdash; Section 3: Changeover &amp; Planned Stops</div>
+      <div class="guide-section-title">05 -- Section 3: Changeover &amp; Planned Stops</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">Changeover time is a planned loss that sits outside OEE. The workbook subtracts it from gross available hours before any capacity calculation. This makes it visible as a separate number rather than buried inside Availability.</div>
       <div class="guide-three-col">
         <div class="guide-card"><div class="guide-card-title">Full Changeovers / Week</div><div class="guide-card-body">Complete product changeovers per week: new stencil, full feeder swap, program change, first article inspection. On a short-run mixed line typically 4&ndash;10 per week.</div></div>
@@ -205,7 +205,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
       <div class="guide-note">A line running 4 full changeovers at 90 minutes each loses 6 hours per week before OEE is applied. On a single-shift 40-hour week that is 15% of capacity gone before the first board is placed.</div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">06 &mdash; Section 5: Product Mix Table</div>
+      <div class="guide-section-title">06 -- Section 5: Product Mix Table</div>
       <div class="guide-card-body" style="margin-bottom:1rem;">Up to 8 products, each fully independent. Panelization and panel length are entered per product. The workbook calculates placer and oven cycle times separately for each and identifies which is the bottleneck.</div>
       <div class="guide-two-col">
         <div class="guide-card"><div class="guide-card-title">PCBs per Panel</div><div class="guide-card-body">How many individual PCBs sit in one production panel. Enter 1 for single boards. Enter 6 for a 2x3 array. Affects placer cycle time: a 6-up panel has 6 times the placements per machine cycle as a single board but also produces 6 PCBs per cycle.</div></div>
@@ -215,7 +215,7 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
       </div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">07 &mdash; Reading the RESULTS Sheet</div>
+      <div class="guide-section-title">07 -- Reading the RESULTS Sheet</div>
       <div class="guide-steps">
         <div class="guide-step"><div class="guide-step-num">A</div><div class="guide-step-text"><h4>Pick-and-Place Machines</h4><p>Summary of your machine table: nameplate CPH, Performance %, effective CPH, and placement share per machine. Verify this reflects your actual configuration before reading capacity figures.</p></div></div>
         <div class="guide-step"><div class="guide-step-num">B</div><div class="guide-step-text"><h4>Changeover &amp; Available Hours</h4><p>Gross hours, changeover loss, minor stops loss, and net productive hours per week and per year. This is the real available time that all products compete for.</p></div></div>
@@ -225,13 +225,13 @@ Machine CT (s) = (placements x share% / 100) / (CPH x Performance% / 100) x 3600
         <div class="guide-step"><div class="guide-step-num">K&ndash;U</div><div class="guide-step-text"><h4>Hidden Helper Columns</h4><p>Intermediate calculations per product: individual machine cycle times, line CT, oven CT, bottleneck CT, mechanical PCBs/h, net PCBs/h, required hours. Hidden for cleanliness. Unhide to audit the math.</p></div></div>
       </div>
       <div class="guide-verdict-row">
-        <div class="guide-verdict-chip pass">FEASIBLE &mdash; below 70%</div>
-        <div class="guide-verdict-chip warn">HIGH LOAD &mdash; 70&ndash;85%</div>
-        <div class="guide-verdict-chip fail">OVERLOADED &mdash; above 85%</div>
+        <div class="guide-verdict-chip pass">FEASIBLE -- below 70%</div>
+        <div class="guide-verdict-chip warn">HIGH LOAD -- 70&ndash;85%</div>
+        <div class="guide-verdict-chip fail">OVERLOADED -- above 85%</div>
       </div>
     </div>
     <div class="guide-section">
-      <div class="guide-section-title">08 &mdash; Common Planning Mistakes</div>
+      <div class="guide-section-title">08 -- Common Planning Mistakes</div>
       <div class="guide-tip"><div class="guide-tip-num">01</div><div class="guide-tip-title">Placement shares that do not sum to 100%</div><div class="guide-tip-body">If shares sum to 80%, 20% of placements are unaccounted for and cycle time is wrong. Cell E12 shows the running total and warns you. Do not proceed until it reads 100%.</div></div>
       <div class="guide-tip"><div class="guide-tip-num">02</div><div class="guide-tip-title">Confusing panels with individual PCBs</div><div class="guide-tip-body">Components per PCB means one board, not one panel. If running a 4-up panel with 150 components per board, enter 150 for components and 4 for PCBs per panel. The workbook multiplies them internally.</div></div>
       <div class="guide-tip"><div class="guide-tip-num">03</div><div class="guide-tip-title">Forgetting double-sided assembly</div><div class="guide-tip-body">A double-sided assembly goes through the line twice. Entering 0 when the board is double-sided doubles apparent capacity and halves required hours. If you produce a mix of single and double-sided boards, enter them as separate products.</div></div>
