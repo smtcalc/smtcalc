@@ -13,132 +13,8 @@
   <meta property="og:url" content="https://smtcalc.com/flux-designator-decoder/">
   <meta property="og:title" content="Flux Designator Decoder - J-STD-004B Code Lookup | SMTCalc">
   <meta property="og:description" content="Decode J-STD-004B flux designators instantly. Look up base material, activity level, and halide content for any four-character flux code. Free SMT tool.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #10141a;
-      --bg2: #171d26;
-      --bg3: #1e2530;
-      --bg4: #262e3c;
-      --accent: #e08318;
-      --accent2: #d43e10;
-      --green: #1fa855;
-      --yellow: #e08318;
-      --red: #d43e10;
-      --text: #dde4ee;
-      --muted: #8fa6be;
-      --border: #28323e;
-      --border2: #303c4a;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      min-height: 100vh;
-    }
-
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.4rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .logo span { color: var(--accent); }
-
-    .tool-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-      padding: 0.3rem 0.75rem;
-    }
-
-    /* HERO */
-    .tool-hero {
-      padding: 3rem 2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-      position: relative;
-      overflow: hidden;
-    }
-    .tool-hero::before {
-      content: '';
-      position: absolute;
-      top: -50%; right: -10%;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(224,131,24,0.12) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .tool-hero-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    .tool-eyebrow {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .tool-eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 2px;
-      background: var(--accent);
-    }
-
-    .tool-hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      text-transform: uppercase;
-      letter-spacing: 0.01em;
-      line-height: 1.0;
-      margin-bottom: 0.75rem;
-    }
-
-    .tool-hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 680px;
-      line-height: 1.65;
-    }
+  <link rel="stylesheet" href="/style.css">
+<style>
 
     /* MAIN LAYOUT */
     .main-wrap {
@@ -157,7 +33,7 @@
     }
 
     .mode-tab {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.12em;
@@ -190,7 +66,7 @@
     }
 
     .panel-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.8rem;
       letter-spacing: 0.15em;
@@ -261,7 +137,7 @@
     .result-block.show { display: block; }
 
     .result-designator {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 900;
       font-size: 4rem;
       color: var(--accent);
@@ -304,7 +180,7 @@
     }
 
     .prop-value {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: 1.15rem;
       line-height: 1.1;
@@ -419,7 +295,7 @@
       border: 1px solid;
     }
     .halide-badge.free { color: var(--green); border-color: rgba(31,168,85,0.35); background: rgba(31,168,85,0.13); }
-    .halide-badge.present { color: var(--yellow); border-color: rgba(224,131,24,0.42); background: rgba(224,131,24,0.12); }
+    .halide-badge.present { color: var(--yellow); border-color: rgba(235,107,52,0.42); background: rgba(235,107,52,0.12); }
 
     .activity-dot {
       display: inline-flex;
@@ -456,7 +332,7 @@
       background: var(--bg2);
       border: 1px solid var(--border);
       color: var(--text);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.12em;
@@ -501,7 +377,7 @@
     .guide-section:last-child { border-bottom: none; }
 
     .guide-section-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.75rem;
       letter-spacing: 0.2em;
@@ -544,7 +420,7 @@
     }
 
     .guide-card-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.05rem;
       color: var(--text);
@@ -652,7 +528,7 @@
       background: transparent;
       border: 1px solid var(--border2);
       color: var(--muted);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.1em;
@@ -671,29 +547,6 @@
       .guide-section { padding: 1.25rem 1rem; }
       .print-bar { padding: 0 1rem; }
       footer { padding: 2rem 1rem; }
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-    .footer-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    .footer-copy a {
-      color: var(--accent);
-      text-decoration: none;
     }
 
     /* PRINT */

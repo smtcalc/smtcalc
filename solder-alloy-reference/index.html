@@ -13,125 +13,8 @@
   <meta property="og:url" content="https://smtcalc.com/solder-alloy-reference/">
   <meta property="og:title" content="Solder Alloy Reference - Lead-Free SMT Alloys | SMTCalc">
   <meta property="og:description" content="Free SMT solder alloy reference. Compare lead-free alloys by thermal properties and process suitability. Covers SAC305, SAC405, SN100C, BiSn, Innolot, and more.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #10141a;
-      --bg2: #171d26;
-      --bg3: #1e2530;
-      --bg4: #262e3c;
-      --accent: #e08318;
-      --accent2: #d43e10;
-      --green: #1fa855;
-      --yellow: #e08318;
-      --red: #d43e10;
-      --text: #dde4ee;
-      --muted: #8fa6be;
-      --border: #28323e;
-      --border2: #303c4a;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      min-height: 100vh;
-    }
-
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.4rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .logo span { color: var(--accent); }
-    .tool-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-      padding: 0.3rem 0.75rem;
-    }
-
-    /* HERO */
-    .tool-hero {
-      padding: 3rem 2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-      position: relative;
-      overflow: hidden;
-    }
-    .tool-hero::before {
-      content: '';
-      position: absolute;
-      top: -50%; right: -10%;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(224,131,24,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .tool-hero-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-    .tool-eyebrow {
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .tool-eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px; height: 2px;
-      background: var(--accent);
-    }
-    .tool-hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      text-transform: uppercase;
-      line-height: 0.95;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.75rem;
-    }
-    .tool-hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 600px;
-      line-height: 1.6;
-    }
+  <link rel="stylesheet" href="/style.css">
+<style>
 
     /* INLINE GUIDE */
     .inline-guide {
@@ -145,7 +28,7 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--accent);
       color: var(--text);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.12em;
@@ -182,7 +65,7 @@
     }
     .guide-section:last-child { border-bottom: none; }
     .guide-section-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.75rem;
       letter-spacing: 0.2em;
@@ -217,7 +100,7 @@
       padding: 1rem 1.1rem;
     }
     .guide-card-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.05rem;
       color: var(--text);
@@ -229,8 +112,8 @@
       line-height: 1.6;
     }
     .guide-note {
-      background: rgba(224,131,24,0.12);
-      border: 1px solid rgba(224,131,24,0.28);
+      background: rgba(235,107,52,0.12);
+      border: 1px solid rgba(235,107,52,0.28);
       border-left: 3px solid var(--accent);
       padding: 0.6rem 0.9rem;
       font-size: 0.88rem;
@@ -247,7 +130,7 @@
       letter-spacing: 0.05em;
     }
     .guide-verdict-chip.ok     { color: var(--green);  border-color: rgba(31,168,85,0.35); }
-    .guide-verdict-chip.warn   { color: var(--yellow); border-color: rgba(224,131,24,0.42); }
+    .guide-verdict-chip.warn   { color: var(--yellow); border-color: rgba(235,107,52,0.42); }
     .guide-verdict-chip.bad    { color: var(--red);    border-color: rgba(212,62,16,0.35); }
     .guide-verdict-chip.plain  { color: var(--muted);  border-color: var(--border2); }
 
@@ -274,7 +157,7 @@
       padding: 1.75rem;
     }
     .panel-label {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.78rem;
       letter-spacing: 0.2em;
@@ -311,7 +194,7 @@
     }
     .filter-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .chip {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.82rem;
       letter-spacing: 0.1em;
@@ -326,7 +209,7 @@
       user-select: none;
     }
     .chip:hover { border-color: var(--accent); color: var(--text); }
-    .chip.active { border-color: var(--accent); background: rgba(224,131,24,0.15); color: var(--accent); }
+    .chip.active { border-color: var(--accent); background: rgba(235,107,52,0.15); color: var(--accent); }
 
     .search-wrap { flex: 1; min-width: 180px; }
     .search-wrap input {
@@ -385,7 +268,7 @@
     .alloy-row.expanded td { border-bottom: none; }
 
     .alloy-name-cell .a-name {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: 1.2rem;
       line-height: 1;
@@ -426,7 +309,7 @@
       border: 1px solid var(--border2);
       color: var(--muted);
     }
-    .proc-chip.reflow   { border-color: rgba(224,131,24,0.42); color: var(--accent); }
+    .proc-chip.reflow   { border-color: rgba(235,107,52,0.42); color: var(--accent); }
     .proc-chip.wave     { border-color: rgba(80,140,220,0.35); color: #6a9ad0; }
     .proc-chip.selective { border-color: rgba(80,190,100,0.35); color: #60b870; }
 
@@ -451,7 +334,6 @@
       /* Kill the hero glow entirely on narrow viewports. Its centre lands
          directly over the content at this width, making the subtle tint
          visually dominant against the dark background. */
-      .tool-hero::before { display: none; }
 
       .tool-wrap { padding: 0 1rem; }
 
@@ -478,7 +360,7 @@
     /* DETAIL ROW */
     .detail-row td {
       padding: 0;
-      border-bottom: 2px solid rgba(224,131,24,0.42);
+      border-bottom: 2px solid rgba(235,107,52,0.42);
       background: var(--bg4);
     }
     .detail-card {
@@ -507,14 +389,14 @@
       margin-bottom: 0.18rem;
     }
     .d-stat-val {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1rem;
       line-height: 1.1;
     }
 
     .detail-notes h4 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.75rem;
       letter-spacing: 0.15em;
@@ -555,7 +437,7 @@
       color: var(--muted);
     }
     .clear-btn {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.82rem;
       letter-spacing: 0.1em;
@@ -580,7 +462,7 @@
 
     .compare-col { background: var(--bg3); padding: 1.25rem 1.25rem 1.5rem; }
     .cmp-name {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 900;
       font-size: 1.7rem;
       text-transform: uppercase;
@@ -613,7 +495,7 @@
       margin-bottom: 0.15rem;
     }
     .cmp-datum-val {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1rem;
     }
@@ -686,7 +568,7 @@
       background: transparent;
       border: 1px solid var(--border2);
       color: var(--muted);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.1em;
@@ -705,26 +587,6 @@
       .guide-section { padding: 1.25rem 1rem; }
       .print-bar { padding: 0 1rem; }
     }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    .footer-copy a { color: var(--accent); text-decoration: none; }
 
     /* NO RESULTS */
     .no-results {

@@ -13,120 +13,8 @@
   <meta property="og:url" content="https://smtcalc.com/resistor-code-calculator/">
   <meta property="og:title" content="SMD Resistor Code Calculator - EIA-96 Decoder | SMTCalc">
   <meta property="og:description" content="Decode SMD resistor markings instantly. Supports 3-digit, 4-digit, and EIA-96 codes with reverse lookup. Free tool for SMT operators and quality inspectors.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #10141a;
-      --bg2: #171d26;
-      --bg3: #1e2530;
-      --bg4: #262e3c;
-      --accent: #e08318;
-      --accent2: #d43e10;
-      --green: #1fa855;
-      --yellow: #e08318;
-      --red: #d43e10;
-      --text: #dde4ee;
-      --muted: #8fa6be;
-      --border: #28323e;
-      --border2: #303c4a;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* HEADER */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.4rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .logo span { color: var(--accent); }
-
-    .tool-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-      padding: 0.3rem 0.75rem;
-    }
-
-    /* HERO */
-    .tool-hero {
-      padding: 3rem 2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-    }
-
-    .tool-hero-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .tool-eyebrow {
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .tool-eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px; height: 2px;
-      background: var(--accent);
-    }
-
-    .tool-hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      text-transform: uppercase;
-      line-height: 0.95;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.75rem;
-    }
-
-    .tool-hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 560px;
-      line-height: 1.6;
-    }
+  <link rel="stylesheet" href="/style.css">
+<style>
 
     /* MAIN LAYOUT */
     .main-wrap {
@@ -146,7 +34,7 @@
     }
 
     .mode-tab {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.12em;
@@ -179,7 +67,7 @@
     }
 
     .panel-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.8rem;
       letter-spacing: 0.15em;
@@ -232,7 +120,7 @@
     select option { background: var(--bg3); }
 
     .btn-calc {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.95rem;
       letter-spacing: 0.12em;
@@ -414,7 +302,7 @@
     }
 
     .ref-title {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1rem;
       letter-spacing: 0.08em;
@@ -461,7 +349,7 @@
     }
 
     .explainer h2 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: 1.5rem;
       text-transform: uppercase;
@@ -476,7 +364,7 @@
     }
 
     .explainer-col h3 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.05rem;
       letter-spacing: 0.1em;
@@ -503,7 +391,7 @@
 
     /* SECTION DIVIDER */
     .section-label {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.75rem;
       letter-spacing: 0.2em;

@@ -13,209 +13,72 @@
   <meta property="og:url" content="https://smtcalc.com/">
   <meta property="og:title" content="SMTCalc - Free SMT Tools for Electronics Manufacturing">
   <meta property="og:description" content="Free, practical tools and calculators for electronics manufacturing professionals. SMT process tools built by industry experts.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css">
+
   <style>
-    :root {
-      --bg:      #10141a;
-      --bg2:     #171d26;
-      --bg3:     #1e2530;
-      --bg4:     #262e3c;
-      --accent:  #e08318;
-      --accent2: #d43e10;
-      --text:    #dde4ee;
-      --muted:   #8fa6be;
-      --border:  #28323e;
-      --border2: #303c4a;
-      --green:   #1fa855;
-      --yellow:  #e08318;
-      --red:     #d43e10;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    /* NOISE OVERLAY */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
-
-    /* HEADER */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.5rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    nav {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-      padding: 0.75rem 0.5rem;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    nav a:hover { color: var(--text); }
-
     /* HERO */
     .hero {
-      min-height: 100vh;
+      min-height: 90vh;
       display: flex;
       align-items: center;
-      padding: 120px 2rem 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(224,131,24,0.09) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(224,131,24,0.09) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
-    }
-
-    .hero-accent {
-      position: absolute;
-      top: 20%;
-      right: -10%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(212,62,16,0.20) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-accent2 {
-      position: absolute;
-      bottom: 0;
-      left: -5%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(224,131,24,0.15) 0%, transparent 70%);
-      pointer-events: none;
+      justify-content: center;
+      padding: 160px 2rem 100px;
+      text-align: center;
     }
 
     .hero-content {
-      max-width: 1100px;
-      margin: 0 auto;
+      max-width: 900px;
       width: 100%;
-      position: relative;
-      z-index: 2;
     }
 
     .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--muted);
       margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.1s forwards;
-    }
-
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
     }
 
     h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: clamp(3.5rem, 9vw, 8rem);
-      line-height: 0.92;
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
+      font-weight: 800;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
       margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.2s forwards;
+      color: var(--text);
     }
 
     h1 .line2 {
-      color: var(--accent);
-      display: block;
+      color: var(--text);
     }
 
     h1 .line3 {
-      color: var(--muted);
       display: block;
-      font-size: 0.6em;
-      letter-spacing: 0.02em;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: -0.01em;
+      margin-top: 0.5rem;
     }
 
     .hero-desc {
-      max-width: 520px;
-      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto 3rem;
+      font-size: 1.25rem;
       color: var(--muted);
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.35s forwards;
+      line-height: 1.6;
     }
 
     .hero-cta {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
+      justify-content: center;
       flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.45s forwards;
     }
 
     .btn-primary {
@@ -223,19 +86,17 @@
       align-items: center;
       gap: 0.5rem;
       background: var(--accent);
-      color: #0e1318;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 1.05rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1.1rem;
       text-decoration: none;
-      padding: 0.85rem 2rem;
-      transition: background 0.2s, transform 0.15s;
+      padding: 1rem 2.5rem;
+      border-radius: 4px;
+      transition: background 0.2s, transform 0.1s;
     }
 
     .btn-primary:hover {
-      background: #f0880e;
+      background: var(--accent-hover);
       transform: translateY(-2px);
     }
 
@@ -245,20 +106,18 @@
       gap: 0.5rem;
       background: transparent;
       color: var(--text);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 1.05rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 1.1rem;
       text-decoration: none;
-      padding: 0.85rem 2rem;
+      padding: 1rem 2.5rem;
       border: 1px solid var(--border);
-      transition: border-color 0.2s, transform 0.15s;
+      border-radius: 4px;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .btn-secondary:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
+      border-color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     /* STATS BAR */
@@ -266,206 +125,124 @@
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       background: var(--bg2);
-      padding: 1.5rem 2rem;
+      padding: 3rem 2rem;
     }
 
     .stats-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      display: flex;
-      gap: 3rem;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      text-align: center;
     }
 
     .stat-value {
-      font-family: 'Barlow Condensed', sans-serif;
+      display: block;
       font-weight: 800;
-      font-size: 2rem;
-      color: var(--accent);
+      font-size: 3rem;
+      color: var(--text);
       line-height: 1;
+      margin-bottom: 0.5rem;
     }
 
     .stat-label {
-      font-size: 0.85rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--accent);
       text-transform: uppercase;
-      margin-top: 0.25rem;
+      letter-spacing: 0.05em;
     }
 
     /* TOOLS SECTION */
     .tools-section {
-      padding: 100px 2rem;
-      max-width: 1100px;
+      padding: 120px 2rem;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
     .section-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 3rem;
-      gap: 2rem;
-      flex-wrap: wrap;
+      margin-bottom: 4rem;
+      text-align: center;
     }
 
     .section-label {
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      font-size: 1rem;
+      font-weight: 600;
       color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
     }
 
     h2 {
-      font-family: 'Barlow Condensed', sans-serif;
       font-weight: 800;
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      text-transform: uppercase;
-      line-height: 0.95;
-      letter-spacing: -0.01em;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      letter-spacing: -0.02em;
+      color: var(--text);
     }
 
     /* TOOL CARDS */
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5px;
-      background: var(--border);
-      border: 1.5px solid var(--border);
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
     }
 
     .tool-card {
-      background: var(--bg);
-      padding: 2.5rem;
-      position: relative;
-      overflow: hidden;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 3rem 2.5rem;
+      border-radius: 8px;
       text-decoration: none;
       color: inherit;
-      display: block;
-      transition: background 0.25s;
-      group: true;
-    }
-
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px;
-      height: 100%;
-      background: var(--accent);
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .tool-card:hover {
       background: var(--bg3);
-    }
-
-    .tool-card:hover::before {
-      transform: scaleY(1);
-    }
-
-    .tool-card-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .tool-number {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 5rem;
-      line-height: 1;
-      color: rgba(22,20,26,0.05);
-      position: absolute;
-      top: -1rem;
-      right: 1rem;
-      letter-spacing: -0.05em;
-      user-select: none;
-      transition: color 0.3s;
-    }
-
-    .tool-card:hover .tool-number {
-      color: rgba(224,131,24,0.14);
+      border-color: var(--border2);
     }
 
     .tool-tag {
-      display: inline-block;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
       color: var(--accent);
-      border: 1px solid rgba(224,131,24,0.42);
-      padding: 0.2rem 0.6rem;
-      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
     }
 
     .tool-name {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      font-size: 2rem;
-      text-transform: uppercase;
-      line-height: 1.05;
-      margin-bottom: 0.75rem;
-      letter-spacing: 0.01em;
-      transition: color 0.2s;
-    }
-
-    .tool-card:hover .tool-name {
-      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--text);
     }
 
     .tool-desc {
       color: var(--muted);
-      font-size: 1rem;
+      font-size: 1.05rem;
       line-height: 1.6;
-      margin-bottom: 1.75rem;
-      max-width: 380px;
+      margin-bottom: 2rem;
+      flex-grow: 1;
     }
 
     .tool-link {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 1rem;
       color: var(--text);
-      transition: gap 0.2s, color 0.2s;
+      transition: color 0.2s;
     }
 
     .tool-card:hover .tool-link {
-      gap: 0.75rem;
       color: var(--accent);
-    }
-
-    .tool-link svg {
-      transition: transform 0.2s;
-    }
-
-    .tool-card:hover .tool-link svg {
-      transform: translateX(3px);
     }
 
     /* ABOUT STRIP */
@@ -473,139 +250,87 @@
       background: var(--bg2);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: 80px 2rem;
+      padding: 120px 2rem;
     }
 
     .about-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 5rem;
+      gap: 6rem;
       align-items: center;
     }
 
     .about-text h2 {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
     }
 
     .about-text p {
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.75;
-      margin-bottom: 1rem;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
     }
 
     .about-features {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 2rem;
     }
 
     .feature-item {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       align-items: flex-start;
     }
 
     .feature-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(224,131,24,0.15);
-      border: 1px solid rgba(224,131,24,0.35);
+      width: 48px;
+      height: 48px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       color: var(--accent);
-      font-size: 1rem;
     }
 
     .feature-text strong {
       display: block;
-      font-family: 'Barlow Condensed', sans-serif;
       font-weight: 700;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.2rem;
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
     }
 
     .feature-text span {
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: var(--muted);
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .footer-copy a {
-      color: var(--accent);
-      text-decoration: none;
-      padding: 0.5rem 0;
-      display: inline-block;
-    }
-
-    .footer-sep {
-      padding: 0 0.5rem;
-    }
-
-    /* ANIMATIONS */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+      line-height: 1.5;
     }
 
     /* RESPONSIVE */
+    @media (max-width: 992px) {
+      .about-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .about-text h2 { text-align: center; }
+    }
+
     @media (max-width: 768px) {
+      nav a.hide-mobile { display: none; }
+      .hero { padding: 140px 1.5rem 80px; }
+      .tools-section { padding: 80px 1.5rem; }
       .tools-grid { grid-template-columns: 1fr; }
-      .tools-grid .tool-card,
-      .tools-grid .tool-card[style] { grid-column: span 1 !important; }
-      .tool-card { padding: 1.75rem 1.5rem; }
-      .about-inner { grid-template-columns: 1fr; gap: 3rem; }
-      nav { gap: 0.5rem; }
-      nav a { font-size: 0.85rem; }
-      .stats-inner { gap: 2rem; }
-      .hero { padding: 100px 1.25rem 60px; }
-      .tools-section { padding: 60px 1.25rem; }
-      .hero-accent, .hero-accent2 { display: none; }
-    }
-
-    @media (max-width: 600px) {
-      .tools-grid { grid-template-columns: 1fr; }
-      .about-inner { grid-template-columns: 1fr; gap: 2rem; }
-    }
-
-    @media (max-width: 480px) {
-      header { padding: 0 1rem; }
-      .hero { padding-top: 80px; }
-      .about-strip { padding: 40px 1rem; }
-      footer { padding: 2rem 1rem; }
-      .stats-bar { padding: 1rem; }
+      .stats-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <a href="/" class="logo">SMT<span>Calc</span></a>
     <nav>
@@ -614,11 +339,7 @@
     </nav>
   </header>
 
-  <!-- HERO -->
   <section class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-accent"></div>
-    <div class="hero-accent2"></div>
     <div class="hero-content">
       <div class="hero-eyebrow">Electronics Manufacturing Tools</div>
       <h1>
@@ -630,16 +351,12 @@
         Free, no-nonsense calculators and process tools built by electronics manufacturing professionals. No login, no fluff - just tools that work.
       </p>
       <div class="hero-cta">
-        <a href="#tools" class="btn-primary">
-          Browse Tools
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+        <a href="#tools" class="btn-primary">Browse Tools</a>
         <a href="/about/" class="btn-secondary">About This Site</a>
       </div>
     </div>
   </section>
 
-  <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stats-inner">
       <div class="stat">
@@ -661,214 +378,125 @@
     </div>
   </div>
 
-  <!-- TOOLS -->
   <section class="tools-section" id="tools">
     <div class="section-header">
-      <div>
-        <div class="section-label">Available Now</div>
-        <h2>The Tools</h2>
-      </div>
+      <div class="section-label">Available Now</div>
+      <h2>The Tools</h2>
     </div>
 
     <div class="tools-grid">
 
-      <!-- STENCIL COACH -->
-      <!-- MSL BAKE CALCULATOR -->
       <a href="msl-bake-calculator/" class="tool-card">
-        <div class="tool-number">01</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Components / Moisture</div>
-          <div class="tool-name">MSL Bake Calculator</div>
-          <p class="tool-desc">
-            Determine correct bake time for moisture-sensitive components per J-STD-033D. Enter MSL level, body thickness, and floor life exposure to get the required bake time at 125, 90, 60, or 40&deg;C.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Components / Moisture</div>
+        <div class="tool-name">MSL Bake Calculator</div>
+        <p class="tool-desc">
+          Determine correct bake time for moisture-sensitive components per J-STD-033D. Enter MSL level, body thickness, and floor life exposure to get the required bake time at 125, 90, 60, or 40&#176;C.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- BARE BOARD BAKE CALCULATOR -->
       <a href="bare-board-bake-calculator/" class="tool-card">
-        <div class="tool-number">02</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">PCB Handling / Moisture</div>
-          <div class="tool-name">Bare Board Bake Calculator</div>
-          <p class="tool-desc">
-            Calculate required drying time for bare printed circuit boards before assembly. Based on PCB material group, storage duration, and target moisture level, using the Arrhenius diffusion model from the Solectron Aquaboard study.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">PCB Handling / Moisture</div>
+        <div class="tool-name">Bare Board Bake Calculator</div>
+        <p class="tool-desc">
+          Calculate required drying time for bare printed circuit boards before assembly. Based on PCB material group, storage duration, and target moisture level, using the Arrhenius diffusion model from the Solectron Aquaboard study.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- STENCIL COACH -->
       <a href="stencil-coach/" class="tool-card">
-        <div class="tool-number">03</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Stencil / Paste</div>
-          <div class="tool-name">Stencil Coach</div>
-          <p class="tool-desc">
-            Evaluate your stencil aperture design against IPC guidelines. Get instant feedback on area ratio, aspect ratio, and paste release - before you order the stencil.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Stencil / Paste</div>
+        <div class="tool-name">Stencil Coach</div>
+        <p class="tool-desc">
+          Evaluate your stencil aperture design against IPC guidelines. Get instant feedback on area ratio, aspect ratio, and paste release - before you order the stencil.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- SMT CAPACITY CALCULATOR -->
       <a href="smt-capacity-calculator/" class="tool-card">
-        <div class="tool-number">04</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Production / Planning</div>
-          <div class="tool-name">SMT Capacity Calculator</div>
-          <p class="tool-desc">
-            Calculate the capacity and utilization of your SMT production line. Factor in line speed, OEE, shift model, and product mix to understand your true production potential.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Production / Planning</div>
+        <div class="tool-name">SMT Capacity Calculator</div>
+        <p class="tool-desc">
+          Calculate the capacity and utilization of your SMT production line. Factor in line speed, OEE, shift model, and product mix to understand your true production potential.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- REFLOW THROUGHPUT CALCULATOR -->
       <a href="reflow-throughput-calculator/" class="tool-card">
-        <div class="tool-number">05</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Reflow / Thermal Process</div>
-          <div class="tool-name">Reflow Throughput Calculator</div>
-          <p class="tool-desc">
-            Check whether your reflow oven can keep up with your SMT line, or calculate the minimum heated tunnel length needed for a target production rate. Includes P&amp;P bottleneck check and oven class reference.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Reflow / Thermal Process</div>
+        <div class="tool-name">Reflow Throughput Calculator</div>
+        <p class="tool-desc">
+          Check whether your reflow oven can keep up with your SMT line, or calculate the minimum heated tunnel length needed for a target production rate. Includes P&amp;P bottleneck check and oven class reference.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- PLACEMENT SPEED VERIFIER -->
       <a href="placement-speed-verifier/" class="tool-card">
-        <div class="tool-number">06</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Placement / Performance</div>
-          <div class="tool-name">Placement Speed Verifier</div>
-          <p class="tool-desc">
-            Calculate your SMT line's actual globally derated placement rate from real production data. Enter elapsed time and product mix to find the true CPH your line delivered across a shift or run.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Placement / Performance</div>
+        <div class="tool-name">Placement Speed Verifier</div>
+        <p class="tool-desc">
+          Calculate your SMT line's actual globally derated placement rate from real production data. Enter elapsed time and product mix to find the true CPH your line delivered across a shift or run.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- SMD RESISTOR CODE CALCULATOR -->
       <a href="resistor-code-calculator/" class="tool-card">
-        <div class="tool-number">07</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Components / Inspection</div>
-          <div class="tool-name">SMD Resistor Code Calculator</div>
-          <p class="tool-desc">
-            Decode surface mount resistor markings on the spot. Supports 3-digit, 4-digit, and EIA-96 precision codes. Reverse lookup from resistance value to code. Built for operators and quality inspectors.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Components / Inspection</div>
+        <div class="tool-name">SMD Resistor Code Calculator</div>
+        <p class="tool-desc">
+          Decode surface mount resistor markings on the spot. Supports 3-digit, 4-digit, and EIA-96 precision codes. Reverse lookup from resistance value to code. Built for operators and quality inspectors.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- SOLDER ALLOY REFERENCE -->
       <a href="solder-alloy-reference/" class="tool-card">
-        <div class="tool-number">08</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Solder / Materials Reference</div>
-          <div class="tool-name">Solder Alloy Reference</div>
-          <p class="tool-desc">
-            Compare RoHS-compliant lead-free solder alloys side by side. Filter by category or process type, sort by thermal properties, and select up to three alloys for a direct comparison. Covers SAC305, SN100C, BiSn, Innolot, and more.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Solder / Materials Reference</div>
+        <div class="tool-name">Solder Alloy Reference</div>
+        <p class="tool-desc">
+          Compare RoHS-compliant lead-free solder alloys side by side. Filter by category or process type, sort by thermal properties, and select up to three alloys for a direct comparison. Covers SAC305, SN100C, BiSn, Innolot, and more.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- MSL TRACKER -->
       <a href="msl-tracker/" class="tool-card">
-        <div class="tool-number">09</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Components / Moisture &mdash; Free Download</div>
-          <div class="tool-name">MSL Tracker</div>
-          <p class="tool-desc">
-            Free Excel workbook for tracking moisture-sensitive component floor life across your production floor. Color-coded dashboard, bake event logging, ambient RH correction per J-STD-033D, and automatic floor life recalculation. Requires Microsoft 365 or Excel 2021.
-          </p>
-          <div class="tool-link">
-            Download Free
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Components / Moisture, Free Download</div>
+        <div class="tool-name">MSL Tracker</div>
+        <p class="tool-desc">
+          Free Excel workbook for tracking moisture-sensitive component floor life across your production floor. Color-coded dashboard, bake event logging, ambient RH correction per J-STD-033D, and automatic floor life recalculation. Requires Microsoft 365 or Excel 2021.
+        </p>
+        <div class="tool-link">Download Free &#8594;</div>
       </a>
 
-      <!-- FLUX DESIGNATOR DECODER -->
       <a href="flux-designator-decoder/" class="tool-card">
-        <div class="tool-number">10</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Materials / Flux Chemistry</div>
-          <div class="tool-name">Flux Designator Decoder</div>
-          <p class="tool-desc">
-            Decode any J-STD-004B flux designator to its base material, activity level, and halide content. Reverse lookup from properties to designator. Covers all 24 codes from Table 3-9 with a built-in guide to flux chemistry and cleaning decisions. Based on J-STD-004B with Amendment 1.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Materials / Flux Chemistry</div>
+        <div class="tool-name">Flux Designator Decoder</div>
+        <p class="tool-desc">
+          Decode any J-STD-004B flux designator to its base material, activity level, and halide content. Reverse lookup from properties to designator. Covers all 24 codes from Table 3-9 with a built-in guide to flux chemistry and cleaning decisions. Based on J-STD-004B with Amendment 1.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- IPC STANDARDS FINDER -->
       <a href="ipc-standards-finder/" class="tool-card">
-        <div class="tool-number">11</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Standards Reference</div>
-          <div class="tool-name">IPC Standards Finder</div>
-          <p class="tool-desc">
-            Find the right IPC or J-STD document fast. Search by keyword, process area, or standard number across 75+ indexed standards covering assembly, PCB design, fabrication, materials, cleaning, conformal coating, testing, surface finishes, and more.
-          </p>
-          <div class="tool-link">
-            Open Tool
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Standards Reference</div>
+        <div class="tool-name">IPC Standards Finder</div>
+        <p class="tool-desc">
+          Find the right IPC or J-STD document fast. Search by keyword, process area, or standard number across 75+ indexed standards covering assembly, PCB design, fabrication, materials, cleaning, conformal coating, testing, surface finishes, and more.
+        </p>
+        <div class="tool-link">Open Tool &#8594;</div>
       </a>
 
-      <!-- SMT LINE CAPACITY PLANNER -->
       <a href="smt-line-capacity-planner/" class="tool-card">
-        <div class="tool-number">12</div>
-        <div class="tool-card-inner">
-          <div class="tool-tag">Production Planning &mdash; Free Download</div>
-          <div class="tool-name">SMT Line Capacity Planner</div>
-          <p class="tool-desc">
-            Calculate the realistic maximum capacity of a single SMT line. Models placer throughput, reflow oven bottleneck, OEE decomposition, panelisation, changeover losses, and multi-product utilisation. Free Excel workbook, no macros, works offline.
-          </p>
-          <div class="tool-link">
-            Download Free
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </div>
-        </div>
+        <div class="tool-tag">Production Planning, Free Download</div>
+        <div class="tool-name">SMT Line Capacity Planner</div>
+        <p class="tool-desc">
+          Calculate the realistic maximum capacity of a single SMT line. Models placer throughput, reflow oven bottleneck, OEE decomposition, panelisation, changeover losses, and multi-product utilisation. Free Excel workbook, no macros, works offline.
+        </p>
+        <div class="tool-link">Download Free &#8594;</div>
       </a>
 
     </div>
   </section>
 
-  <!-- ABOUT -->
   <section class="about-strip" id="about">
     <div class="about-inner">
       <div class="about-text">
@@ -884,7 +512,7 @@
       <div class="about-features">
         <div class="feature-item">
           <div class="feature-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
           <div class="feature-text">
             <strong>Instant Results</strong>
@@ -893,7 +521,7 @@
         </div>
         <div class="feature-item">
           <div class="feature-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l7-6 7 6v12"/><path d="M9 20v-6h6v6"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l7-6 7 6v12"/><path d="M9 20v-6h6v6"/></svg>
           </div>
           <div class="feature-text">
             <strong>Industry Standards Referenced</strong>
@@ -902,7 +530,7 @@
         </div>
         <div class="feature-item">
           <div class="feature-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
           </div>
           <div class="feature-text">
             <strong>Always Free</strong>
@@ -911,7 +539,7 @@
         </div>
         <div class="feature-item">
           <div class="feature-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           </div>
           <div class="feature-text">
             <strong>Growing Toolset</strong>
@@ -922,12 +550,12 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-copy">
-        &copy; 2026 <a href="/">SMTCalc.com</a> &mdash; Free tools for electronics manufacturing professionals.
-        <span class="footer-sep">|</span>
+        &copy; 2026 <a href="/">SMTCalc.com</a> <span class="footer-sep">|</span> Free tools for electronics manufacturing professionals.
+      </div>
+      <div class="footer-copy">
         <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
       </div>
     </div>
