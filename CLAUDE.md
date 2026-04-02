@@ -50,10 +50,11 @@ Tell it like it is.
 ## Project Overview
 
 SMTCalc.com is a free browser-based tool website for electronics manufacturing professionals.
-It is hosted on GitHub Pages as a static site. All tools are self-contained single HTML files.
-No frameworks, no build tools, no external dependencies beyond Google Fonts.
+It is hosted on GitHub Pages as a static site. No frameworks, no build tools, no external
+dependencies beyond Google Fonts (loaded via @import in style.css).
 
-Each tool lives in its own subdirectory with its own index.html.
+Each tool lives in its own subdirectory with its own index.html. All shared styles are in
+/style.css at the project root, linked from every page.
 The project filename convention for working files is [tool-slug]-index.html.
 
 ---
@@ -86,40 +87,43 @@ Do not add it to the landing page or sitemap until Kimmo confirms it is ready.
 
 Full details are in STYLE_GUIDE.md. Key facts:
 
-**Theme:** Dark theme with cool undertones.
+**Theme:** Dark theme with warm brown undertones. Clean solid backgrounds, no noise textures
+or decorative glows.
 
-**Colors (CSS custom properties on :root):**
-- --bg:      #10141a  (page background)
-- --bg2:     #171d26  (hero section)
-- --bg3:     #1e2530  (input fields, stat boxes)
-- --bg4:     #262e3c  (active panel backgrounds)
-- --accent:  #e08318  (orange, primary accent)
-- --accent2: #d43e10  (red-orange, error/destructive)
-- --green:   #1fa855  (PASS/OK)
-- --yellow:  #e08318  (WARNING, same as accent)
-- --red:     #d43e10  (FAIL)
-- --text:    #dde4ee  (primary text, cool light)
-- --muted:   #8fa6be  (secondary text, labels)
-- --border:  #28323e
-- --border2: #303c4a
-- --mono:    'Share Tech Mono', monospace
+**Shared stylesheet:** All pages link to `/style.css` at the project root. It provides all
+shared tokens, components, and responsive rules. No separate Google Fonts link tags are
+needed in page heads -- fonts are imported inside style.css. Each page adds only its own
+page-specific styles in an inline `<style>` block.
+
+**Colors (CSS custom properties in style.css :root):**
+- --bg:           #1a1614  (page background, warm near-black)
+- --bg2:          #241e1b  (section backgrounds, panels)
+- --bg3:          #2e2723  (input fields, stat boxes)
+- --bg4:          #3a302a  (active states, unit badges)
+- --accent:       #eb6b34  (orange, primary accent)
+- --accent-hover: #cf5c2b  (orange hover state)
+- --accent2:      #d43e10  (red-orange, error/destructive)
+- --green:        #1fa855  (PASS/OK)
+- --yellow:       #eb6b34  (WARNING, same as --accent)
+- --red:          #d43e10  (FAIL)
+- --text:         #fdfbf9  (primary text, warm off-white)
+- --muted:        #a89f96  (secondary text, labels)
+- --border:       #3d342e
+- --border2:      #4a4039
+- --mono:         'Share Tech Mono', monospace
 
 **Typography:**
-- Barlow Condensed 900: page h1, tool name, verdict labels
-- Barlow Condensed 700-800: panel labels, section eyebrows, button text
-- Barlow 400: body text (font-weight 400)
-- Share Tech Mono 400: input values, units, stat labels, formula text
-
-**Font size bumps for dark theme (applied globally):**
-- .stat-label: 0.75rem (was 0.70rem)
-- .panel-label: 0.78rem (was 0.75rem)
-- .field-note: 0.88rem (was 0.85rem)
+- Inter 800-900: page h1, tool hero heading, section headings
+- Inter 600-700: panel labels, eyebrows, button text, nav links
+- Inter 400-500: body text, field notes, guide prose
+- Share Tech Mono 400: input values, units, stat values, formula text
 
 **Print reports always use a light theme.** The printReport() JS uses hardcoded light
-colors (#fff background, #c07c0a accent, #167a40 pass, #c42b08 fail). Tools with a
-@media print block use an inline :root override to reset dark tokens for printing.
+colors (#fff background, #d4720a accent, #167a40 pass, #c42b08 fail). Each tool page
+keeps its own @media print block inline with a :root light-theme override. Do not move
+print overrides to style.css.
 
-**Canonical reference implementation:** stencil-coach-index.html
+**Canonical reference implementation:** stencil-coach/index.html
 When in doubt about any markup or styling pattern, check that file first.
 STYLE_GUIDE.md is the written reference.
 
@@ -158,16 +162,16 @@ Tool file must have:
 - Correct title format: [Tool Name] - SMTCalc
 - Correct meta description (one sentence, plain language)
 - Favicon link: /favicon.svg
-- All three Google Font families imported
-- All CSS variables matching the design system
+- `<link rel="stylesheet" href="/style.css">` -- no separate Google Fonts link tags
+- No inline :root block (all tokens come from style.css)
 - Header with logo linking to / and tool-badge
-- Tool hero with eyebrow, h1, description paragraph
-- Guide banner if a guide exists
+- Tool hero: .tool-hero > .tool-hero-inner > .hero-eyebrow + h1 + p
+- Guide banner if a guide URL is available
 - Main grid with .tool-main, .panel, .panel-full
-- Print bar with report title input and print button
-- printReport() using correct print accent colors (#d4720a, #167a40, #c42b08)
-- @media print hiding header, guide banner, print bar
-- body font-weight 400, not 300
+- Print bar with report title input and .print-btn
+- printReport() using hardcoded light-theme colors (#d4720a, #167a40, #c42b08)
+- @media print with inline :root light-theme override (not in style.css)
+- Footer with JS-obfuscated contact email
 - No characters above ASCII codepoint 127
 
 ---
@@ -201,8 +205,12 @@ Changefreq: weekly for /, monthly for all others.
   project reference files. PDFs that are ZIP-extractable can be read by treating them
   as ZIP archives.
 
-- **stencil-coach-index.html is the canonical HTML reference.** STYLE_GUIDE.md is the
+- **stencil-coach/index.html is the canonical HTML reference.** STYLE_GUIDE.md is the
   single written reference. Do not rely on memory for design system details.
+
+- **Shared styles live in /style.css.** Do not duplicate tokens, resets, or shared
+  component styles inside individual page style blocks. Each page adds only its own
+  page-specific CSS. The @media print :root override must stay inline per-page.
 
 - **Check reference files before answering technical questions.** Do not answer from
   memory alone when relevant reference material is available in the repo.
