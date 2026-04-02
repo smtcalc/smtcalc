@@ -373,28 +373,26 @@ nav a:hover { color: var(--accent); }
 
 /* FOOTER */
 footer {
-  padding: 4rem 2rem;
+  padding: 2.5rem 2rem;
   background: var(--bg);
   border-top: 1px solid var(--border);
 }
 .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
 }
-.footer-copy { font-size: 1rem; color: var(--muted); }
+.footer-copy {
+  font-size: 1rem;
+  color: var(--muted);
+}
 .footer-copy a {
-  color: var(--text);
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
-.footer-copy a:hover { color: var(--accent); }
-.footer-sep { padding: 0 0.75rem; }
+.footer-copy a:hover { color: var(--accent-hover); }
+.footer-sep { padding: 0 0.6rem; color: var(--border2); }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
