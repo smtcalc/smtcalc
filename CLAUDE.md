@@ -178,9 +178,39 @@ Tool file must have:
 
 ## Footer
 
-Every tool page has a standardized footer with the contact email obfuscated via JS.
-The email is contact@smtcalc.com. Use JS-based obfuscation (character code assembly),
-not a plain mailto link. Cross-check the footer pattern against stencil-coach-index.html.
+Every page uses the exact same footer markup. Do not deviate from this structure.
+
+```html
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
+```
+
+Rules:
+- Single line layout: copyright text, `--` separator, pipe `|`, contact link -- all in one `.footer-copy` div
+- Use `--` (two plain hyphens) between the site name and the tagline. Never &mdash; or a Unicode dash.
+- Contact email is contact@smtcalc.com. Always obfuscate via the showContact() JS function above.
+  Never use a plain mailto link in the HTML.
+- No inline styles on any footer element. All styling comes from style.css.
+- The `.footer-sep` span renders the `|` character with padding. Do not use &nbsp; or other spacing hacks.
+- Copyright year: 2026.
 
 ---
 
