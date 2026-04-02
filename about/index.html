@@ -13,38 +13,8 @@
   <meta property="og:url" content="https://smtcalc.com/about/">
   <meta property="og:title" content="About SMTCalc - Free Tools Built by SMT Industry Experts">
   <meta property="og:description" content="About SMTCalc - free, practical tools for electronics manufacturing professionals, built by an industry veteran with nearly 30 years of SMT experience.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css">
   <style>
-    :root {
-      --bg: #10141a;
-      --bg2: #171d26;
-      --bg3: #1e2530;
-      --accent: #e08318;
-      --accent2: #d43e10;
-      --text: #dde4ee;
-      --muted: #8fa6be;
-      --border: #28323e;
-      --bg4: #262e3c;
-      --green: #1fa855;
-      --yellow: #e08318;
-      --red: #d43e10;
-      --border2: #303c4a;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
     /* NOISE OVERLAY */
     body::before {
       content: '';
@@ -55,52 +25,6 @@
       z-index: 1000;
       opacity: 0.4;
     }
-
-    /* HEADER */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.5rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-
-    .logo span { color: var(--accent); }
-
-    nav {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    nav a:hover { color: var(--text); }
-    nav a.active { color: var(--accent); }
 
     /* PAGE WRAPPER */
     .page {
@@ -133,7 +57,7 @@
     }
 
     h1 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 900;
       font-size: clamp(2.8rem, 7vw, 5.5rem);
       line-height: 0.93;
@@ -185,7 +109,7 @@
     .content-block:nth-child(7) { animation-delay: 0.45s; }
 
     h2 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: clamp(1.6rem, 3vw, 2.2rem);
       text-transform: uppercase;
@@ -282,7 +206,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.95rem;
       letter-spacing: 0.1em;
@@ -295,32 +219,6 @@
     }
 
     .back-link:hover { color: var(--accent); gap: 0.75rem; }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .footer-copy a {
-      color: var(--accent);
-      text-decoration: none;
-    }
 
     /* ANIMATIONS */
     @keyframes fadeUp {

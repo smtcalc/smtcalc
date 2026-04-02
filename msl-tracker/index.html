@@ -13,36 +13,8 @@
   <meta property="og:url" content="https://smtcalc.com/msl-tracker/">
   <meta property="og:title" content="MSL Tracker - Free Excel Workbook for MSD Tracking | SMTCalc">
   <meta property="og:description" content="Free Excel workbook for tracking MSD floor life per J-STD-033D. Color-coded dashboard, bake log, RH correction, and auto-status. Download free.">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css">
   <style>
-    :root {
-      --bg: #10141a;
-      --bg2: #171d26;
-      --bg3: #1e2530;
-      --accent: #e08318;
-      --accent2: #d43e10;
-      --text: #dde4ee;
-      --muted: #8fa6be;
-      --border: #28323e;
-      --bg4: #262e3c;
-      --green: #1fa855;
-      --yellow: #e08318;
-      --red: #d43e10;
-      --border2: #303c4a;
-      --mono: 'Share Tech Mono', monospace;
-}
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Barlow', sans-serif;
-      font-weight: 400;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
 
     body::before {
       content: '';
@@ -52,42 +24,6 @@
       pointer-events: none;
       z-index: 1000;
       opacity: 0.4;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 2rem;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(16,20,26,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 1.5rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .logo span { color: var(--accent); }
-
-    .tool-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border2);
-      padding: 0.3rem 0.75rem;
     }
 
     /* PAGE HERO */
@@ -105,7 +41,7 @@
       position: absolute;
       top: -50%; right: -10%;
       width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(224,131,24,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(235,107,52,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -135,7 +71,7 @@
     }
 
     .page-hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 900;
       font-size: clamp(2.5rem, 6vw, 4.5rem);
       text-transform: uppercase;
@@ -189,7 +125,7 @@
       gap: 0.6rem;
       background: var(--accent);
       color: var(--text);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1rem;
       letter-spacing: 0.08em;
@@ -233,7 +169,7 @@
 
     .sheet-tab {
       display: inline-block;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.85rem;
       letter-spacing: 0.1em;
@@ -248,7 +184,7 @@
     .sheet-tab.grey   { background: rgba(150,150,150,0.15); color: var(--muted);   border: 1px solid rgba(150,150,150,0.2); }
 
     .sheet-name {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: 1.3rem;
       text-transform: uppercase;
@@ -283,7 +219,7 @@
     }
 
     h2 {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 800;
       font-size: clamp(1.8rem, 3.5vw, 2.8rem);
       text-transform: uppercase;
@@ -312,8 +248,8 @@
     .feature-icon {
       width: 32px;
       height: 32px;
-      background: rgba(224,131,24,0.15);
-      border: 1px solid rgba(224,131,24,0.30);
+      background: rgba(235,107,52,0.15);
+      border: 1px solid rgba(235,107,52,0.30);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -324,7 +260,7 @@
 
     .feature-text strong {
       display: block;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.05rem;
       text-transform: uppercase;
@@ -352,11 +288,11 @@
     .step:last-child { border-bottom: none; }
 
     .step-num {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 900;
       font-size: 2.5rem;
       line-height: 1;
-      color: rgba(224,131,24,0.35);
+      color: rgba(235,107,52,0.35);
       flex-shrink: 0;
       width: 48px;
       text-align: right;
@@ -364,7 +300,7 @@
 
     .step-content strong {
       display: block;
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.05rem;
       text-transform: uppercase;
@@ -393,7 +329,7 @@
     .legend-row:last-child { border-bottom: none; }
 
     .legend-badge {
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       letter-spacing: 0.08em;
@@ -421,29 +357,6 @@
     .standards-note p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
     .standards-note strong { color: var(--text); }
 
-    /* FOOTER */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid var(--border);
-    }
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-copy {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    .footer-copy a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
     @media (max-width: 768px) {
       .sheets-grid { grid-template-columns: 1fr; }
       .feature-list { grid-template-columns: 1fr; }
@@ -462,7 +375,6 @@
       footer { padding: 2rem 1rem; }
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 </head>
 <body>
 

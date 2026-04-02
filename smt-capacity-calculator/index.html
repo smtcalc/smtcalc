@@ -13,129 +13,8 @@
 <meta property="og:url" content="https://smtcalc.com/smt-capacity-calculator/">
 <meta property="og:title" content="SMT Capacity Calculator - Line Throughput Tool | SMTCalc">
 <meta property="og:description" content="Free SMT line capacity calculator. Calculate line utilization, throughput, and capacity for your SMT production planning.">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
 <style>
-  :root {
-    --bg:      #10141a;
-    --bg2:     #171d26;
-    --bg3:     #1e2530;
-    --bg4:     #262e3c;
-    --accent:  #e08318;
-    --accent2: #d43e10;
-    --green:   #1fa855;
-    --yellow:  #e08318;
-    --red:     #d43e10;
-    --text:    #dde4ee;
-    --muted:   #8fa6be;
-    --border:  #28323e;
-    --border2: #303c4a;
-    --mono: 'Share Tech Mono', monospace;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 400;
-    min-height: 100vh;
-  }
-
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0 2rem;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(16,20,26,0.97);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.4rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--text);
-  }
-  .logo span { color: var(--accent); }
-
-  .tool-badge {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--border2);
-    padding: 0.3rem 0.75rem;
-  }
-
-  .tool-hero {
-    padding: 3rem 2rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-    position: relative;
-    overflow: hidden;
-  }
-  .tool-hero::before {
-    content: '';
-    position: absolute;
-    top: -50%; right: -10%;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(224,131,24,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .tool-hero-inner {
-    max-width: 980px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .tool-eyebrow {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-  }
-  .tool-eyebrow::before {
-    content: '';
-    display: block;
-    width: 20px; height: 2px;
-    background: var(--accent);
-  }
-
-  .tool-hero h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    text-transform: uppercase;
-    line-height: 0.95;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.75rem;
-  }
-
-  .tool-hero p {
-    color: var(--muted);
-    font-size: 1rem;
-    max-width: 580px;
-    line-height: 1.6;
-  }
 
   /* WRAPPER */
   .tool-wrap {
@@ -167,7 +46,7 @@
   }
 
   .panel-label {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.78rem;
     letter-spacing: 0.2em;
@@ -217,7 +96,7 @@
   .input-wrap input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
   .input-wrap input[type=number]:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(224,131,24,0.28);
+    box-shadow: 0 0 0 2px rgba(235,107,52,0.28);
   }
 
   .input-unit {
@@ -253,7 +132,7 @@
     background: var(--bg3);
     border: none;
     color: var(--muted);
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
@@ -391,7 +270,7 @@
     background: transparent;
     border: 1px solid var(--border2);
     color: var(--accent);
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
     letter-spacing: 0.1em;
@@ -400,7 +279,7 @@
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
   }
-  .add-btn:hover { background: rgba(224,131,24,0.15); border-color: var(--accent); }
+  .add-btn:hover { background: rgba(235,107,52,0.15); border-color: var(--accent); }
   .add-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .table-note {
@@ -446,7 +325,7 @@
   }
 
   .result-value {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-size: 1.75rem;
     line-height: 1;
@@ -494,7 +373,7 @@
     text-align: left;
     font-weight: 600;
     color: var(--text);
-    font-family: 'Barlow', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   .breakdown-table tfoot td {
@@ -546,7 +425,7 @@
   }
 
   .util-pct {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 900;
     font-size: 3rem;
     line-height: 1;
@@ -639,7 +518,7 @@
     background: transparent;
     border: 1px solid var(--border2);
     color: var(--muted);
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
     letter-spacing: 0.1em;
@@ -658,7 +537,7 @@
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent);
     color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
     letter-spacing: 0.12em;
@@ -700,7 +579,7 @@
   .guide-section:last-child { border-bottom: none; }
 
   .guide-section-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.75rem;
     letter-spacing: 0.2em;
@@ -732,7 +611,7 @@
     padding: 1rem 1.1rem;
   }
   .guide-card-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1.05rem;
     color: var(--text);
@@ -770,7 +649,7 @@
     margin-bottom: 0.4rem;
   }
   .guide-io-item-name {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 0.95rem;
     color: var(--accent);
@@ -796,7 +675,7 @@
     padding: 1rem 1rem 0.9rem;
   }
   .guide-param-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     color: var(--accent);
@@ -819,8 +698,8 @@
   }
 
   .guide-note {
-    background: rgba(224,131,24,0.12);
-    border: 1px solid rgba(224,131,24,0.28);
+    background: rgba(235,107,52,0.12);
+    border: 1px solid rgba(235,107,52,0.28);
     border-left: 3px solid var(--accent);
     padding: 0.6rem 0.9rem;
     font-size: 0.88rem;
@@ -843,7 +722,7 @@
     padding: 0.65rem 0.85rem;
   }
   .guide-field-name {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     color: var(--text);
@@ -866,7 +745,7 @@
     flex-wrap: wrap;
   }
   .guide-verdict-badge {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 900;
     font-size: 0.85rem;
     letter-spacing: 0.1em;
@@ -876,11 +755,11 @@
     flex-shrink: 0;
   }
   .guide-verdict-badge.ok { background: rgba(31,168,85,0.15); color: var(--green); border: 1px solid rgba(31,168,85,0.35); }
-  .guide-verdict-badge.warn { background: rgba(224,131,24,0.15); color: var(--accent); border: 1px solid rgba(224,131,24,0.42); }
+  .guide-verdict-badge.warn { background: rgba(235,107,52,0.15); color: var(--accent); border: 1px solid rgba(235,107,52,0.42); }
   .guide-verdict-badge.bad { background: rgba(212,62,16,0.16); color: var(--red); border: 1px solid rgba(212,62,16,0.35); }
   .guide-verdict-text { flex: 1; }
   .guide-verdict-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     margin-bottom: 0.2rem;
@@ -903,7 +782,7 @@
     padding: 0.9rem 1rem;
   }
   .guide-tip-num {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 900;
     font-size: 1.4rem;
     color: var(--accent);
@@ -911,7 +790,7 @@
     margin-bottom: 0.25rem;
   }
   .guide-tip-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     color: var(--text);
@@ -927,32 +806,6 @@
 
   @media (max-width: 640px) {
     .tool-wrap { padding: 0 1rem; }
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 3rem 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .footer-copy {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .footer-copy a {
-    color: var(--accent);
-    text-decoration: none;
   }
 </style>
 </head>
