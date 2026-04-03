@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMT Defect Diagnostics - Root Cause Finder | SMTCalc</title>
+  <meta name="description" content="Interactive SMT defect root cause finder. Select your defect, package type, and process phase to get ranked root causes and corrective actions for solder bridges, opens, tombstoning, voiding, HiP, and more.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/smt-defect-diagnostics/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/smt-defect-diagnostics/">
+  <meta property="og:title" content="SMT Defect Diagnostics - Root Cause Finder | SMTCalc">
+  <meta property="og:description" content="Interactive SMT defect root cause finder. Select your defect, package type, and process phase to get ranked root causes and corrective actions.">
+  <link rel="stylesheet" href="/style.css">
+<style>
+  .tool-main {
+    max-width: 960px;
+    margin: 2rem auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 680px) {
+    .tool-main { margin: 1rem; }
+  }
+
+  .panel {
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+
+  .panel-full {
+    grid-column: 1 / -1;
+    background: var(--bg);
+    padding: 1.75rem;
+  }
+
+  .panel-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel-label::before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  /* SELECTOR ROW */
+  .selector-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+  }
+
+  @media (max-width: 680px) {
+    .selector-row { grid-template-columns: 1fr; }
+  }
+
+  .sel-cell {
+    background: var(--bg);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c4b3a6' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.2rem;
+    cursor: pointer;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* RESULTS */
+  .results-empty {
+    color: var(--muted);
+    font-size: 1rem;
+    text-align: center;
+    padding: 3rem 1rem;
+    font-style: italic;
+  }
+
+  .defect-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .defect-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .ipc-badge {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.6rem;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .defect-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+    border-left: 2px solid var(--border2);
+    padding-left: 1rem;
+  }
+
+  .defect-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 0.85rem;
+  }
+
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  .meta-value {
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* PACKAGE WARNING */
+  .pkg-warning {
+    background: rgba(255, 117, 43, 0.1);
+    border: 1px solid rgba(255, 117, 43, 0.35);
+    border-left: 3px solid var(--accent2);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  /* ROOT CAUSES */
+  .section-heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cause-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+  }
+
+  .cause-item {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cause-item:last-child {
+    border-bottom: none;
+  }
+
+  .cause-rank {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--accent);
+    padding-top: 0.1rem;
+    text-align: right;
+  }
+
+  .cause-body {}
+
+  .cause-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+  }
+
+  .cause-cat {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--muted);
+    padding: 0.1rem 0.45rem;
+    margin-bottom: 0.45rem;
+    vertical-align: middle;
+  }
+
+  .cause-detail {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* CORRECTIVE ACTIONS */
+  .action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: action-counter;
+  }
+
+  .action-item {
+    counter-increment: action-counter;
+    display: grid;
+    grid-template-columns: 1.8rem 1fr;
+    gap: 0 0.75rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .action-item:last-child { border-bottom: none; }
+
+  .action-item::before {
+    content: counter(action-counter);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--green);
+    padding-top: 0.15rem;
+    text-align: right;
+  }
+
+  /* DIVIDER between causes and actions */
+  .results-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.75rem 0;
+  }
+
+  /* PRINT BAR */
+  .print-bar {
+    max-width: 960px;
+    margin: 0 auto 2rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .print-bar input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.8rem;
+  }
+
+  .print-bar input[type="text"]::placeholder { color: var(--muted); }
+  .print-bar input[type="text"]:focus { outline: none; border-color: var(--accent); }
+
+  .print-btn {
+    background: var(--accent);
+    color: #130d08;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  .print-btn:hover { background: var(--accent-hover); }
+  .print-btn:disabled { opacity: 0.35; cursor: default; }
+
+  @media print {
+    :root {
+      --bg: #ffffff;
+      --bg2: #f8f4f0;
+      --bg3: #f2ede8;
+      --bg4: #ebe5de;
+      --text: #1a1008;
+      --muted: #5a4a3a;
+      --accent: #d4720a;
+      --accent2: #c42b08;
+      --green: #167a40;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+    }
+    nav, .print-bar, .tool-hero, footer { display: none !important; }
+    .tool-main { border: none; margin: 0; }
+    .cause-cat { border: 1px solid var(--muted); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">SMTCalc</a>
+  <div class="nav-links">
+    <a href="/">Tools</a>
+    <a href="/about/">About</a>
+  </div>
+</nav>
+
+<header class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="hero-eyebrow">Process Diagnostics</div>
+    <h1>SMT Defect Diagnostics</h1>
+    <p>
+      Select a solder defect, your component package, and the process phase where it appears.
+      Get ranked root causes with detailed explanations and specific corrective actions.
+      Based on IPC-S-816, Alpha, AIM, and Indium troubleshooting references.
+    </p>
+  </div>
+</header>
+
+<main>
+
+  <div class="tool-main">
+
+    <!-- SELECTOR ROW -->
+    <div class="panel-full" style="padding: 0;">
+      <div class="selector-row">
+        <div class="sel-cell">
+          <div class="field">
+            <label for="sel-defect">Defect Type</label>
+            <select id="sel-defect" onchange="render()">
+              <option value="">-- Select a defect --</option>
+              <option value="bridging">Solder Bridging / Short</option>
+              <option value="opens">Open Joint / Non-Wet Open</option>
+              <option value="tombstoning">Tombstoning / Manhattan Effect</option>
+              <option value="voiding">Solder Voiding</option>
+              <option value="solder_balls">Solder Balls / Solder Beading</option>
+              <option value="cold_joint">Cold Joint / Graping</option>
+              <option value="insufficient_solder">Insufficient Solder / Starved Joint</option>
+              <option value="skewing">Component Skewing / Misalignment</option>
+              <option value="head_in_pillow">Head-in-Pillow (HiP)</option>
+              <option value="non_wetting">Non-Wetting / Dewetting</option>
+              <option value="icicles_spikes">Icicles / Spikes (Wave)</option>
+              <option value="pinholes_blowholes">Pinholes / Blow Holes (Wave)</option>
+            </select>
+          </div>
+        </div>
+        <div class="sel-cell">
+          <div class="field">
+            <label for="sel-pkg">Component Package</label>
+            <select id="sel-pkg" onchange="render()">
+              <option value="">Any package</option>
+              <option value="chip">Chip Passive (0402, 0201, 0603...)</option>
+              <option value="fineic">Fine-Pitch IC (QFP, SOIC, SOP)</option>
+              <option value="bga">BGA / CSP / PoP</option>
+              <option value="qfn">QFN / LGA / BTC</option>
+              <option value="tht">Through-Hole (THT / Wave)</option>
+            </select>
+          </div>
+        </div>
+        <div class="sel-cell">
+          <div class="field">
+            <label for="sel-phase">Detection Phase</label>
+            <select id="sel-phase" onchange="render()">
+              <option value="">Any phase</option>
+              <option value="postprint">Post-Print (SPI)</option>
+              <option value="postplacement">Post-Placement</option>
+              <option value="postreflow">Post-Reflow</option>
+              <option value="postwave">Post-Wave / Post-Selective</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="panel-full" id="results-panel">
+      <div class="results-empty">Select a defect type above to begin diagnosis.</div>
+    </div>
+
+  </div>
+
+  <!-- PRINT BAR -->
+  <div class="print-bar">
+    <input type="text" id="report-title" placeholder="Report title (e.g. Line 3 bridging investigation 2026-04-03)" />
+    <button class="print-btn" onclick="printReport()" id="print-btn" disabled>Print Report</button>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// ============================================================
+//  DEFECT DATA
+//  Sources: IPC-S-816, Alpha/Cookson, AIM Solder,
+//           Indium Corporation, Troubleshooting SMT Solder
+//           Paste Problems
+// ============================================================
+
+var DEFECTS = {
+
+  bridging: {
+    name: 'Solder Bridging / Short',
+    ipc: 'Solder Bridge',
+    desc: 'An unintended solder connection between two or more adjacent pads or leads, forming a conductive path where none should exist. Appears as a solder filament or mass spanning between pads. Most common on fine-pitch ICs and small passives.',
+    packages: ['QFP', 'QFN', 'SOIC', 'fine-pitch', '0402'],
+    phases: ['postprint', 'postreflow'],
+    phaseNote: 'Wet bridges visible at SPI stage; dry bridges detected by AOI or visual after reflow.',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Stencil / Printing', title: 'Paste smearing under stencil or dirty stencil underside', detail: 'Poor stencil gasketing lets paste ooze beneath the stencil onto the board surface. Dirty stencil undersides transfer paste to the next board, creating deposits between pads.' },
+      { rank: 2, cat: 'Solder Paste', title: 'Paste cold slump or hot slump spreading onto adjacent pads', detail: 'Incorrect paste viscosity or shear-thinned paste slumps laterally after printing. Extended soak zone in reflow causes hot slump, which pushes paste off pads before liquids.' },
+      { rank: 3, cat: 'Printing', title: 'Misaligned print narrowing gap between adjacent deposits', detail: 'Print offset narrows the clearance between paste on adjacent pads. During reflow the molten solder cannot pull back cleanly and bridges form.' },
+      { rank: 4, cat: 'Placement', title: 'Excessive component placement pressure squeezing paste off pads', detail: 'Over-pressing the component into paste causes paste bleed-out to adjacent features. Z-height should not exceed one-third of paste deposit height.' },
+      { rank: 5, cat: 'Stencil', title: 'Stencil aperture too large or stencil tension too low', detail: 'Aperture larger than pad allows excess paste volume. Low stencil tension causes inconsistent gasketing and allows paste to bleed under the foil.' },
+      { rank: 6, cat: 'Printing', title: 'Squeegee blade dented, worn, or set at wrong pressure or angle', detail: 'A dented blade creates uneven print pressure. Excessive pressure causes bleed-out. Inadequate angle leaves paste residue on the stencil surface.' },
+      { rank: 7, cat: 'PCB Design', title: 'Insufficient pad spacing or no solder mask dam between pads', detail: 'No solder mask dam between fine-pitch pads makes bridging nearly unavoidable regardless of how tight the process is.' }
+    ],
+    actions: [
+      'Set print gap to zero (on-contact printing). Verify no paste smear under stencil after each print cycle.',
+      'Increase stencil wipe frequency. Use wet/vacuum/dry cleaning cycle. Verify stencil is dry before next print.',
+      'Reduce stencil aperture width by 5-10% for fine-pitch. Consider in-fill or fence aperture designs for QFN.',
+      'Check squeegee blade condition. Replace dented or worn blades. Typical blade life: 500,000 - 1,000,000 strokes.',
+      'Reduce component placement Z-height to approximately one-third of paste height. Verify placement pressure setting.',
+      'Switch to ramp-to-spike reflow profile. Eliminate or shorten soak zone to prevent hot slump.',
+      'Verify paste viscosity and storage conditions (target 25 deg C, 50% RH). Do not mix aged and fresh paste.',
+      'Perform cold slump and hot slump test per IPC-TM-650 Method 2.4.35 when qualifying a new paste.',
+      'Segment large QFN ground apertures into a windowpane grid to reduce paste bleed-out.'
+    ]
+  },
+
+  opens: {
+    name: 'Open Joint / Non-Wet Open',
+    ipc: 'Open Circuit; Non-Wet Open (NWO)',
+    desc: 'A solder joint where no metallurgical bond formed, resulting in an open circuit. Solder is either absent, did not wet one or both surfaces, or pulled back after initial wetting. NWO on BGA appears as a ball sitting in paste without bonding.',
+    packages: ['BGA', 'CSP', 'QFP', 'fine-pitch', '0402'],
+    phases: ['postreflow'],
+    phaseNote: 'Detected post-reflow by AOI (lifted QFP leads), X-ray (BGA), or ICT. NWO is often missed by ICT.',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: true },
+    causes: [
+      { rank: 1, cat: 'Stencil / Printing', title: 'Insufficient solder paste volume on pad', detail: 'Low transfer efficiency from undersized aperture, high aspect ratio, or paste hanging up in stencil holes leaves too little solder to form a fillet. Area ratio below 0.66 is the most common root cause.' },
+      { rank: 2, cat: 'Component', title: 'Component lead coplanarity out of tolerance (QFP) or BGA package warpage', detail: 'Non-planar leads do not contact the paste deposit. During reflow the paste wets the pad and solidifies before the high lead can reach it. BGA warpage lifts perimeter balls off paste.' },
+      { rank: 3, cat: 'Reflow Profile', title: 'Solder wicking up component leads away from the joint', detail: 'CTE mismatch causes differential heating. Component leads act as heat sinks and draw solder upward via capillary action before the pad can wet. Worse on bottom-side components in double-reflow.' },
+      { rank: 4, cat: 'Material', title: 'Oxidized component leads, PCB pads, or solder paste powder', detail: 'Oxide layers prevent metallurgical bonding. Flux cannot break through heavy oxidation, especially on aged Sn-plated leads or boards stored beyond shelf life.' },
+      { rank: 5, cat: 'Reflow Profile', title: 'Peak temperature too low or time above liquidus (TAL) too short', detail: 'Insufficient heat means solder does not fully melt and wet both surfaces. Target at least 15 deg C above liquidus with TAL greater than 45 seconds.' },
+      { rank: 6, cat: 'Printing', title: 'Paste misregistration leaving lead with no paste contact', detail: 'Paste deposited off-center or partially off-pad means the component lead contacts bare metal, not paste. Even partial misregistration produces starved joints.' },
+      { rank: 7, cat: 'Solder Paste', title: 'Paste drying out during production run raising viscosity', detail: 'Dry paste does not release properly from stencil apertures. Transfer efficiency drops, causing insufficient deposits particularly on small apertures.' }
+    ],
+    actions: [
+      'Verify stencil area ratio is greater than 0.66 and aspect ratio is greater than 1.5. Increase aperture size or switch to square apertures for better transfer efficiency.',
+      'Use SPI (solder paste inspection) to verify deposit volume is 50-150% of nominal before placement.',
+      'Attach thermocouples to component body and PCB. Apply soak zone to minimize delta-T across the board. Raise bottom zone temperatures to keep PCB hotter than component.',
+      'Verify component solderability per J-STD-002. Check QFP lead coplanarity (max 0.1 mm per J-STD-020). Reject out-of-tolerance parts.',
+      'Increase peak reflow temperature to at least 15 deg C above alloy liquidus. Extend TAL to minimum 45 seconds. Profile with thermocouples, not just oven recipe.',
+      'Consider nitrogen reflow atmosphere to reduce re-oxidation during the ramp and soak stages.',
+      'Use higher-activity flux paste for known-oxidized surfaces. Do not exceed solder paste shelf life (typically 6 months refrigerated, 8 hours on stencil).'
+    ]
+  },
+
+  tombstoning: {
+    name: 'Tombstoning / Manhattan Effect',
+    ipc: 'Tombstoning',
+    desc: 'A chip component stands vertically on one end after reflow, with one termination fully soldered and the other lifted off its pad. Also called the Manhattan effect. Almost exclusively a chip passive defect driven by unequal wetting forces.',
+    packages: ['0402', '0201', '01005', 'chip resistors', 'chip capacitors'],
+    phases: ['postreflow'],
+    phaseNote: 'Detected post-reflow by visual inspection or AOI. Sometimes visible immediately as boards exit oven.',
+    pkgMap: { chip: true, fineic: false, bga: false, qfn: false, tht: false },
+    causes: [
+      { rank: 1, cat: 'Reflow Profile', title: 'Unequal wetting forces: one pad wets molten before the other', detail: 'When one solder deposit reaches liquidus before the other, the surface tension of the molten solder pulls the component upright. The leading edge of the component in conveyor direction heats first and is the lifting side.' },
+      { rank: 2, cat: 'PCB Design', title: 'Unequal pad sizes or asymmetric thermal mass (ground plane on one side)', detail: 'Different solder volumes on each pad produce different wetting forces. A ground plane connected to one pad delays wetting on that side by acting as a heat sink.' },
+      { rank: 3, cat: 'Printing', title: 'Unequal solder paste volume between the two pads', detail: 'More paste on one pad creates a higher wetting force on that side. Paste misregistration or inconsistent stencil printing creates unequal volumes, directly causing tombstoning.' },
+      { rank: 4, cat: 'Placement', title: 'Component placement skew or off-center placement', detail: 'Skewed placement creates an imbalanced wetting force geometry. Self-alignment forces during reflow amplify rather than correct any initial rotational offset.' },
+      { rank: 5, cat: 'Component', title: 'Variable termination solderability between the two ends', detail: 'Non-uniform oxide levels on terminations cause one end to wet faster than the other, creating the timing differential that leads to tombstoning.' },
+      { rank: 6, cat: 'Reflow Atmosphere', title: 'Nitrogen atmosphere increasing wetting speed (on susceptible designs)', detail: 'Nitrogen increases wetting speed and makes surface tension forces appear more rapidly, reducing the time window for both joints to reach liquidus simultaneously. Counter-intuitive but documented.' },
+      { rank: 7, cat: 'PCB Design', title: 'Inter-pad gap too large for component body, giving insufficient mechanical resistance', detail: 'Component body covering less than 50% of both pads provides insufficient mechanical resistance against tipping forces during the wetting event.' }
+    ],
+    actions: [
+      'Use a soak-type reflow profile. For SAC305, soak at 190-220 deg C for 30-45 seconds to equalize temperatures before solder goes liquid.',
+      'Use home-plate or step-down aperture design to reduce paste volume at the inner (under-body) end of pads. Reduces the wetting force on the lifting side.',
+      'Verify component placement accuracy. Component body must cover at least 50% of both pads. Re-teach fiducials if there is a systematic shift.',
+      'Use SPI to verify both pad deposits are equal volume. Equal paste volume = equal wetting force.',
+      'Correct PCB pad design: equal pad sizes, no heat-sink vias under one pad only, reduce inter-pad gap toward component body size.',
+      'If using nitrogen reflow and tombstoning is a persistent problem, trial switching to air reflow.',
+      'SAC305 has a broader plastic range than SAC3510 or SAC387 and is generally less prone to tombstoning. Consider alloy selection if tombstoning rates are high.'
+    ]
+  },
+
+  voiding: {
+    name: 'Solder Voiding',
+    ipc: 'Void',
+    desc: 'Empty gas pockets trapped within a solder joint during reflow. Not visible on the surface. Detected by X-ray as dark circular or irregular spots. Most critical under BGA balls, QFN thermal pads, and LGA lands where voids degrade thermal conductivity and electrical performance.',
+    packages: ['BGA', 'CSP', 'QFN', 'LGA', 'BTC'],
+    phases: ['postreflow'],
+    phaseNote: 'Detection requires X-ray inspection. 2D X-ray shows voids but 3D CT X-ray is needed to measure void percentage accurately.',
+    pkgMap: { chip: false, fineic: false, bga: true, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Solder Paste / Reflow', title: 'Flux volatiles trapped under component outgassing through molten solder', detail: 'Large paste volumes under BTCs and LGAs produce large amounts of flux volatiles that cannot escape laterally. Voids form when flux vapors are trapped before solder solidifies. Paste formulation is the dominant variable.' },
+      { rank: 2, cat: 'Stencil Design', title: 'Solid aperture over large thermal pad giving flux no escape channel', detail: 'A solid-fill aperture over QFN/LGA thermal pads traps flux with no outgassing path. Windowpane or segmented aperture designs (55% coverage) provide channels for volatile escape.' },
+      { rank: 3, cat: 'Reflow Profile', title: 'Reflow profile mismatch: soak too long/hot, or ramp too fast', detail: 'For BGA voiding: a hot soak profile (driving off volatiles before liquidus) often helps. For BTC/QFN voiding: mechanism differs and profile sensitivity varies by paste. Test empirically.' },
+      { rank: 4, cat: 'PCB Design', title: 'Micro-via holes on pads trapping air and flux', detail: 'Via holes smaller than 0.15 mm under pads are very difficult to outgas. Solder can also wick down into open vias, causing starvation voids alongside trapped-gas voids.' },
+      { rank: 5, cat: 'PCB Material', title: 'Surface finish oxidation, especially OSP and immersion tin', detail: 'ENIG gives lowest voiding rates. OSP is worst, as heavy oxidation forces flux to do more cleaning work, consuming activity that would otherwise prevent voiding.' },
+      { rank: 6, cat: 'Placement', title: 'Excessive component placement force compressing paste and closing outgassing path', detail: 'High Z-force compresses paste under the component body and reduces standoff height, closing the only escape path for flux volatiles.' },
+      { rank: 7, cat: 'Material', title: 'Moisture in PCB laminate or solder paste vaporizing during reflow', detail: 'Moisture vaporizes explosively during reflow, forming voids. Water-soluble pastes are hygroscopic and particularly susceptible. Bake boards per IPC-1601 if moisture absorption is suspected.' }
+    ],
+    actions: [
+      'Use windowpane aperture design for QFN/LGA thermal pads: 55% coverage with solder mask webs or segmented grid openings as outgassing channels.',
+      'Reduce total solder volume on large thermal pads by 40-50% using segmented or reduced apertures. Less paste = fewer flux volatiles to escape.',
+      'For BGA voiding: trial a hot soak profile (soak 170-220 deg C for 60-90 sec) to drive off volatiles before the solder reaches liquidus.',
+      'For BTC/QFN voiding: soak profiles may worsen the situation. Trial ramp-to-spike. Evaluate specific paste performance, as paste selection alone can reduce voids from 45% to under 5%.',
+      'Plug blind via holes in the pad design, or use an aperture that avoids printing paste directly over vias.',
+      'Use nitrogen reflow to reduce oxidation and preserve flux activity throughout the profile.',
+      'Consider vacuum reflow for critical assemblies with strict voiding requirements (automotive typically requires less than 10% void area).',
+      'Verify placement Z-force is not excessive. Optimize to minimize standoff compression.',
+      'Use ENIG surface finish for large thermal pads where possible. Avoid OSP on QFN and LGA pads.'
+    ]
+  },
+
+  solder_balls: {
+    name: 'Solder Balls / Solder Beading',
+    ipc: 'Solder Ball; Solder Bead',
+    desc: 'Small spherical solder particles adjacent to joints or scattered on the PCB surface after reflow. Solder beading refers specifically to larger balls adjacent to chip component terminations (mid-chip solder balls). Both can migrate and cause intermittent shorts in service.',
+    packages: ['chip resistors', 'chip capacitors', '0402', '0603'],
+    phases: ['postreflow'],
+    phaseNote: 'Detected post-reflow by visual inspection or AOI. Mid-chip solder balls appear at component body midpoint. Random solder balls appear anywhere on solder mask.',
+    pkgMap: { chip: true, fineic: true, bga: false, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Stencil Design', title: 'Aperture too large for chip component, depositing excess paste under body', detail: 'Excess paste at the inner portion of chip pads is squeezed under the component body during placement. It cannot coalesce with the main solder mass during reflow and forms a bead at the component midpoint.' },
+      { rank: 2, cat: 'Reflow Profile', title: 'Ramp rate too fast, causing violent solvent outgassing that spatters solder', detail: 'Solvents volatilize explosively rather than gradually when ramp is too fast, spattering solder particles across the board. Maximum recommended ramp rate: 1.5 deg C per second from ambient to 150 deg C.' },
+      { rank: 3, cat: 'Printing', title: 'Paste smearing on solder mask from poor gasketing or stencil contamination', detail: 'Paste stuck under the stencil transfers to solder mask on the next board. Small paste particles on mask form solder balls during reflow. Wipe frequency is the primary control.' },
+      { rank: 4, cat: 'Solder Paste', title: 'Moisture in paste or on PCB causing spattering during reflow', detail: 'Hygroscopic paste absorbs moisture from atmosphere. Refrigerated paste opened before reaching room temperature condenses moisture. PCB moisture (especially FR2 and CEM1) vaporizes explosively.' },
+      { rank: 5, cat: 'Solder Paste', title: 'Oxidized solder paste powder not coalescing into the main solder pool', detail: 'Paste past shelf life, stored incorrectly, or with excessive fine powder fraction has high oxide content. Oxides prevent particle-to-particle bonding during reflow, leaving stray balls.' },
+      { rank: 6, cat: 'Reflow Profile', title: 'Extended soak zone causing paste hot slump under component body', detail: 'Hot slump pushes paste off pads and under component bodies where it cannot coalesce with the main solder during reflow. A ramp-to-spike profile eliminates this.' },
+      { rank: 7, cat: 'Placement', title: 'Excessive placement pressure squeezing paste laterally off pads', detail: 'Component Z-height set too low (more than one-third into paste) forces paste off the pad edge onto solder mask.' }
+    ],
+    actions: [
+      'Use home-plate or U-shape aperture design for chip components. Reduce paste at the inner (under-body) portion of the pad by 20% to prevent squeeze-out.',
+      'Slow preheat ramp rate to less than 1.5 deg C per second from ambient to 150 deg C.',
+      'Increase stencil wipe frequency. Verify zero print gap. Use wet/vacuum/dry cleaning cycle.',
+      'Open refrigerated paste only after it has reached room temperature (minimum 4 hours). Maintain print area at approximately 25 deg C, 50% RH. Never mix fresh and used paste.',
+      'Use paste within shelf life. Do not use paste that shows visible dryness or skinning. Replace with fresh paste if in doubt.',
+      'Switch to ramp-to-spike reflow profile. Eliminate or shorten soak zone.',
+      'Set component placement height to approximately one-third of paste deposit height. Reduce placement force.',
+      'Verify solder mask clearance is at least 120 micrometers at pad edges to prevent paste from contacting bare mask during print.'
+    ]
+  },
+
+  cold_joint: {
+    name: 'Cold Joint / Graping',
+    ipc: 'Cold Solder Joint; Grainy Joint',
+    desc: 'Cold joint: solder that has not fully reflowed, appearing rough, dull, or matte instead of smooth and shiny. Graping: individual solder particles visible in a cluster resembling a bunch of grapes, caused by incomplete particle coalescence. Both indicate a process problem that results in a mechanically weak joint.',
+    packages: ['All SMT components', 'fine-pitch ICs', 'BGA'],
+    phases: ['postreflow'],
+    phaseNote: 'Detected post-reflow by visual inspection (dull/grainy surface) or AOI. Graping in BGA joints requires X-ray. IPC-A-610 Class 2/3 requires smooth, shiny reflowed appearance.',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Reflow Profile', title: 'Peak temperature too low or TAL too short', detail: 'Paste does not fully melt. Residual solid particles remain visible in the joint. TAL less than 45 seconds or peak less than 15 deg C above liquidus are the most common causes of cold joint appearance.' },
+      { rank: 2, cat: 'Reflow Profile', title: 'Excessive soak time or temperature exhausting flux before reflow', detail: 'Long or hot soak (more than 60 seconds above 150 deg C) depletes flux activators before solder reaches liquidus. Flux cannot clean oxidized particle surfaces, preventing coalescence. The result is the classic graping appearance.' },
+      { rank: 3, cat: 'Solder Paste', title: 'Oxidized powder preventing particle-to-particle coalescence', detail: 'Oxide shells on individual particles act as barriers to bonding. As deposit size decreases, surface area to volume ratio increases and oxide becomes more significant. Graping worsens with Type 4/5 powder vs Type 3.' },
+      { rank: 4, cat: 'Reflow Profile', title: 'Cooling rate too slow allowing coarse grain structure to form', detail: 'Slow cooling (less than 3 deg C per second from liquidus) produces large grain structure, giving a dull and rough appearance. Target 3-8 deg C per second cooling rate for fine grain and shiny surface.' },
+      { rank: 5, cat: 'Handling', title: 'Board movement or vibration during solder solidification', detail: 'Any board movement while solder is between liquidus and solidus creates a disturbed joint with characteristic rippled or irregular surface. Do not touch or move boards until fully cooled.' },
+      { rank: 6, cat: 'Solder Paste', title: 'Water-soluble paste with lower oxidation resistance', detail: 'Water-soluble fluxes lack resin oxidation barriers, making them more sensitive to long or hot soak profiles. Graping rates are typically higher than equivalent no-clean formulations under the same profile.' },
+      { rank: 7, cat: 'Reflow Atmosphere', title: 'Air reflow causing surface oxidation during long profiles', detail: 'Air reflow at lead-free temperatures increases oxidation during ramp and soak stages. Some paste formulations require nitrogen for full particle coalescence, especially with Type 4/5 powder.' }
+    ],
+    actions: [
+      'Attach thermocouple to component body. Verify peak temperature is at least 15 deg C above alloy liquidus and TAL is minimum 45 seconds.',
+      'Switch to ramp-to-peak profile. Target approximately 1 deg C per second ramp rate from ambient to peak. Reduce total oven time.',
+      'Shorten or eliminate soak zone. Soak longer than 60 seconds weakens flux activity and produces cold-looking joints.',
+      'Verify cooling rate from liquidus is 3-8 deg C per second. Fast cooling produces fine grain structure and the shiny appearance required by IPC-A-610.',
+      'Use coarser powder type where aperture geometry allows (Type 3 instead of Type 4/5). Larger particles have lower surface area to volume ratio and less oxide per unit mass.',
+      'Ensure conveyor is smooth and vibration-free. Do not transfer boards from oven until paste is fully solidified.',
+      'Consider nitrogen reflow for paste formulations prone to graping or assemblies with large thermal mass differences.',
+      'Square apertures instead of round give slightly more paste volume for the same area ratio, improving transfer efficiency and reducing graping tendency.'
+    ]
+  },
+
+  insufficient_solder: {
+    name: 'Insufficient Solder / Starved Joint',
+    ipc: 'Insufficient Solder; Insufficient Fillet',
+    desc: 'The solder joint has less solder than required to form a proper fillet. The joint may appear incomplete, with solder not covering the full pad or not rising adequately up the component lead. Starved joints may pass initial electrical test but fail in service due to reduced mechanical strength.',
+    packages: ['QFP', 'SOIC', 'chip components', 'BGA'],
+    phases: ['postprint', 'postreflow'],
+    phaseNote: 'Detectable at SPI stage (low deposit volume). Confirmed post-reflow by AOI (insufficient fillet height) or X-ray (BGA with small ball joints).',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Stencil Design', title: 'Stencil aperture aspect ratio or area ratio below minimum', detail: 'Area ratio below 0.66 or aspect ratio below 1.5 causes paste to adhere to aperture walls rather than release to the pad. Transfer efficiency drops and becomes erratic. Burrs on aperture edges make this worse.' },
+      { rank: 2, cat: 'Printing', title: 'Excessive squeegee pressure scooping paste from large apertures', detail: 'A hard squeegee blade with high pressure on large apertures scoops paste from the center of the deposit, leaving a thin, dished print with insufficient volume.' },
+      { rank: 3, cat: 'Printing', title: 'Print speed too fast for paste to fill apertures', detail: 'Paste rolling in front of the squeegee does not have sufficient time to flow into and fill narrow apertures. Slow down print speed and verify deposit quality before committing to production.' },
+      { rank: 4, cat: 'Solder Paste', title: 'Paste viscosity too high preventing proper roll and aperture fill', detail: 'High viscosity paste skids rather than rolls in front of the squeegee. Poor rolling means incomplete aperture fill, especially for small apertures.' },
+      { rank: 5, cat: 'Printing', title: 'Stencil misalignment placing paste partially off pad', detail: 'Even partial misregistration reduces effective paste volume on the pad. Systematic misalignment across a board suggests a fiducial recognition problem.' },
+      { rank: 6, cat: 'Reflow Profile', title: 'Solder wicking up component leads away from joint due to thermal gradient', detail: 'When component leads are hotter than the PCB pad, solder preferentially wets the lead and wicks up via capillary action before the pad can wet. Worst on heavy components over large ground planes.' },
+      { rank: 7, cat: 'Printing', title: 'Stencil separation speed too fast tearing small paste deposits', detail: 'Rapid stencil lift tears paste deposits on small apertures. Slow the separation speed and observe paste release under magnification.' }
+    ],
+    actions: [
+      'Verify area ratio greater than 0.66 for square apertures, aspect ratio greater than 1.5 for rectangular. Moving to 0.6 minimum is only valid with advanced stencil technology (electroformed, nano-coated) and verified paste performance.',
+      'Check aperture edges for burrs under magnification. Laser-cut stainless or electroformed stencils give best paste release.',
+      'Reduce print speed to allow adequate paste roll and aperture fill. Verify deposit quality by SPI after each change.',
+      'Reduce squeegee pressure to the minimum that achieves a clean wipe of paste off the stencil surface. Over-pressure is a very common mistake.',
+      'Increase stencil thickness or aperture dimensions if confirmed insufficient volume after correcting the above.',
+      'Apply a soak zone at 190-220 deg C (for SAC305) to equalize temperature between component and PCB before reflow, minimizing solder wicking.',
+      'Set bottom zone reflow temperatures higher than top zones to keep PCB warmer than the component. Verify with thermocouples.'
+    ]
+  },
+
+  skewing: {
+    name: 'Component Skewing / Misalignment',
+    ipc: 'Component Misalignment',
+    desc: 'A component is rotated or shifted from its correct position after reflow. Mild skew is partially self-corrected by solder surface tension. Severe skew exceeds self-alignment capability and results in misaligned joints with potential opens or bridging.',
+    packages: ['chip resistors', 'chip capacitors', 'QFP', 'SOIC', 'BGA'],
+    phases: ['postplacement', 'postreflow'],
+    phaseNote: 'Visible post-placement and post-reflow. AOI checks after reflow. X-ray inspection for BGA shift. Severe QFP skew visible to the naked eye.',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: false },
+    causes: [
+      { rank: 1, cat: 'Placement', title: 'Placement machine calibration drift or incorrect program data', detail: 'Machine calibration drift, incorrect rotation data in the program, or wrong component origin point causes systematic or random misplacement across the batch.' },
+      { rank: 2, cat: 'Printing', title: 'Unequal solder paste volumes pulling component during reflow', detail: 'Differential surface tension forces from unequal paste volumes rotate or shift the component toward the pad with more solder. The paste, not the machine, causes the final position.' },
+      { rank: 3, cat: 'Reflow Profile', title: 'Paste hot slump floating components before solder solidifies', detail: 'Hot slump from extended soak reduces paste viscosity and allows lightweight components to float or drift. Eliminate or shorten soak zone.' },
+      { rank: 4, cat: 'Equipment', title: 'Conveyor vibration displacing components while solder is molten', detail: 'Chain conveyor vibration displaces lightweight chip components while solder is liquid. Most common on older reflow ovens with worn chain sprockets.' },
+      { rank: 5, cat: 'PCB Design', title: 'Unequal pad design creating asymmetric wetting forces', detail: 'Pads extending unequally beyond the component footprint create unequal wetting forces that pull the component toward the larger pad side.' }
+    ],
+    actions: [
+      'Re-teach placement fiducials. Verify placement accuracy with X-ray (BGA) or microscope (QFP) against 1,000-piece sample.',
+      'Use SPI to verify equal paste volumes on both pads. Correct aperture design if systematic volume imbalance is found.',
+      'Eliminate or shorten soak zone. Switch to ramp-to-spike profile to prevent hot slump.',
+      'Clean and lubricate conveyor chains. Check chain tension. Replace worn sprockets.',
+      'Verify PCB pad design ensures balanced wetting forces. Component body should cover at least 50% of both opposing pads.',
+      'Check component placement pressure and height. Excessive height means tack force is insufficient to hold component through conveyor vibration.'
+    ]
+  },
+
+  head_in_pillow: {
+    name: 'Head-in-Pillow (HiP)',
+    ipc: 'Head-in-Pillow; Non-Wet Open (NWO)',
+    desc: 'A BGA or CSP defect where the solder ball and solder paste both reflow but do not coalesce, leaving the ball resting on the paste dome without forming a metallurgical bond. Often passes ICT and X-ray if using 2D. Typically clusters at BGA perimeter due to package warpage geometry. A leading cause of field failures on large BGA packages.',
+    packages: ['BGA', 'CSP', 'PoP'],
+    phases: ['postreflow'],
+    phaseNote: '3D X-ray or CT scanning required for reliable detection. 2D X-ray misses it frequently. Dye-and-pry is the confirmatory test. Electrical test often passes because HiP joints make intermittent contact under probe pressure.',
+    pkgMap: { chip: false, fineic: false, bga: true, qfn: false, tht: false },
+    causes: [
+      { rank: 1, cat: 'Component / Reflow', title: 'BGA package warpage during reflow lifting perimeter balls off paste (Type 2 HiP)', detail: 'The most common cause. Thin BGA substrates warp significantly at elevated temperatures. Perimeter balls lift away from paste deposits when the package bows during preheat. Both ball and paste oxidize and solidify separately before the BGA cools flat. Double-reflow boards are especially susceptible. Time above board Tg should be under 2 minutes.' },
+      { rank: 2, cat: 'Component', title: 'Oxidized or contaminated BGA solder balls blocking flux (Type 1 HiP)', detail: 'Heavy oxidation or silver segregation on high-Ag SAC ball surfaces creates a barrier that even active flux cannot penetrate. Produces random HiP distribution across BGA rather than perimeter clustering.' },
+      { rank: 3, cat: 'Stencil / Printing', title: 'Insufficient paste volume failing to maintain contact through warpage gap', detail: 'Inadequate paste deposit height means the gap created by BGA warpage cannot be bridged by the paste dome. Poor SPI uniformity across BGA pads creates inconsistent ball-to-paste contact.' },
+      { rank: 4, cat: 'Solder Paste', title: 'Paste hot slump reducing deposit height before reflow', detail: 'Paste that slumps during the soak stage drops in height, increasing the gap between ball and paste exactly when the package warps. Makes Type 2 HiP significantly worse.' },
+      { rank: 5, cat: 'Reflow Profile', title: 'Long soak exhausting flux capacity before liquidus', detail: 'Extended soak at intermediate temperatures consumes flux activators via oxidation. By the time solder reaches liquidus, insufficient flux activity remains to break through oxide layers at the ball-paste interface.' },
+      { rank: 6, cat: 'PCB Design', title: 'CTE mismatch between BGA substrate and PCB amplifying warpage', detail: 'Differential thermal expansion increases warpage severity. Compounded by surrounding components that affect local PCB temperature distribution.' }
+    ],
+    actions: [
+      'Minimize time above board Tg (130 deg C for FR4). Target less than 2 minutes above Tg for boards undergoing double reflow.',
+      'Use the slowest ramp rate that the overall profile will allow. Slow heating reduces peak warpage displacement.',
+      'Increase paste deposit volume: switch from round to square apertures (same area ratio, approximately 5% more volume). Enlarge apertures within bridging constraint.',
+      'Use HiP-resistant paste: high tack force, strong oxidation barrier, excellent slump resistance, and high transfer efficiency. This is the single highest-leverage intervention.',
+      'Use nitrogen reflow to protect flux activity for the full profile duration, especially on long soak profiles.',
+      'Verify print height uniformity across all BGA pads with SPI. Poor edge-to-edge registration directly causes HiP on perimeter balls.',
+      'Verify BGA ball oxidation level with supplier. Reject overaged components. Store BGAs per J-STD-033D if MSL rating applies.',
+      'For PoP assemblies, use flux dipping or paste dipping of the top package to increase ball tack and flux activity at the ball interface.'
+    ]
+  },
+
+  non_wetting: {
+    name: 'Non-Wetting / Dewetting',
+    ipc: 'Nonwetting; Dewetting',
+    desc: 'Non-wetting: solder fails to form any bond with the base metal surface, leaving bare metal exposed. Dewetting: solder initially wets but then recedes, leaving irregular solder blobs on an exposed base metal. Both result in unreliable joints. The physics is always oxide or contamination at the metal surface.',
+    packages: ['All SMT components', 'OSP-finished boards', 'aged tin-plated leads'],
+    phases: ['postreflow'],
+    phaseNote: 'Detected post-reflow by visual inspection and AOI. Dewetted surfaces are visually distinctive: solder in isolated rounded masses with bare metal visible between them.',
+    pkgMap: { chip: true, fineic: true, bga: true, qfn: true, tht: true },
+    causes: [
+      { rank: 1, cat: 'Material / Solderability', title: 'Oxidized component leads, PCB pads, or solder powder', detail: 'Oxide layers are the primary barrier to wetting. Affects aged components, oxidized tin-plated leads (tin pest, whisker-related surface degradation), and boards stored beyond recommended shelf life.' },
+      { rank: 2, cat: 'Contamination', title: 'Contaminated pad or lead surfaces from handling oils, residues, or coating overspray', detail: 'Organic contamination prevents flux from reaching the metal surface. Even fingerprints leave enough contamination to cause localized dewetting.' },
+      { rank: 3, cat: 'Solder Paste', title: 'Insufficient flux activity for the surface oxidation condition', detail: 'Flux removes oxides but if the oxide load is too high or flux activity too low for the surface finish type, wetting cannot occur. Lead-free alloys have higher surface tension than SnPb and wet more slowly, making them less forgiving.' },
+      { rank: 4, cat: 'Reflow Profile', title: 'Peak temperature too low or TAL too short for the surface finish', detail: 'OSP and immersion tin require adequate heat to activate flux. Insufficient heat leaves flux unable to clean the surface before solder solidifies.' },
+      { rank: 5, cat: 'PCB Design', title: 'Solder mask registered over pad area creating non-solderable region', detail: 'Solder mask printed over the pad edge or on the pad itself creates a non-solderable island. Check for mask-on-pad at incoming inspection on critical assemblies.' },
+      { rank: 6, cat: 'PCB Material', title: 'Excess gold in ENIG finish causing brittle AuSn4 intermetallic formation', detail: 'Gold thicker than 0.125 micrometers on ENIG dissolves into solder during reflow. If gold content exceeds 3-5% in the bulk solder, AuSn4 intermetallics form and the joint dewets or becomes brittle.' }
+    ],
+    actions: [
+      'Verify component and board solderability by wetting balance test per J-STD-002 (components) and J-STD-003 (boards) at incoming inspection for critical parts.',
+      'Implement FIFO for components and boards. Reject parts beyond shelf life. Store in sealed dry nitrogen conditions.',
+      'Switch to higher-activity solder paste. Consider no-clean ROL0 or REL0 paste for OSP-finished boards.',
+      'Use nitrogen reflow to protect metal surfaces during heating, especially for OSP-finished boards and tin-plated components.',
+      'Increase peak reflow temperature and TAL. Attach thermocouples to confirm actual joint temperature matches oven recipe.',
+      'Inspect PCBs for solder mask registration at incoming inspection. Reject boards with mask coverage over pad area.',
+      'Verify ENIG gold thickness specification (target 0.05-0.125 micrometers gold per IPC-4552). Reject boards with suspect gold build-up.'
+    ]
+  },
+
+  icicles_spikes: {
+    name: 'Icicles / Spikes (Wave Solder)',
+    ipc: 'Icicle; Spike; Solder Projection',
+    desc: 'Pointed solder projections extending from a wave-soldered joint, most commonly at the trailing leads of ICs in the wave direction. Form when solder does not drain cleanly as the assembly exits the solder wave. An icicle long enough to contact an adjacent lead or track is a latent short.',
+    packages: ['THT components', 'SOIC (wave)', 'QFP tails (wave)'],
+    phases: ['postwave'],
+    phaseNote: 'Detected post-wave by visual inspection or AOI. Most common at last two leads of SOICs and DIP packages in the wave travel direction.',
+    pkgMap: { chip: false, fineic: false, bga: false, qfn: false, tht: true },
+    causes: [
+      { rank: 1, cat: 'Wave Equipment', title: 'Incorrect wave exit dynamics: wave height or exit angle wrong', detail: 'If the wave crest is too high or the exit angle incorrect, solder does not peel cleanly off the assembly. The trailing solder column stretches and freezes into a spike.' },
+      { rank: 2, cat: 'Wave Equipment', title: 'Conveyor speed too slow giving excessive solder contact time', detail: 'Slow conveyor means the assembly sits in the solder longer, picking up excess solder that then hangs and spikes on exit.' },
+      { rank: 3, cat: 'Wave Equipment', title: 'Solder pot temperature too low causing high viscosity and poor drainage', detail: 'Low solder temperature increases viscosity. Solder hangs on leads and forms spikes as the assembly exits the wave instead of draining cleanly.' },
+      { rank: 4, cat: 'Preheat', title: 'Insufficient preheat leaving flux not fully activated', detail: 'Under-preheated boards have poor flux activation and poor solder drainage. The flux cannot reduce surface tension enough to allow clean solder separation from leads.' },
+      { rank: 5, cat: 'PCB Design', title: 'No drainage (robber) pads at trailing edge of SOIC and quad packs', detail: 'The last two leads of an SOIC or quad pack in the wave direction are classic icicle locations. Dummy pads at the trailing edge provide a drainage point for the solder column.' },
+      { rank: 6, cat: 'Material', title: 'Dross contamination in solder pot increasing viscosity', detail: 'Dross recirculating from the pot onto the wave surface increases viscosity and reduces fluidity, preventing clean drainage.' }
+    ],
+    actions: [
+      'Adjust wave exit flow dynamics. Set correct wave height and exit angle using a leveling tool or wave calibration board.',
+      'Add dummy drain pads (robber pads) at the trailing edge of SOIC and quad pack components in the wave direction.',
+      'Rotate board 45 or 90 degrees relative to wave direction to change which leads are the trailing edge.',
+      'Increase conveyor speed to reduce contact time and improve drainage.',
+      'Increase solder pot temperature to improve fluidity and drainage. Verify with calibrated thermocouple in the pot.',
+      'Increase preheat temperature and dwell time to ensure full flux activation before wave contact.',
+      'Drain and clean solder pot. Remove dross accumulation. Verify solder alloy composition is within specification.'
+    ]
+  },
+
+  pinholes_blowholes: {
+    name: 'Pinholes / Blow Holes (Wave Solder)',
+    ipc: 'Pinhole; Blowhole',
+    desc: 'Small holes or craters in wave-soldered joints caused by gas escaping through molten solder. Pinholes are small surface craters. Blow holes are larger voids that can penetrate through the joint and create an open circuit. Both indicate outgassing during wave contact.',
+    packages: ['THT components', 'PTH vias (wave)'],
+    phases: ['postwave'],
+    phaseNote: 'Detected post-wave by visual inspection. Blow holes may be visible as craters through the joint to the other side. Some may be hidden under component bodies and require cross-sectioning to confirm.',
+    pkgMap: { chip: false, fineic: false, bga: false, qfn: false, tht: true },
+    causes: [
+      { rank: 1, cat: 'PCB Material', title: 'Moisture in PCB laminate vaporizing during wave contact', detail: 'Moisture absorbed by the PCB flashes to steam during wave contact. The steam bubble escapes through the molten solder and leaves a hole. Worst on FR2, CEM1, and multilayer boards with internal moisture entrapment.' },
+      { rank: 2, cat: 'Flux / Process', title: 'Excess flux in through-holes volatilizing on wave contact', detail: 'Too much liquid flux in through-hole barrels vaporizes when the wave contacts the joint. Adequate preheat should volatilize flux thinners before wave contact. Reduce flux application volume.' },
+      { rank: 3, cat: 'PCB Quality', title: 'Plating voids or contamination in PTH barrels releasing gas', detail: 'Plating voids or organic residues in hole barrels trap gas that escapes during soldering. Incoming PCB quality inspection should include barrel integrity checks.' },
+      { rank: 4, cat: 'Preheat', title: 'Preheat temperature too low leaving flux thinners present at wave contact', detail: 'Insufficient preheat means flux solvents remain liquid in the hole. They flash to vapor when the wave contacts the board, blowing through the solidifying solder before it can close.' },
+      { rank: 5, cat: 'Component', title: 'Moisture or volatile coatings on component leads', detail: 'Coatings, oils, or absorbed moisture on leads can outgas during wave contact and blow through the joint.' }
+    ],
+    actions: [
+      'Bake PCBs before wave soldering to drive off absorbed moisture. Typical bake: 120 deg C for 4 hours. Extend to 8 hours for thick multilayer boards. Bake within 24 hours of wave soldering.',
+      'Increase preheat temperature and time to fully volatilize flux thinners before wave contact. Target board topside temperature of 100-120 deg C at wave entry.',
+      'Reduce flux application volume. Verify flux penetration into holes without excess pooling.',
+      'Verify PCB incoming quality. Check PTH plating continuity and barrel integrity per IPC-A-600.',
+      'Inspect component leads at incoming. Pre-tin contaminated or poorly solderable leads before assembly.'
+    ]
+  }
+
+};
+
+// ============================================================
+//  PACKAGE FILTER LOGIC
+// ============================================================
+
+var PKG_LABELS = {
+  chip:  'Chip Passive (0402 / 0201 / 0603...)',
+  fineic: 'Fine-Pitch IC (QFP / SOIC / SOP)',
+  bga:   'BGA / CSP / PoP',
+  qfn:   'QFN / LGA / BTC',
+  tht:   'Through-Hole (THT / Wave)'
+};
+
+var PHASE_LABELS = {
+  postprint:     'Post-Print (SPI)',
+  postplacement: 'Post-Placement',
+  postreflow:    'Post-Reflow',
+  postwave:      'Post-Wave / Post-Selective'
+};
+
+// ============================================================
+//  RENDER
+// ============================================================
+
+function render() {
+  var defectId = document.getElementById('sel-defect').value;
+  var pkg      = document.getElementById('sel-pkg').value;
+  var phase    = document.getElementById('sel-phase').value;
+  var panel    = document.getElementById('results-panel');
+  var printBtn = document.getElementById('print-btn');
+
+  if (!defectId) {
+    panel.innerHTML = '<div class="results-empty">Select a defect type above to begin diagnosis.</div>';
+    printBtn.disabled = true;
+    return;
+  }
+
+  var d = DEFECTS[defectId];
+  printBtn.disabled = false;
+
+  var html = '';
+
+  // Header
+  html += '<div class="defect-header">';
+  html += '<div class="defect-name">' + d.name + '</div>';
+  html += '<div class="ipc-badge">IPC: ' + d.ipc + '</div>';
+  html += '</div>';
+
+  // Description
+  html += '<div class="defect-desc">' + d.desc + '</div>';
+
+  // Meta
+  html += '<div class="defect-meta">';
+  html += '<div class="meta-item"><div class="meta-label">Primarily affects</div><div class="meta-value">' + d.packages.join(', ') + '</div></div>';
+  html += '<div class="meta-item"><div class="meta-label">Detection phase</div><div class="meta-value">' + d.phaseNote + '</div></div>';
+  html += '</div>';
+
+  // Package mismatch warning
+  if (pkg && d.pkgMap[pkg] === false) {
+    html += '<div class="pkg-warning">';
+    html += '<strong>Note:</strong> This defect is uncommon with ' + PKG_LABELS[pkg] + ' components. ';
+    html += 'Verify defect identification before proceeding. The root causes below still apply if the defect is confirmed.';
+    html += '</div>';
+  }
+
+  // Phase mismatch warning
+  if (phase && d.phases.indexOf(phase) === -1) {
+    html += '<div class="pkg-warning">';
+    html += '<strong>Note:</strong> This defect is not typically detected at the ' + PHASE_LABELS[phase] + ' stage. ';
+    html += 'Typical detection: ' + d.phases.map(function(p){ return PHASE_LABELS[p]; }).join(', ') + '.';
+    html += '</div>';
+  }
+
+  // Root causes
+  html += '<div class="section-heading">Root Causes -- Ranked by Likelihood</div>';
+  html += '<ul class="cause-list">';
+  for (var i = 0; i < d.causes.length; i++) {
+    var c = d.causes[i];
+    html += '<li class="cause-item">';
+    html += '<div class="cause-rank">' + c.rank + '</div>';
+    html += '<div class="cause-body">';
+    html += '<div class="cause-title"><span class="cause-cat">' + c.cat + '</span> ' + c.title + '</div>';
+    html += '<div class="cause-detail">' + c.detail + '</div>';
+    html += '</div>';
+    html += '</li>';
+  }
+  html += '</ul>';
+
+  html += '<hr class="results-divider">';
+
+  // Corrective actions
+  html += '<div class="section-heading">Corrective Actions</div>';
+  html += '<ol class="action-list">';
+  for (var j = 0; j < d.actions.length; j++) {
+    html += '<li class="action-item"><span></span>' + d.actions[j] + '</li>';
+  }
+  html += '</ol>';
+
+  panel.innerHTML = html;
+}
+
+// ============================================================
+//  PRINT REPORT
+// ============================================================
+
+function printReport() {
+  var defectId = document.getElementById('sel-defect').value;
+  if (!defectId) return;
+
+  var d        = DEFECTS[defectId];
+  var pkg      = document.getElementById('sel-pkg').value;
+  var phase    = document.getElementById('sel-phase').value;
+  var title    = document.getElementById('report-title').value.trim() || 'SMT Defect Diagnostic Report';
+  var dateStr  = new Date().toISOString().slice(0, 10);
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">';
+  html += '<title>' + title + '</title>';
+  html += '<style>';
+  html += 'body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#1a1008;background:#fff;margin:0;padding:2cm;}';
+  html += 'h1{font-size:16pt;color:#d4720a;margin:0 0 4pt;}';
+  html += '.meta{font-size:9pt;color:#5a4a3a;margin-bottom:16pt;}';
+  html += '.subtitle{font-size:12pt;color:#1a1008;font-weight:bold;margin:0 0 8pt;}';
+  html += '.desc{font-size:10pt;color:#5a4a3a;margin:0 0 12pt;padding:8pt;border-left:3px solid #d4720a;background:#fdf8f4;}';
+  html += '.sec{font-size:9pt;font-weight:bold;letter-spacing:0.1em;text-transform:uppercase;color:#d4720a;margin:14pt 0 6pt;padding-bottom:4pt;border-bottom:1px solid #ddd;}';
+  html += '.cause{display:grid;grid-template-columns:24pt 1fr;gap:0 8pt;padding:6pt 0;border-bottom:1px solid #eee;}';
+  html += '.cause:last-child{border-bottom:none;}';
+  html += '.rank{font-size:10pt;color:#d4720a;font-weight:bold;text-align:right;}';
+  html += '.cat{display:inline-block;font-size:7pt;font-weight:bold;text-transform:uppercase;background:#5a4a3a;color:#fff;padding:1pt 4pt;margin-bottom:2pt;vertical-align:middle;}';
+  html += '.ctitle{font-size:10pt;font-weight:bold;margin-bottom:2pt;}';
+  html += '.cdetail{font-size:9pt;color:#5a4a3a;}';
+  html += '.action{counter-increment:ac;display:grid;grid-template-columns:20pt 1fr;gap:0 6pt;padding:5pt 0;border-bottom:1px solid #eee;font-size:9.5pt;}';
+  html += '.action:last-child{border-bottom:none;}';
+  html += '.anum{color:#167a40;font-weight:bold;text-align:right;}';
+  html += '.footer{margin-top:2cm;font-size:8pt;color:#999;border-top:1px solid #ddd;padding-top:6pt;}';
+  html += '@counter-style n{system:numeric;}';
+  html += 'ol{list-style:none;padding:0;margin:0;counter-reset:ac;}';
+  html += '</style></head><body>';
+
+  html += '<h1>SMT Defect Diagnostic Report</h1>';
+  html += '<div class="meta">Generated: ' + dateStr + ' | ' + title;
+  if (pkg) html += ' | Package: ' + PKG_LABELS[pkg];
+  if (phase) html += ' | Phase: ' + PHASE_LABELS[phase];
+  html += '</div>';
+
+  html += '<div class="subtitle">' + d.name + '</div>';
+  html += '<div style="font-size:9pt;color:#5a4a3a;margin-bottom:6pt;">IPC Term: ' + d.ipc + '</div>';
+  html += '<div class="desc">' + d.desc + '</div>';
+
+  html += '<div style="font-size:9.5pt;margin-bottom:12pt;"><strong>Primarily affects:</strong> ' + d.packages.join(', ') + '<br>';
+  html += '<strong>Detection note:</strong> ' + d.phaseNote + '</div>';
+
+  // Causes
+  html += '<div class="sec">Root Causes -- Ranked by Likelihood</div>';
+  html += '<div>';
+  for (var i = 0; i < d.causes.length; i++) {
+    var c = d.causes[i];
+    html += '<div class="cause">';
+    html += '<div class="rank">' + c.rank + '</div>';
+    html += '<div>';
+    html += '<div class="ctitle"><span class="cat">' + c.cat + '</span> ' + c.title + '</div>';
+    html += '<div class="cdetail">' + c.detail + '</div>';
+    html += '</div></div>';
+  }
+  html += '</div>';
+
+  // Actions
+  html += '<div class="sec">Corrective Actions</div>';
+  html += '<ol>';
+  var ac = 0;
+  for (var j = 0; j < d.actions.length; j++) {
+    ac++;
+    html += '<li class="action"><div class="anum">' + ac + '</div><div>' + d.actions[j] + '</div></li>';
+  }
+  html += '</ol>';
+
+  html += '<div class="footer">SMTCalc.com -- Free tools for electronics manufacturing professionals. smtcalc.com/smt-defect-diagnostics/</div>';
+  html += '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+</script>
+
+</body>
+</html>
