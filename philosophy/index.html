@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Philosophy - SMTCalc</title>
+  <meta name="description" content="Why SMTCalc exists: information should be free. Tools built from real shop floor experience, given away freely." />
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/philosophy/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/philosophy/">
+  <meta property="og:title" content="Philosophy - SMTCalc">
+  <meta property="og:description" content="Why SMTCalc exists: information should be free. Tools built from real shop floor experience, given away freely.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* PAGE WRAPPER */
+    .page {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 140px 2rem 120px;
+    }
+
+    /* BUDDHA BACKGROUND */
+    .buddha-bg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 640px;
+      height: auto;
+      pointer-events: none;
+      filter: invert(1) sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.85) opacity(0.13);
+      z-index: 0;
+    }
+
+    @media (max-width: 768px) {
+      .buddha-bg { width: 100vw; opacity: 0.08; }
+    }
+
+    /* PAGE CONTENT */
+    .page-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* PAGE EYEBROW */
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.1s forwards;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      line-height: 0.93;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.2s forwards;
+    }
+
+    h1 span { color: var(--accent); display: block; }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3rem 0;
+    }
+
+    /* BODY TEXT */
+    .body-text {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.85;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.3s forwards;
+    }
+
+    .body-text p { margin-bottom: 1.5rem; }
+    .body-text p:last-child { margin-bottom: 0; }
+
+    /* QUOTE BLOCK */
+    .quote-block {
+      margin: 3rem 0;
+      padding: 2rem 2rem 2rem 2.5rem;
+      border-left: 3px solid var(--accent);
+      background: var(--bg2);
+      opacity: 0;
+      animation: fadeUp 0.5s 0.45s forwards;
+    }
+
+    .quote-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-attribution {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* BACK LINK */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      margin-top: 3.5rem;
+      transition: color 0.2s, gap 0.2s;
+      opacity: 0;
+      animation: fadeUp 0.5s 0.55s forwards;
+    }
+
+    .back-link:hover { color: var(--accent); gap: 0.75rem; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .page { padding: 100px 1.25rem 80px; }
+    }
+
+    @media print {
+      :root {
+        --bg: #ffffff;
+        --bg2: #f5f0eb;
+        --text: #1a1008;
+        --muted: #5a4a3a;
+        --accent: #d4720a;
+        --border: rgba(0,0,0,0.15);
+      }
+      .buddha-bg { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BUDDHA BACKGROUND -->
+  <img src="/philosophy-buddha.png" alt="" class="buddha-bg" aria-hidden="true" />
+
+  <!-- HEADER -->
+  <header>
+    <a href="/" class="logo">SMT<span>Calc</span></a>
+    <nav>
+      <a href="/">Tools</a>
+      <a href="/about/">About</a>
+      <a href="/philosophy/" class="active">Philosophy</a>
+    </nav>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main class="page">
+    <div class="page-inner">
+
+      <div class="page-eyebrow">Why This Exists</div>
+      <h1>Information<span>Should Be Free</span></h1>
+
+      <div class="body-text">
+        <p>
+          SMTCalc exists because information should be free.
+        </p>
+        <p>
+          The electronics manufacturing industry has no shortage of people who treat their knowledge
+          as a competitive asset. Consultants who drip-feed insights at an hourly rate, experts who
+          guard process know-how as if the world would end if others learned it too. That culture
+          frustrates me. The industry moves forward when people share what they know, not when they
+          lock it behind paywalls and NDAs.
+        </p>
+        <p>
+          Every tool on this site comes from real work on real production floors. The calculations
+          aren't invented, they're derived from IPC standards, published research, and years of
+          hands-on experience. Making them freely available isn't charity. It's just the right
+          thing to do.
+        </p>
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-text">
+          &ldquo;Thousands of candles can be lit from a single candle, and the life of the candle
+          will not be shortened.&rdquo;
+        </div>
+        <div class="quote-attribution">The Buddha</div>
+      </div>
+
+      <a href="/" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Tools
+      </a>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+  </footer>
+
+<script>
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
+</body>
+</html>
