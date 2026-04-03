@@ -107,20 +107,21 @@ The site uses a dark theme with warm brown undertones. All tokens are defined in
 
 ```css
 :root {
-  --bg:           #1a1614;   /* Page background, deepest level */
-  --bg2:          #241e1b;   /* Section backgrounds, panels */
-  --bg3:          #2e2723;   /* Input fields, stat boxes */
-  --bg4:          #3a302a;   /* Active states, unit badges */
-  --accent:       #eb6b34;   /* Orange: primary accent */
-  --accent-hover: #cf5c2b;   /* Orange: hover state */
-  --accent2:      #d43e10;   /* Red-orange: destructive / error */
-  --text:         #fdfbf9;   /* Primary text, warm off-white */
-  --muted:        #a89f96;   /* Secondary text, labels */
-  --border:       #3d342e;   /* Primary border */
-  --border2:      #4a4039;   /* Secondary border */
-  --green:        #1fa855;   /* PASS / OK verdict */
-  --yellow:       #eb6b34;   /* WARNING (same as --accent) */
-  --red:          #d43e10;   /* FAIL verdict */
+  --bg:           #130d08;                    /* Page background, deepest level */
+  --bg2:          #19120d;                    /* Section backgrounds, panels */
+  --bg3:          #201812;                    /* Input fields, stat boxes */
+  --bg4:          #261e18;                    /* Active states, unit badges */
+  --bg5:          #2e2620;                    /* Hover states, deepest inset */
+  --accent:       #ff9238;                    /* Orange: primary accent */
+  --accent-hover: #ef8529;                    /* Orange: hover state */
+  --accent2:      #ff752b;                    /* Red-orange: destructive / error */
+  --text:         #fdeee5;                    /* Primary text, warm off-white */
+  --muted:        #c4b3a6;                    /* Secondary text, labels */
+  --border:       rgba(253,238,229,0.12);     /* Primary border */
+  --border2:      rgba(253,238,229,0.22);     /* Secondary border */
+  --green:        #1fa855;                    /* PASS / OK verdict */
+  --yellow:       #ff752b;                    /* WARNING (same as --accent2) */
+  --red:          #cf4444;                    /* FAIL verdict */
   --mono:         'Share Tech Mono', monospace;
 }
 ```
@@ -130,18 +131,18 @@ The site uses a dark theme with warm brown undertones. All tokens are defined in
 | State     | Color          | Variable  |
 |-----------|----------------|-----------|
 | PASS / OK | #1fa855 green  | --green   |
-| MARGINAL  | #eb6b34 orange | --yellow  |
-| FAIL      | #d43e10 red    | --red     |
+| MARGINAL  | #ff752b orange | --yellow  |
+| FAIL      | #cf4444 red    | --red     |
 
 **rgba reference (for transparency expressions in page-specific CSS):**
 
 | Token    | Hex     | RGB base            |
 |----------|---------|---------------------|
-| --accent | #eb6b34 | rgba(235,107,52,...) |
+| --accent | #ff9238 | rgba(255,146,56,...) |
 | --green  | #1fa855 | rgba(31,168,85,...)  |
-| --red    | #d43e10 | rgba(212,62,16,...)  |
+| --red    | #cf4444 | rgba(207,68,68,...)  |
 
-Header background (hardcoded in style.css): `rgba(26,22,20,0.95)`
+Header background (hardcoded in style.css): `rgba(19,13,8,0.95)`
 
 **Print reports always use a light theme.** The `printReport()` JS builds its own HTML
 with hardcoded light colors. Do not change these:
@@ -160,14 +161,15 @@ dark tokens to light values. Do not remove or move this to style.css.
 Fonts are loaded by style.css via `@import`:
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&family=Share+Tech+Mono&display=swap');
 ```
 
 **Font roles:**
 
 | Family          | Weight(s) | Use case                                       |
 |-----------------|-----------|------------------------------------------------|
-| Inter           | 800-900   | Page h1, tool hero h1, section headings        |
+| Manrope         | 800       | Tool hero h1, landing page h1                  |
+| Inter           | 800-900   | Section headings                               |
 | Inter           | 600-700   | Panel labels, eyebrows, button text, nav       |
 | Inter           | 400-500   | Body text, field notes, guide prose            |
 | Share Tech Mono | 400       | Input values, units, stat values, formula text |
@@ -242,7 +244,7 @@ Top padding 120px clears the fixed 80px header with breathing room.
 Key values from style.css:
 - Padding: 120px 2rem 60px
 - Max-width inner: 960px
-- h1: Inter 800, clamp(2rem, 5vw, 3.25rem), line-height 1.1, letter-spacing -0.02em
+- h1: Manrope 800, clamp(2rem, 5vw, 3.25rem), line-height 1.1, letter-spacing -0.02em
 - Eyebrow: Inter 600, 0.85rem, letter-spacing 0.1em, uppercase, --accent color
 - Description p: 1.1rem, --muted, max-width 700px, line-height 1.7
 
@@ -278,7 +280,7 @@ Shown between hero and tool grid when a guide exists. Defined in style.css.
 </div>
 ```
 
-Background: rgba(235,107,52,0.07), bottom border: rgba(235,107,52,0.2).
+Background: rgba(255,146,56,0.07), bottom border: rgba(255,146,56,0.2).
 Omit the guide banner entirely if no guide exists yet.
 
 ---
@@ -409,7 +411,7 @@ Defined in style.css. Use CSS variables, not hardcoded rgba.
 </div>
 ```
 
-Background: rgba(235,107,52,0.1), border: 1px rgba(235,107,52,0.35), border-radius 6px.
+Background: rgba(255,146,56,0.1), border: 1px rgba(255,146,56,0.35), border-radius 6px.
 
 ### Info Box
 

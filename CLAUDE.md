@@ -96,24 +96,26 @@ needed in page heads -- fonts are imported inside style.css. Each page adds only
 page-specific styles in an inline `<style>` block.
 
 **Colors (CSS custom properties in style.css :root):**
-- --bg:           #1a1614  (page background, warm near-black)
-- --bg2:          #241e1b  (section backgrounds, panels)
-- --bg3:          #2e2723  (input fields, stat boxes)
-- --bg4:          #3a302a  (active states, unit badges)
-- --accent:       #eb6b34  (orange, primary accent)
-- --accent-hover: #cf5c2b  (orange hover state)
-- --accent2:      #d43e10  (red-orange, error/destructive)
+- --bg:           #130d08  (page background, warm near-black)
+- --bg2:          #19120d  (section backgrounds, panels)
+- --bg3:          #201812  (input fields, stat boxes)
+- --bg4:          #261e18  (active states, unit badges)
+- --bg5:          #2e2620  (hover states, deepest inset)
+- --accent:       #ff9238  (orange, primary accent)
+- --accent-hover: #ef8529  (orange hover state)
+- --accent2:      #ff752b  (red-orange, error/destructive)
 - --green:        #1fa855  (PASS/OK)
-- --yellow:       #eb6b34  (WARNING, same as --accent)
-- --red:          #d43e10  (FAIL)
-- --text:         #fdfbf9  (primary text, warm off-white)
-- --muted:        #a89f96  (secondary text, labels)
-- --border:       #3d342e
-- --border2:      #4a4039
+- --yellow:       #ff752b  (WARNING, same as --accent2)
+- --red:          #cf4444  (FAIL)
+- --text:         #fdeee5  (primary text, warm off-white)
+- --muted:        #c4b3a6  (secondary text, labels)
+- --border:       rgba(253,238,229,0.12)
+- --border2:      rgba(253,238,229,0.22)
 - --mono:         'Share Tech Mono', monospace
 
 **Typography:**
-- Inter 800-900: page h1, tool hero heading, section headings
+- Manrope 800: tool hero h1, landing page h1
+- Inter 800-900: section headings
 - Inter 600-700: panel labels, eyebrows, button text, nav links
 - Inter 400-500: body text, field notes, guide prose
 - Share Tech Mono 400: input values, units, stat values, formula text
