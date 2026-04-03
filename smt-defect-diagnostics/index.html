@@ -358,7 +358,7 @@
       --border: rgba(0,0,0,0.12);
       --border2: rgba(0,0,0,0.22);
     }
-    nav, .print-bar, .tool-hero, footer { display: none !important; }
+    header, .print-bar, .tool-hero, footer { display: none !important; }
     .tool-main { border: none; margin: 0; }
     .cause-cat { border: 1px solid var(--muted); }
   }
@@ -366,15 +366,12 @@
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">SMTCalc</a>
-  <div class="nav-links">
-    <a href="/">Tools</a>
-    <a href="/about/">About</a>
-  </div>
-</nav>
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">SMT Defect Diagnostics</div>
+</header>
 
-<header class="tool-hero">
+<div class="tool-hero">
   <div class="tool-hero-inner">
     <div class="hero-eyebrow">Process Diagnostics</div>
     <h1>SMT Defect Diagnostics</h1>
@@ -384,7 +381,7 @@
       Based on IPC-S-816, Alpha, AIM, and Indium troubleshooting references.
     </p>
   </div>
-</header>
+</div>
 
 <main>
 
