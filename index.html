@@ -18,17 +18,39 @@
   <style>
     /* HERO */
     .hero {
+      position: relative;
+      overflow: hidden;
       min-height: 90vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 160px 2rem 100px;
       text-align: center;
+      background-image:
+        linear-gradient(rgba(253,238,229,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(253,238,229,0.055) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    .hero-pcb {
+      position: absolute;
+      top: 30px;
+      right: -40px;
+      width: 520px;
+      height: auto;
+      pointer-events: none;
+      filter: sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.85) opacity(0.35);
     }
 
     .hero-content {
+      position: relative;
+      z-index: 1;
       max-width: 900px;
       width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .hero-pcb { display: none; }
     }
 
     .hero-eyebrow {
@@ -45,6 +67,7 @@
     }
 
     h1 {
+      font-family: 'Manrope', sans-serif;
       font-weight: 800;
       font-size: clamp(3rem, 7vw, 5.5rem);
       line-height: 1.05;
@@ -85,18 +108,18 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: var(--accent);
+      background: linear-gradient(135deg, #ff9238 0%, #ef8529 100%);
       color: #ffffff;
       font-weight: 600;
       font-size: 1.1rem;
       text-decoration: none;
       padding: 1rem 2.5rem;
       border-radius: 4px;
-      transition: background 0.2s, transform 0.1s;
+      transition: filter 0.2s, transform 0.1s;
     }
 
     .btn-primary:hover {
-      background: var(--accent-hover);
+      filter: brightness(1.1);
       transform: translateY(-2px);
     }
 
@@ -176,6 +199,7 @@
     }
 
     h2 {
+      font-family: 'Manrope', sans-serif;
       font-weight: 800;
       font-size: clamp(2.5rem, 5vw, 4rem);
       letter-spacing: -0.02em;
@@ -190,7 +214,7 @@
     }
 
     .tool-card {
-      background: var(--bg2);
+      background: var(--bg3);
       border: 1px solid var(--border);
       padding: 3rem 2.5rem;
       border-radius: 8px;
@@ -198,12 +222,12 @@
       color: inherit;
       display: flex;
       flex-direction: column;
-      transition: border-color 0.2s, background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
     }
 
     .tool-card:hover {
-      background: var(--bg3);
-      border-color: var(--border2);
+      background: var(--bg4);
+      box-shadow: inset 2px 0 0 var(--accent);
     }
 
     .tool-tag {
@@ -340,6 +364,10 @@
   </header>
 
   <section class="hero">
+
+    <!-- PCB traces illustration, top-right corner -->
+    <img class="hero-pcb" src="/hero-pcb.svg" alt="" aria-hidden="true">
+
     <div class="hero-content">
       <div class="hero-eyebrow">Electronics Manufacturing Tools</div>
       <h1>
