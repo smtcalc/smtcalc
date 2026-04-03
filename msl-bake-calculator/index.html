@@ -302,6 +302,17 @@
   .bake-table tr:hover td { background: var(--bg2); }
   .bake-table tr:hover td.time-val.calc { background: rgba(74,159,212,0.08); }
 
+  .bake-table th.carrier-blocked {
+    color: rgba(253,238,229,0.22) !important;
+    border-top-color: transparent !important;
+  }
+  .bake-table td.carrier-blocked {
+    color: rgba(253,238,229,0.18);
+    background: rgba(207,68,68,0.05);
+    text-decoration: line-through;
+    text-decoration-color: rgba(207,68,68,0.35);
+  }
+
   .temp-label {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
@@ -1088,6 +1099,16 @@
         </div>
       </label>
 
+      <div class="field" style="margin-top:0.5rem;">
+        <label>Component Carrier / Packaging</label>
+        <select id="carrierMedium" onchange="calculate()">
+          <option value="tray-ht">High-temp bake tray or loose (no restriction)</option>
+          <option value="tube-std">Standard tube or tray (ABS) -- 60&#176;C max</option>
+          <option value="tr-std">Standard tape and reel (polystyrene) -- 40&#176;C max</option>
+        </select>
+        <div class="field-note">Standard polystyrene T&amp;R pocket tape deforms above ~65&#176;C. Baking in standard T&amp;R at 90&#176;C or 125&#176;C will warp the carrier and cause feeder jams.</div>
+      </div>
+
     </div>
 
     <!-- RIGHT: Exposure -->
@@ -1149,19 +1170,19 @@
       <thead>
         <tr>
           <th>Condition</th>
-          <th class="temp-col">
+          <th class="temp-col" id="th125">
             <div class="temp-label">125&deg;C</div>
             <span class="temp-tolerance">+10 / -0&deg;C, &lt;5% RH</span>
           </th>
-          <th class="temp-col">
+          <th class="temp-col" id="th90">
             <div class="temp-label">90&deg;C</div>
             <span class="temp-tolerance">+8 / -0&deg;C, &lt;5% RH</span>
           </th>
-          <th class="temp-col calc">
+          <th class="temp-col calc" id="th60">
             <div class="temp-label">60&deg;C</div>
             <span class="temp-tolerance">calculated, &lt;5% RH</span>
           </th>
-          <th class="temp-col">
+          <th class="temp-col" id="th40">
             <div class="temp-label">40&deg;C</div>
             <span class="temp-tolerance">+5 / -0&deg;C, &lt;5% RH</span>
           </th>
@@ -1213,6 +1234,11 @@
   <!-- ELEVATED RH WARNING -->
   <div class="assumption-note" id="elevatedNote" style="display:none; border-left-color: rgba(212,114,10,0.70);">
     <p><strong style="color:var(--yellow);">Elevated humidity exposure noted:</strong> J-STD-033D Table 4-1 Note 1 states that if components have been exposed above 60% RH, the tabled bake times may not be sufficient. Track actual desorption data (weigh the component lot periodically during baking) to confirm dryness rather than relying solely on the timed values.</p>
+  </div>
+
+  <!-- CARRIER TEMPERATURE WARNING -->
+  <div class="assumption-note" id="carrierNote" style="display:none; border-left-color: rgba(207,68,68,0.7);">
+    <p id="carrierNoteText"></p>
   </div>
 
   <!-- ACCORDION GUIDE -->
@@ -1452,6 +1478,41 @@ function floorLifeLabel(msl) {
 }
 
 // ============================================================
+// CARRIER BLOCKING HELPERS
+// Returns [block125, block90, block60, block40]
+// ============================================================
+function carrierBlockedTemps(carrier) {
+  if (carrier === 'tr-std')   return [true,  true,  true,  false];
+  if (carrier === 'tube-std') return [true,  true,  false, false];
+  return [false, false, false, false];
+}
+
+function applyCarrierHeaders(carrier) {
+  var blocked = carrierBlockedTemps(carrier);
+  var ids = ['th125', 'th90', 'th60', 'th40'];
+  ids.forEach(function(id, i) {
+    var th = document.getElementById(id);
+    if (!th) return;
+    if (blocked[i]) { th.classList.add('carrier-blocked'); }
+    else            { th.classList.remove('carrier-blocked'); }
+  });
+}
+
+function updateCarrierNote(carrier, hasResults) {
+  var noteEl   = document.getElementById('carrierNote');
+  var noteText = document.getElementById('carrierNoteText');
+  if (!hasResults || carrier === 'tray-ht') { noteEl.style.display = 'none'; return; }
+  var msg = '';
+  if (carrier === 'tr-std') {
+    msg = 'Standard polystyrene tape and reel: maximum safe bake temperature is approximately 65\u00b0C. The pocket tape deforms above this threshold, warping the reel and causing feeder jams at pick-and-place. Only the 40\u00b0C column is safe for standard T&R. Strikethrough columns cannot be used without first re-packaging the components into a high-temperature bake tray.';
+  } else if (carrier === 'tube-std') {
+    msg = 'Standard ABS tube or tray: maximum safe bake temperature is approximately 80\u00b0C. The 125\u00b0C and 90\u00b0C columns are not safe for this carrier. 60\u00b0C and 40\u00b0C are acceptable. Confirm the specific carrier manufacturer temperature rating before committing to 60\u00b0C.';
+  }
+  noteText.textContent = msg;
+  noteEl.style.display = 'block';
+}
+
+// ============================================================
 // MAIN CALCULATE
 // ============================================================
 function calculate() {
@@ -1645,6 +1706,8 @@ function hideResults() {
   document.getElementById('resultsPlaceholder').style.display = 'none';
   document.getElementById('bakeTableWrap').style.display = 'none';
   document.getElementById('calcNote').style.display = 'none';
+  document.getElementById('carrierNote').style.display = 'none';
+  applyCarrierHeaders('tray-ht');
 }
 
 function showCalcNote() {
@@ -1665,18 +1728,24 @@ function hideElevatedNote() {
 
 function showBgaResults() {
   var h60 = bakeTimeAt60(96);
+  var carrier = document.getElementById('carrierMedium').value;
+  var blocked = carrierBlockedTemps(carrier);
   var body = document.getElementById('bakeTableBody');
   body.innerHTML = '';
+  var col125cls = blocked[0] ? 'time-val carrier-blocked' : 'time-val fastest';
+  var col60cls  = blocked[2] ? 'time-val calc carrier-blocked' : 'time-val calc';
   var row = '<tr>' +
     '<td style="color:var(--muted);font-size:0.78rem;">Large BGA / Stacked Die<br><span style="font-size:0.75rem;color:#555;">Table 4-1 Note 2</span></td>' +
-    '<td class="time-val fastest">' + fmtHours(96) + '</td>' +
+    '<td class="' + col125cls + '">' + fmtHours(96) + '</td>' +
     '<td class="time-val" style="color:#777;">--</td>' +
-    '<td class="time-val calc">' + fmtHours60(h60) + '</td>' +
+    '<td class="' + col60cls + '">' + fmtHours60(h60) + '</td>' +
     '<td class="time-val" style="color:#777;">--</td>' +
     '</tr>';
   body.innerHTML = row;
   document.getElementById('resultsPlaceholder').style.display = 'none';
   document.getElementById('bakeTableWrap').style.display = 'block';
+  applyCarrierHeaders(carrier);
+  updateCarrierNote(carrier, true);
 }
 
 function showTableResults(h125, h90, h60, h40, over72h) {
@@ -1686,13 +1755,16 @@ function showTableResults(h125, h90, h60, h40, over72h) {
   var excLabel = over72h ? 'Floor life exceeded &gt; 72h' : 'Floor life exceeded &lt; 72h';
   var excSub   = over72h ? 'Worst-case column -- Table 4-1' : 'Moderate column -- Table 4-1';
 
-  // Find fastest valid time
+  var carrier = document.getElementById('carrierMedium').value;
+  var blocked = carrierBlockedTemps(carrier);
+
+  // Find fastest valid non-blocked time
   var times = [
     { v: h125, idx: 0 },
     { v: h90,  idx: 1 },
     { v: h60,  idx: 2 },
     { v: h40,  idx: 3 }
-  ].filter(function(x) { return x.v !== null && x.v > 0; });
+  ].filter(function(x) { return x.v !== null && x.v > 0 && !blocked[x.idx]; });
 
   var fastestIdx = -1;
   if (times.length > 0) {
@@ -1700,10 +1772,10 @@ function showTableResults(h125, h90, h60, h40, over72h) {
   }
 
   function cls(i, isCalc) {
+    if (blocked[i]) return 'time-val' + (isCalc ? ' calc' : '') + ' carrier-blocked';
     var c = 'time-val';
     if (isCalc) c += ' calc';
-    if (i === fastestIdx && !isCalc) c += ' fastest';
-    if (i === fastestIdx && isCalc)  c += ' fastest';
+    if (i === fastestIdx) c += ' fastest';
     return c;
   }
 
@@ -1718,6 +1790,8 @@ function showTableResults(h125, h90, h60, h40, over72h) {
   body.innerHTML = row;
   document.getElementById('resultsPlaceholder').style.display = 'none';
   document.getElementById('bakeTableWrap').style.display = 'block';
+  applyCarrierHeaders(carrier);
+  updateCarrierNote(carrier, true);
 }
 
 // Init on load
@@ -1734,6 +1808,12 @@ function printReport() {
   var largeBga = document.getElementById('largeBga').checked;
   var elevRH  = document.getElementById('exposureRH').value === 'elevated';
   var expUnknown = document.getElementById('exposureUnknown').checked;
+  var carrier = document.getElementById('carrierMedium').value;
+  var carrierLabels = {
+    'tray-ht':   'High-temp bake tray / loose (no restriction)',
+    'tube-std':  'Standard tube or tray (ABS) -- 60C max',
+    'tr-std':    'Standard tape and reel (polystyrene) -- 40C max'
+  };
   var now     = new Date();
   var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
 
@@ -1773,6 +1853,13 @@ function printReport() {
   var elevNoteHtml = '';
   if (elevNoteEl && elevNoteEl.style.display !== 'none') {
     elevNoteHtml = '<div class="note-box warn-note">' + elevNoteEl.innerHTML + '</div>';
+  }
+
+  // Carrier note
+  var carrierNoteEl = document.getElementById('carrierNote');
+  var carrierNoteHtml = '';
+  if (carrierNoteEl && carrierNoteEl.style.display !== 'none') {
+    carrierNoteHtml = '<div class="note-box" style="border-left-color:#c42b08;">' + carrierNoteEl.innerHTML + '</div>';
   }
 
   // Thickness label map
@@ -1836,6 +1923,7 @@ function printReport() {
         (largeBga ? '  |  Large BGA / Stacked Die: YES' : '') +
         (elevRH ? '  |  Exposure: Elevated (above 60% RH)' : '  |  Exposure: Standard (up to 30C / 60% RH)') + '<br>' +
         (expUnknown ? 'Time Out of Bag: UNKNOWN -- worst-case assumed (over-72h column)' : 'Time Out of Bag: ' + timeOut + ' hours') +
+        '<br>Carrier: ' + (carrierLabels[carrier] || carrier) +
       '</div>' +
     '</div>' +
 
@@ -1849,6 +1937,7 @@ function printReport() {
 
     calcNoteHtml +
     elevNoteHtml +
+    carrierNoteHtml +
 
     '<div class="section-label">Floor Life and Exposure</div>' +
     '<div class="panel-row">' +
