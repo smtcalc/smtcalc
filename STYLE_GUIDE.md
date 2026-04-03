@@ -1,7 +1,7 @@
 # SMTCalc.com -- Design System & Style Guide
 
 This document is the single source of truth for building and maintaining tools on smtcalc.com.
-Cross-check against `stencil-coach/index.html` (canonical tool reference) and `style.css`
+Cross-check against `stencil-architect/index.html` (canonical tool reference) and `style.css`
 (shared stylesheet) when in doubt.
 
 ---
@@ -15,7 +15,7 @@ page-specific styles in an inline `<style>` block.
 ```
 smtcalc.com/                               -> landing page
 smtcalc.com/about/                         -> about page
-smtcalc.com/stencil-coach/                -> Stencil Coach (canonical tool reference)
+smtcalc.com/stencil-architect/            -> Stencil Architect (canonical tool reference)
 smtcalc.com/smt-capacity-calculator/      -> SMT Capacity Calculator
 smtcalc.com/msl-bake-calculator/          -> MSL Bake Calculator
 smtcalc.com/reflow-throughput-calculator/ -> Reflow Throughput Calculator
@@ -252,7 +252,7 @@ Key values from style.css:
 
 | Tool                      | Eyebrow label                            |
 |---------------------------|------------------------------------------|
-| Stencil Coach             | Stencil / Paste Process                  |
+| Stencil Architect         | Stencil / Paste Process                  |
 | SMT Capacity Calculator   | Production / Planning                    |
 | MSL Bake Calculator       | Component Handling / Moisture Management |
 | Reflow Throughput Calc    | Reflow / Thermal Process                 |

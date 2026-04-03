@@ -65,7 +65,7 @@ The project filename convention for working files is [tool-slug]-index.html.
 |-------------------------------|----------------------------------|--------------------------------|
 | /                             | Landing page                     |                                |
 | /about/                       | About                            |                                |
-| /stencil-coach/               | Stencil Coach                    | Canonical HTML reference       |
+| /stencil-architect/           | Stencil Architect                | Canonical HTML reference       |
 | /smt-capacity-calculator/     | SMT Capacity Calculator          |                                |
 | /msl-bake-calculator/         | MSL Bake Calculator              | Based on J-STD-033D            |
 | /reflow-throughput-calculator/| Reflow Throughput Calculator     |                                |
@@ -125,7 +125,7 @@ colors (#fff background, #d4720a accent, #167a40 pass, #c42b08 fail). Each tool 
 keeps its own @media print block inline with a :root light-theme override. Do not move
 print overrides to style.css.
 
-**Canonical reference implementation:** stencil-coach/index.html
+**Canonical reference implementation:** stencil-architect/index.html
 When in doubt about any markup or styling pattern, check that file first.
 STYLE_GUIDE.md is the written reference.
 
@@ -237,7 +237,7 @@ Changefreq: weekly for /, monthly for all others.
   project reference files. PDFs that are ZIP-extractable can be read by treating them
   as ZIP archives.
 
-- **stencil-coach/index.html is the canonical HTML reference.** STYLE_GUIDE.md is the
+- **stencil-architect/index.html is the canonical HTML reference.** STYLE_GUIDE.md is the
   single written reference. Do not rely on memory for design system details.
 
 - **Shared styles live in /style.css.** Do not duplicate tokens, resets, or shared
