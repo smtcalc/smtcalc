@@ -31,7 +31,7 @@
   }
   .sheet-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
   @media (max-width: 640px) { .sheet-grid { grid-template-columns: 1fr; } }
-  .sheet-card { background: var(--bg); padding: 1.5rem 1.75rem; }
+  .sheet-card { background: var(--bg2); padding: 1.5rem 1.75rem; }
   .sheet-tab { display: inline-block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.55rem; border: 1px solid; margin-bottom: 0.75rem; }
   .sheet-tab.blue { color: #0055a4; border-color: rgba(0,85,164,0.3); background: rgba(0,85,164,0.05); }
   .sheet-tab.green { color: var(--green); border-color: rgba(31,168,85,0.35); background: rgba(31,168,85,0.07); }
@@ -80,7 +80,7 @@
   .related-header::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); }
   .related-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
   @media (max-width: 640px) { .related-grid { grid-template-columns: 1fr; } }
-  .related-card { background: var(--bg); padding: 1.5rem 1.75rem; text-decoration: none; color: inherit; display: block; transition: background 0.2s; position: relative; overflow: hidden; }
+  .related-card { background: var(--bg2); padding: 1.5rem 1.75rem; text-decoration: none; color: inherit; display: block; transition: background 0.2s; position: relative; overflow: hidden; }
   .related-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s ease; }
   .related-card:hover { background: var(--bg3); }
   .related-card:hover::before { transform: scaleY(1); }
