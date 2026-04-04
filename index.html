@@ -34,12 +34,14 @@
 
     .hero-pcb {
       position: absolute;
-      top: -60px;
-      right: -120px;
-      width: 820px;
+      top: 50%;
+      right: 30px;
+      transform: translateY(-50%);
+      width: 560px;
       height: auto;
       pointer-events: none;
-      filter: sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.85) opacity(0.18);
+      filter: invert(1) sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.9) opacity(0.12);
+      mix-blend-mode: screen;
     }
 
     .hero-content {
@@ -367,7 +369,7 @@
   <section class="hero">
 
     <!-- PCB traces illustration, top-right corner -->
-    <img class="hero-pcb" src="/hero-pcb.svg" alt="" aria-hidden="true">
+    <img class="hero-pcb" src="/hero-calculator.webp" alt="" aria-hidden="true">
 
     <div class="hero-content">
       <h1>
