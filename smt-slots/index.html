@@ -1290,7 +1290,7 @@ function resolveResult() {
 
   if (wins.length === 0) {
     showMsg('No win. Try again.', 'msg-lose');
-    checkGameOver();
+    setTimeout(checkGameOver, 1200);
     return;
   }
 
