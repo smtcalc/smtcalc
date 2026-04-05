@@ -35,18 +35,27 @@
     .hero-pcb {
       position: absolute;
       top: 50%;
-      right: 30px;
-      transform: translateY(-50%);
-      width: 560px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(1600px, 95vw);
       height: auto;
       pointer-events: none;
       filter: invert(1) sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.9) opacity(0.12);
       mix-blend-mode: screen;
     }
 
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(19,13,8,0.82) 0%, transparent 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .hero-content {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       max-width: 900px;
       width: 100%;
     }
