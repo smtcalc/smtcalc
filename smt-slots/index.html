@@ -1412,9 +1412,9 @@ function doubleChoice(choice) {
   document.getElementById('btn-collect').style.visibility = 'hidden';
   showMsg('Spinning...', 'msg-spin');
 
-  /* Determine result: 3% double-sided PCB edge = lose regardless */
+  /* Determine result: 1% double-sided PCB edge = lose regardless */
   var r = Math.random();
-  var result = r < 0.03 ? 'edge' : (Math.random() < 0.5 ? 'top' : 'bottom');
+  var result = r < 0.01 ? 'edge' : (Math.random() < 0.5 ? 'top' : 'bottom');
 
   spinDblReel(result, function() {
     if (result === 'edge') {
