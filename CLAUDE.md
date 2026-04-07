@@ -77,6 +77,8 @@ The project filename convention for working files is [tool-slug]-index.html.
 | /ipc-standards-finder/        | IPC Standards Finder             |                                |
 | /smt-line-capacity-planner/   | SMT Line Capacity Planner        |                                |
 | /bare-board-bake-calculator/  | Bare Board Bake Calculator       |                                |
+| /pip-calculator/              | Pin-in-Paste Calculator          |                                |
+| /smt-slots/                   | SMT Slots                        | Entertainment only, not a calculator |
 
 The Solder Ball Aperture Calculator was built but is unpublished pending fact-checking.
 Do not add it to the landing page or sitemap until Kimmo confirms it is ready.
