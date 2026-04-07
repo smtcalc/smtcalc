@@ -234,18 +234,25 @@ Top padding 120px clears the fixed 80px header with breathing room.
 ```html
 <div class="tool-hero">
   <div class="tool-hero-inner">
-    <span class="hero-eyebrow">Category / Subcategory</span>
+    <div class="hero-eyebrow">Category / Subcategory</div>
     <h1>Tool Name</h1>
     <p>One sentence describing what the tool does and who it is for.</p>
   </div>
 </div>
 ```
 
+**Critical rules:**
+- The outer element is always `<div class="tool-hero">`. Never use `.page-hero`, `.hero`, or any other class name.
+- The inner wrapper is always `<div class="tool-hero-inner">`. Never use `.hero-inner`, `.page-hero-inner`, or similar.
+- The eyebrow is always `<div class="hero-eyebrow">`. Never use `.tool-eyebrow`, `.eyebrow`, or similar.
+- Do not add any inline CSS that overrides the hero's h1 font, size, color, or text-transform. All styling comes from style.css.
+- Do not add decorative pseudo-elements (glows, radial gradients, lines) to the hero.
+
 Key values from style.css:
 - Padding: 120px 2rem 60px
 - Max-width inner: 960px
-- h1: Manrope 800, clamp(2rem, 5vw, 3.25rem), line-height 1.1, letter-spacing -0.02em
-- Eyebrow: Inter 600, 0.85rem, letter-spacing 0.1em, uppercase, --accent color
+- h1: Manrope 800, clamp(2rem, 5vw, 3.25rem), line-height 1.1, letter-spacing -0.02em, color --text
+- Eyebrow: Inter 600, 0.85rem, letter-spacing 0.1em, uppercase, color --accent
 - Description p: 1.1rem, --muted, max-width 700px, line-height 1.7
 
 **Eyebrow category labels:**
