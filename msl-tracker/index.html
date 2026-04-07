@@ -16,68 +16,6 @@
   <link rel="stylesheet" href="/style.css">
   <style>
 
-    /* PAGE HERO */
-    .page-hero {
-      padding-top: 64px;
-      padding: calc(64px + 3rem) 2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .page-hero::before {
-      content: '';
-      position: absolute;
-      top: -50%; right: -10%;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(235,107,52,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .page-hero-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .tool-eyebrow {
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .tool-eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px; height: 2px;
-      background: var(--accent);
-    }
-
-    .page-hero h1 {
-      font-family: 'Inter', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      text-transform: uppercase;
-      line-height: 0.95;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.75rem;
-    }
-
-    .page-hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 560px;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-
     /* DOWNLOAD BOX */
     .download-box {
       display: inline-flex;
@@ -373,9 +311,9 @@
     <div class="tool-badge">MSL Tracker</div>
   </header>
 
-  <section class="page-hero">
-    <div class="page-hero-inner">
-      <div class="tool-eyebrow">Component Handling / Moisture Management</div>
+  <div class="tool-hero">
+    <div class="tool-hero-inner">
+      <div class="hero-eyebrow">Component Handling / Moisture Management</div>
       <h1>MSL Tracker Excel Workbook</h1>
       <p>Track moisture-sensitive component floor life across your production floor. Color-coded status dashboard, bake event logging, ambient RH correction, and automatic floor life recalculation. All per J-STD-033D.</p>
 
@@ -390,7 +328,7 @@
         <div class="req-note">Requires <strong>Microsoft 365</strong> or <strong>Excel 2021</strong> or later.</div>
       </div>
     </div>
-  </section>
+  </div>
 
   <div class="content-area">
 
