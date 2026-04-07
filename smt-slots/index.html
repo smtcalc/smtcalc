@@ -683,6 +683,10 @@
       <span class="score-label">Last Win</span>
       <span class="score-value" id="win-val" style="color:var(--green);">--</span>
     </div>
+    <div class="score-box">
+      <span class="score-label">Personal Best</span>
+      <span class="score-value" id="best-val" style="color:var(--muted);">--</span>
+    </div>
   </div>
 
   <!-- Status message -->
@@ -1039,6 +1043,7 @@ var STRIPS = [
    GAME STATE
    ============================================================ */
 var credits = 100;
+var personalBest = 0;
 var linesSelected = 5;
 var currentGrid = null;   /* 3x3 array of symbol ids (cols 0-2 only) */
 var gameState = 'idle';   /* idle | spinning | doubling */
@@ -1060,6 +1065,13 @@ window.addEventListener('DOMContentLoaded', function() {
   currentGrid = generateGrid();
   renderGrid();
   setDblReelIdle();
+  var stored = parseFloat(localStorage.getItem('smtslots_best'));
+  if (stored > 0) {
+    personalBest = stored;
+    var el = document.getElementById('best-val');
+    el.textContent = Math.round(personalBest * 10) / 10;
+    el.style.color = 'var(--accent)';
+  }
 });
 
 function buildReels() {
@@ -1486,6 +1498,13 @@ function collectWin() {
    ============================================================ */
 function updateCredits() {
   document.getElementById('credits-val').textContent = Math.round(Math.max(0, credits) * 10) / 10;
+  if (credits > personalBest) {
+    personalBest = credits;
+    localStorage.setItem('smtslots_best', personalBest);
+    var el = document.getElementById('best-val');
+    el.textContent = Math.round(personalBest * 10) / 10;
+    el.style.color = 'var(--accent)';
+  }
 }
 
 function showMsg(text, cls) {
