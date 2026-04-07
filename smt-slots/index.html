@@ -709,7 +709,7 @@
 </div>
 
 <main>
-<audio id="bg-music" src="/smt-slots/smt-slots.mp3" loop preload="auto"></audio>
+<audio id="bg-music" src="smt_slots.mp3" loop preload="auto"></audio>
 
 <div class="game-wrap">
 
@@ -729,7 +729,7 @@
     </div>
     <button class="music-btn" id="music-btn" onclick="toggleMusic()">
       <span class="music-label">Music</span>
-      <span class="music-value" id="music-state">&#9834; ON</span>
+      <span class="music-value" id="music-state">&#9834; OFF</span>
     </button>
   </div>
 
@@ -833,33 +833,42 @@ function showContact() {
 var musicStarted = false;
 var musicMuted = false;
 
+function setMusicState(on) {
+  var btn = document.getElementById('music-btn');
+  var state = document.getElementById('music-state');
+  state.textContent = on ? '\u266a ON' : '\u266a OFF';
+  if (on) { btn.classList.remove('muted'); } else { btn.classList.add('muted'); }
+}
+
 function startMusic() {
   if (musicStarted) return;
   var audio = document.getElementById('bg-music');
   audio.volume = 0.5;
   audio.play().then(function() {
     musicStarted = true;
-  }).catch(function() {});
+    musicMuted = false;
+    setMusicState(true);
+  }).catch(function(e) {
+    console.warn('SMT Slots: audio play failed:', e);
+  });
 }
 
 function toggleMusic() {
   var audio = document.getElementById('bg-music');
-  var btn = document.getElementById('music-btn');
-  var state = document.getElementById('music-state');
   if (!musicStarted) {
     audio.volume = 0.5;
     audio.play().then(function() {
       musicStarted = true;
       musicMuted = false;
-      state.textContent = '\u266a ON';
-      btn.classList.remove('muted');
-    }).catch(function() {});
+      setMusicState(true);
+    }).catch(function(e) {
+      console.warn('SMT Slots: audio play failed:', e);
+    });
     return;
   }
   musicMuted = !musicMuted;
   audio.muted = musicMuted;
-  state.textContent = musicMuted ? '\u266a OFF' : '\u266a ON';
-  if (musicMuted) { btn.classList.add('muted'); } else { btn.classList.remove('muted'); }
+  setMusicState(!musicMuted);
 }
 
 /* ============================================================
