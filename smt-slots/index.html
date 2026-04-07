@@ -654,42 +654,25 @@
 .diag-dot.on { background: var(--accent); }
 
 /* Music toggle */
+.music-bar {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
 .music-btn {
   background: var(--bg3);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.6rem 1.25rem;
-  min-width: 130px;
-  text-align: center;
+  border-radius: 6px;
+  padding: 0.4rem 1.25rem;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   cursor: pointer;
-  letter-spacing: 0.06em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.15rem;
+  letter-spacing: 0.08em;
 }
 
 .music-btn:hover { background: var(--bg4); color: var(--text); }
 .music-btn.muted { color: var(--red); border-color: var(--red); }
-
-.music-btn .music-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: block;
-}
-
-.music-btn .music-value {
-  font-size: 1.7rem;
-  font-weight: 800;
-  line-height: 1.1;
-  display: block;
-}
 
 </style>
 </head>
@@ -727,10 +710,6 @@
       <span class="score-label">Personal Best</span>
       <span class="score-value" id="best-val" style="color:var(--muted);">--</span>
     </div>
-    <button class="music-btn" id="music-btn" onclick="toggleMusic()">
-      <span class="music-label">Music</span>
-      <span class="music-value" id="music-state">&#9834; OFF</span>
-    </button>
   </div>
 
   <!-- Status message -->
@@ -804,6 +783,11 @@
     </div>
   </div>
 
+  <!-- Music toggle -->
+  <div class="music-bar">
+    <button class="music-btn" id="music-btn" onclick="toggleMusic()">&#9834; <span id="music-state">OFF</span></button>
+  </div>
+
 </div>
 </main>
 
@@ -836,7 +820,7 @@ var musicMuted = false;
 function setMusicState(on) {
   var btn = document.getElementById('music-btn');
   var state = document.getElementById('music-state');
-  state.textContent = on ? '\u266a ON' : '\u266a OFF';
+  state.textContent = on ? 'ON' : 'OFF';
   if (on) { btn.classList.remove('muted'); } else { btn.classList.add('muted'); }
 }
 
