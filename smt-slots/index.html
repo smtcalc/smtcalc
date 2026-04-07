@@ -653,6 +653,28 @@
 
 .diag-dot.on { background: var(--accent); }
 
+/* Music toggle */
+.music-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.music-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+
+.music-btn:hover { background: var(--bg4); color: var(--text); }
+.music-btn.muted { color: var(--red); border-color: var(--red); }
+
 </style>
 </head>
 <body>
@@ -671,7 +693,14 @@
 </div>
 
 <main>
+<audio id="bg-music" src="/smt-slots/smt-slots.mp3" loop preload="auto"></audio>
+
 <div class="game-wrap">
+
+  <!-- Music toggle -->
+  <div class="music-bar">
+    <button class="music-btn" id="music-btn" onclick="toggleMusic()">&#9834; MUSIC ON</button>
+  </div>
 
   <!-- Score bar -->
   <div class="score-bar">
@@ -781,6 +810,40 @@ function showContact() {
   a.href = 'mailto:' + u + '@' + d;
   a.textContent = u + '@' + d;
   a.onclick = null;
+}
+
+/* ============================================================
+   MUSIC
+   ============================================================ */
+var musicStarted = false;
+var musicMuted = false;
+
+function startMusic() {
+  if (musicStarted) return;
+  var audio = document.getElementById('bg-music');
+  audio.volume = 0.5;
+  audio.play().then(function() {
+    musicStarted = true;
+  }).catch(function() {});
+}
+
+function toggleMusic() {
+  var audio = document.getElementById('bg-music');
+  var btn = document.getElementById('music-btn');
+  if (!musicStarted) {
+    audio.volume = 0.5;
+    audio.play().then(function() {
+      musicStarted = true;
+      musicMuted = false;
+      btn.textContent = '\u266a MUSIC ON';
+      btn.classList.remove('muted');
+    }).catch(function() {});
+    return;
+  }
+  musicMuted = !musicMuted;
+  audio.muted = musicMuted;
+  btn.textContent = musicMuted ? '\u266a MUSIC OFF' : '\u266a MUSIC ON';
+  if (musicMuted) { btn.classList.add('muted'); } else { btn.classList.remove('muted'); }
 }
 
 /* ============================================================
@@ -1199,6 +1262,7 @@ function setLines(n) {
    ============================================================ */
 function spin() {
   if (gameState !== 'idle') return;
+  startMusic();
   var bet = linesSelected;
   if (credits < bet) {
     showMsg('Not enough credits.', 'msg-lose');
