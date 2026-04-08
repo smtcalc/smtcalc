@@ -204,58 +204,6 @@
   to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Separator between regular reels and doubling reel */
-.reel-sep {
-  width: 1px;
-  background: var(--border2);
-  align-self: stretch;
-  flex-shrink: 0;
-  margin: 0 0.1rem;
-}
-
-/* Doubling reel column */
-.reel-double-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.reel-double-label {
-  font-family: var(--mono);
-  font-size: 0.52rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.7;
-  text-align: center;
-}
-
-.reel.reel-dbl {
-  flex: 0 0 auto;
-  width: 72px;
-}
-
-.reel.reel-dbl .symbol-cell {
-  border-color: rgba(255,146,56,0.25);
-  background: var(--bg4);
-}
-
-.reel.reel-dbl .symbol-cell.dbl-active {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(255,146,56,0.3);
-}
-
-.reel.reel-dbl .symbol-cell.dbl-win {
-  border-color: var(--green);
-  box-shadow: 0 0 12px rgba(31,168,85,0.4);
-}
-
-.reel.reel-dbl .symbol-cell.dbl-lose {
-  border-color: var(--red);
-  box-shadow: 0 0 12px rgba(207,68,68,0.3);
-}
-
 /* Controls */
 .controls {
   display: flex;
@@ -339,133 +287,6 @@
   color: var(--text);
   display: block;
 }
-
-/* Doubling panel (always visible) */
-.double-panel {
-  background: var(--bg2);
-  border: 2px solid var(--border2);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: border-color 0.3s;
-}
-
-.double-panel.active { border-color: var(--accent); }
-
-.double-left {
-  flex: 1;
-  text-align: left;
-}
-
-/* Single doubling reel cell */
-.dbl-reel-cell {
-  width: 84px;
-  height: 84px;
-  flex-shrink: 0;
-  background: var(--bg3);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.25s, box-shadow 0.25s;
-}
-
-.dbl-reel-cell svg { width: 72%; height: 72%; }
-
-.dbl-reel-cell.dbl-active { border-color: var(--accent); box-shadow: 0 0 12px rgba(255,146,56,0.3); }
-.dbl-reel-cell.dbl-win    { border-color: var(--green);  box-shadow: 0 0 12px rgba(31,168,85,0.4); }
-.dbl-reel-cell.dbl-lose   { border-color: var(--red);    box-shadow: 0 0 12px rgba(207,68,68,0.3); }
-
-.dbl-reel-cell.spinning svg { opacity: 0; }
-
-.dbl-reel-cell.spinning::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 38%;
-  height: 38%;
-  border: 3px solid var(--border2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin-wheel 0.35s linear infinite;
-}
-
-.double-eyebrow {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  font-family: var(--mono);
-  margin-bottom: 0.2rem;
-}
-
-.double-panel.active .double-eyebrow { color: var(--accent); }
-
-.double-stake {
-  font-size: 1.7rem;
-  font-weight: 800;
-  font-family: var(--mono);
-  color: var(--text);
-  margin-bottom: 0.15rem;
-  line-height: 1;
-}
-
-.double-question {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 0.6rem;
-}
-
-.double-btns {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-
-.dbl-choice {
-  padding: 0.5rem 1rem;
-  border: 2px solid var(--border2);
-  border-radius: 8px;
-  background: var(--bg3);
-  color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.12s;
-  font-family: var(--mono);
-}
-
-.dbl-choice:hover:not(:disabled) {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.dbl-choice:disabled { opacity: 0.5; cursor: default; }
-
-.dbl-choice:disabled { opacity: 0.3; cursor: not-allowed; }
-.dbl-choice:disabled:hover { border-color: var(--border2); color: var(--text); }
-.dbl-choice.correct { border-color: var(--green); background: rgba(31,168,85,0.12); color: var(--green); }
-.dbl-choice.wrong   { border-color: var(--red);   background: rgba(207,68,68,0.12);  color: var(--red); }
-
-.collect-btn {
-  padding: 0.45rem 1.25rem;
-  background: transparent;
-  border: 1px solid var(--border2);
-  border-radius: 7px;
-  color: var(--muted);
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: all 0.12s;
-}
-
-.collect-btn:hover { border-color: var(--text); color: var(--text); }
 
 /* Gameover panel */
 .gameover-panel {
@@ -756,21 +577,6 @@
     <button class="reset-btn" onclick="resetGame()">Play again (100 credits)</button>
   </div>
 
-  <!-- Doubling panel (always visible) -->
-  <div class="double-panel" id="double-panel">
-    <div class="double-left">
-      <div class="double-eyebrow">Doubling feature</div>
-      <div class="double-stake" id="dbl-stake">--</div>
-      <div class="double-question" id="dbl-question">Win to activate</div>
-      <div class="double-btns">
-        <button class="dbl-choice" id="btn-top"    onclick="doubleChoice('top')"    disabled>TOP SIDE &#9650;</button>
-        <button class="dbl-choice" id="btn-bottom" onclick="doubleChoice('bottom')" disabled>BOT SIDE &#9660;</button>
-      </div>
-      <button class="collect-btn" id="btn-collect" onclick="collectWin()" style="visibility:hidden">Collect win</button>
-    </div>
-    <div class="dbl-reel-cell" id="dbl-single-cell"></div>
-  </div>
-
   <!-- Slot machine -->
   <div class="machine-frame">
     <div class="machine-inner">
@@ -808,7 +614,7 @@
       <span class="paytable-arrow" id="pt-arrow">&#9660;</span>
     </div>
     <div class="paytable-body" id="pt-body">
-      <p class="paytable-intro">Match 3 identical components on any active line across the first 3 reels to win. Win = highest matching combination multiplied by the number of winning lines. LED and Resistor also pay for 2-match. The 4th reel is the doubling reel -- it only spins during the doubling feature.</p>
+      <p class="paytable-intro">Match 3 identical components on any active line to win. Win = highest matching combination multiplied by the number of winning lines. LED and Resistor also pay for 2-match.</p>
       <div class="pt-grid" id="pt-grid"></div>
       <div class="lines-info">
         <div class="lines-info-title">Win line patterns (3 reels x 3 rows)</div>
@@ -1029,66 +835,6 @@ var SYMMAP = {};
 SYMS.forEach(function(s) { SYMMAP[s.id] = s; });
 
 /* ============================================================
-   PCB DOUBLING REEL SYMBOLS (4th reel only)
-   ============================================================ */
-var PCB_Q_SVG =
-  '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">' +
-  '<rect x="7" y="7" width="46" height="46" rx="6" fill="#261e18" stroke="#ff9238" stroke-width="1.5" stroke-dasharray="5 3"/>' +
-  '<text x="30" y="40" text-anchor="middle" fill="#ff9238" font-size="30" font-family="monospace" font-weight="bold">?</text>' +
-  '</svg>';
-
-var PCB_TOP_SVG =
-  '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">' +
-  '<rect x="4" y="6" width="52" height="48" fill="#1a5c1a" rx="3"/>' +
-  '<rect x="4" y="6" width="52" height="5" fill="#3a8a3a" rx="3"/>' +
-  '<rect x="4" y="49" width="52" height="5" fill="#3a8a3a" rx="3"/>' +
-  '<rect x="9" y="14" width="14" height="9" fill="#c8961a" rx="1"/>' +
-  '<circle cx="11" cy="16" r="1.2" fill="#7a5500"/>' +
-  '<rect x="9" y="14" width="3" height="2" fill="#bbb" rx="0.5"/>' +
-  '<rect x="20" y="14" width="3" height="2" fill="#bbb" rx="0.5"/>' +
-  '<text x="16" y="21" text-anchor="middle" fill="#f0c050" font-size="4.5" font-family="monospace" font-weight="bold">IC</text>' +
-  '<rect x="28" y="14" width="18" height="6" fill="#6a3d8f" rx="1"/>' +
-  '<text x="37" y="19" text-anchor="middle" fill="#c8a0e8" font-size="4" font-family="monospace" font-weight="bold">MCU</text>' +
-  '<rect x="9" y="28" width="8" height="5" fill="#888" rx="1"/>' +
-  '<rect x="21" y="28" width="6" height="5" fill="#c0a060" rx="1"/>' +
-  '<rect x="31" y="28" width="22" height="5" fill="#1a5020" rx="1"/>' +
-  '<line x1="23" y1="23" x2="23" y2="28" stroke="#c8961a" stroke-width="1" opacity="0.6"/>' +
-  '<line x1="37" y1="20" x2="37" y2="28" stroke="#9b6bbf" stroke-width="1" opacity="0.6"/>' +
-  '<text x="30" y="45" text-anchor="middle" fill="#60e060" font-size="5.5" font-family="monospace" font-weight="bold">TOP SIDE</text>' +
-  '</svg>';
-
-var PCB_BOT_SVG =
-  '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">' +
-  '<rect x="4" y="6" width="52" height="48" fill="#0d3a0d" rx="3"/>' +
-  '<rect x="4" y="6" width="52" height="5" fill="#1e5c1e" rx="3"/>' +
-  '<rect x="4" y="49" width="52" height="5" fill="#1e5c1e" rx="3"/>' +
-  '<line x1="10" y1="18" x2="50" y2="18" stroke="#c8961a" stroke-width="2" opacity="0.8"/>' +
-  '<line x1="10" y1="28" x2="50" y2="28" stroke="#c8961a" stroke-width="1.5" opacity="0.8"/>' +
-  '<line x1="10" y1="38" x2="50" y2="38" stroke="#c8961a" stroke-width="1.5" opacity="0.8"/>' +
-  '<line x1="20" y1="14" x2="20" y2="42" stroke="#c8961a" stroke-width="1.5" opacity="0.8"/>' +
-  '<line x1="30" y1="14" x2="30" y2="42" stroke="#c8961a" stroke-width="1.5" opacity="0.8"/>' +
-  '<line x1="40" y1="14" x2="40" y2="42" stroke="#c8961a" stroke-width="1.5" opacity="0.8"/>' +
-  '<circle cx="20" cy="18" r="3" fill="#e0c060"/>' +
-  '<circle cx="30" cy="18" r="3" fill="#e0c060"/>' +
-  '<circle cx="40" cy="18" r="3" fill="#e0c060"/>' +
-  '<circle cx="20" cy="28" r="3" fill="#e0c060"/>' +
-  '<circle cx="30" cy="28" r="3" fill="#e0c060"/>' +
-  '<circle cx="40" cy="28" r="3" fill="#e0c060"/>' +
-  '<circle cx="20" cy="38" r="3" fill="#e0c060"/>' +
-  '<circle cx="30" cy="38" r="3" fill="#e0c060"/>' +
-  '<circle cx="40" cy="38" r="3" fill="#e0c060"/>' +
-  '<text x="30" y="45" text-anchor="middle" fill="#c8961a" font-size="5.5" font-family="monospace" font-weight="bold">BOT SIDE</text>' +
-  '</svg>';
-
-var PCB_EDGE_SVG =
-  '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">' +
-  '<rect x="24" y="6" width="12" height="48" fill="#1a5c1a" rx="2"/>' +
-  '<rect x="22" y="6" width="4" height="48" fill="#c8961a" rx="1"/>' +
-  '<rect x="34" y="6" width="4" height="48" fill="#c8961a" rx="1"/>' +
-  '<text x="30" y="55" text-anchor="middle" fill="#cf4444" font-size="5" font-family="monospace" font-weight="bold">EDGE</text>' +
-  '</svg>';
-
-/* ============================================================
    WIN LINES -- 3 reels (cols 0-2), 3 rows (rows 0-2)
    Row 0 = top, Row 1 = middle, Row 2 = bottom
    ============================================================ */
@@ -1152,12 +898,10 @@ var credits = 100;
 var personalBest = 0;
 var linesSelected = 5;
 var currentGrid = null;   /* 3x3 array of symbol ids (cols 0-2 only) */
-var gameState = 'idle';   /* idle | spinning | doubling */
+var gameState = 'idle';   /* idle | spinning */
 var currentWin = 0;
-var doubleCount = 0;
 var spinTimers = [];
 var framers = [null, null, null];
-var dblFramer = null;
 
 /* ============================================================
    INIT
@@ -1170,7 +914,6 @@ window.addEventListener('DOMContentLoaded', function() {
   setLines(5);
   currentGrid = generateGrid();
   renderGrid();
-  setDblReelIdle();
   var stored = parseFloat(localStorage.getItem('smtslots_best'));
   if (stored > 0) {
     personalBest = stored;
@@ -1194,24 +937,6 @@ function buildReels() {
     }
     reelsEl.appendChild(reel);
   }
-}
-
-function setDblReelIdle() {
-  var cell = document.getElementById('dbl-single-cell');
-  if (cell) { cell.innerHTML = PCB_Q_SVG; cell.className = 'dbl-reel-cell'; }
-  document.getElementById('double-panel').classList.remove('active');
-  document.getElementById('dbl-stake').textContent = '--';
-  document.getElementById('dbl-question').textContent = 'Win to activate';
-  var bt = document.getElementById('btn-top');
-  var bb = document.getElementById('btn-bottom');
-  bt.className = 'dbl-choice'; bt.disabled = true;
-  bb.className = 'dbl-choice'; bb.disabled = true;
-  document.getElementById('btn-collect').style.visibility = 'hidden';
-}
-
-function setDblReelSymbol(svg, cls) {
-  var cell = document.getElementById('dbl-single-cell');
-  if (cell) { cell.innerHTML = svg; cell.className = 'dbl-reel-cell ' + (cls || ''); }
 }
 
 function buildLineIndicators() {
@@ -1314,15 +1039,11 @@ function spin() {
   credits -= bet;
   updateCredits();
   clearHighlights();
-  setDblReelIdle();
   document.getElementById('gameover-panel').classList.remove('show');
   showMsg('Spinning...', 'msg-spin');
   document.getElementById('win-val').textContent = '--';
   document.getElementById('spin-btn').disabled = true;
   gameState = 'spinning';
-
-  /* Reset doubling reel to idle */
-  setDblReelIdle();
 
   /* Generate result ahead of time */
   currentGrid = generateGrid();
@@ -1429,7 +1150,6 @@ function resolveResult() {
   });
 
   currentWin = total;
-  doubleCount = 0;
   credits += total;
   updateCredits();
 
@@ -1442,7 +1162,7 @@ function resolveResult() {
   var desc = wins.map(function(w) { return w.desc; }).join(', ');
   showMsg('WIN! ' + desc, 'msg-win');
 
-  showDoublePanel();
+  setTimeout(checkGameOver, 1200);
 }
 
 function checkAllLines() {
@@ -1483,124 +1203,6 @@ function evalLine(syms, lineId, cells) {
 }
 
 /* ============================================================
-   DOUBLING FEATURE
-   Player guesses TOP or BOTTOM, then 4th reel spins and reveals.
-   ============================================================ */
-function showDoublePanel() {
-  document.getElementById('double-panel').classList.add('active');
-  document.getElementById('dbl-stake').textContent = currentWin + ' cr';
-  document.getElementById('dbl-question').textContent = 'Single-sided or double-sided PCB?';
-  var cell = document.getElementById('dbl-single-cell');
-  if (cell) { cell.innerHTML = PCB_Q_SVG; cell.className = 'dbl-reel-cell dbl-active'; }
-  var bt = document.getElementById('btn-top');
-  var bb = document.getElementById('btn-bottom');
-  bt.className = 'dbl-choice'; bt.disabled = false;
-  bb.className = 'dbl-choice'; bb.disabled = false;
-  document.getElementById('btn-collect').style.visibility = 'visible';
-}
-
-function spinDblReel(result, callback) {
-  /* Spin the 4th reel through PCB_TOP / PCB_BOT, then stop on result */
-  var idx = 0;
-  var frames = [PCB_TOP_SVG, PCB_BOT_SVG];
-  clearInterval(dblFramer);
-  setDblReelSymbol(PCB_TOP_SVG, 'dbl-active');
-  dblFramer = setInterval(function() {
-    idx = (idx + 1) % 2;
-    setDblReelSymbol(frames[idx], 'dbl-active');
-  }, 90);
-
-  setTimeout(function() {
-    clearInterval(dblFramer);
-    var svg, cls;
-    if (result === 'edge') {
-      svg = PCB_EDGE_SVG; cls = 'dbl-lose';
-    } else if (result === 'top') {
-      svg = PCB_TOP_SVG; cls = 'dbl-active';
-    } else {
-      svg = PCB_BOT_SVG; cls = 'dbl-active';
-    }
-    setDblReelSymbol(svg, cls);
-    callback();
-  }, 700);
-}
-
-function doubleChoice(choice) {
-  document.getElementById('btn-top').disabled = true;
-  document.getElementById('btn-bottom').disabled = true;
-  document.getElementById('btn-collect').style.visibility = 'hidden';
-  showMsg('Spinning...', 'msg-spin');
-
-  /* Determine result: 1% double-sided PCB edge = lose regardless */
-  var r = Math.random();
-  var result = r < 0.01 ? 'edge' : (Math.random() < 0.5 ? 'top' : 'bottom');
-
-  spinDblReel(result, function() {
-    if (result === 'edge') {
-      showMsg('PCB landed on its edge -- double-sided! Stake lost.', 'msg-lose');
-      credits -= currentWin;
-      currentWin = 0;
-      updateCredits();
-      document.getElementById('win-val').textContent = '--';
-      setTimeout(function() {
-        document.getElementById('double-panel').classList.remove('active');
-        setDblReelIdle();
-        checkGameOver();
-      }, 2500);
-      return;
-    }
-
-    /* Mark buttons correct/wrong */
-    document.getElementById('btn-' + result).className = 'dbl-choice correct';
-    document.getElementById('btn-' + (result === 'top' ? 'bottom' : 'top')).className = 'dbl-choice wrong';
-
-    /* Update reel cell class to show win/lose */
-    var reelCls = result === choice ? 'dbl-win' : 'dbl-lose';
-    setDblReelSymbol(result === 'top' ? PCB_TOP_SVG : PCB_BOT_SVG, reelCls);
-
-    var won = result === choice;
-    if (won) {
-      credits += currentWin;
-      currentWin = Math.round(currentWin * 2 * 10) / 10;
-      doubleCount++;
-      updateCredits();
-      document.getElementById('dbl-stake').textContent = currentWin + ' cr';
-      document.getElementById('win-val').textContent = currentWin + ' cr';
-
-      if (doubleCount >= 5) {
-        showMsg('Max doublings reached! Win collected.', 'msg-win');
-        setTimeout(function() {
-          document.getElementById('double-panel').classList.remove('active');
-          setDblReelIdle();
-          checkGameOver();
-        }, 2000);
-      } else {
-        showMsg('Correct! Doubled to ' + currentWin + ' cr. Double again?', 'msg-win');
-        setTimeout(showDoublePanel, 1600);
-      }
-    } else {
-      credits -= currentWin;
-      currentWin = 0;
-      updateCredits();
-      document.getElementById('win-val').textContent = '--';
-      showMsg('Wrong side. Doubling stake lost.', 'msg-lose');
-      setTimeout(function() {
-        document.getElementById('double-panel').classList.remove('active');
-        setDblReelIdle();
-        checkGameOver();
-      }, 2500);
-    }
-  });
-}
-
-function collectWin() {
-  document.getElementById('double-panel').classList.remove('active');
-  setDblReelIdle();
-  showMsg('Win collected: ' + currentWin + ' cr.', 'msg-win');
-  checkGameOver();
-}
-
-/* ============================================================
    UTILITIES
    ============================================================ */
 function updateCredits() {
@@ -1631,7 +1233,6 @@ function clearHighlights() {
 }
 
 function hidePanels() {
-  document.getElementById('double-panel').classList.remove('active');
   document.getElementById('gameover-panel').classList.remove('show');
 }
 
@@ -1654,7 +1255,6 @@ function resetGame() {
   currentGrid = generateGrid();
   renderGrid();
   clearHighlights();
-  setDblReelIdle();
 }
 
 function togglePaytable() {
