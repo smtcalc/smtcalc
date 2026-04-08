@@ -474,26 +474,45 @@
 
 .diag-dot.on { background: var(--accent); }
 
-/* Music toggle */
+/* Music selector */
 .music-bar {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   margin-top: 1.5rem;
 }
 
-.music-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
+.music-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--mono);
+  margin-right: 0.2rem;
+}
+
+.music-sel {
+  padding: 0.35rem 0.8rem;
   border-radius: 6px;
-  padding: 0.4rem 1.25rem;
+  border: 1.5px solid var(--border);
+  background: var(--bg3);
   color: var(--muted);
   font-family: var(--mono);
   font-size: 0.78rem;
   cursor: pointer;
-  letter-spacing: 0.08em;
+  transition: all 0.12s;
+  letter-spacing: 0.05em;
 }
 
-.music-btn:hover { background: var(--bg4); color: var(--text); }
-.music-btn.muted { color: var(--red); border-color: var(--red); }
+.music-sel:hover { background: var(--bg4); color: var(--text); }
+
+.music-sel.sel {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 700;
+}
 
 </style>
 </head>
@@ -508,12 +527,13 @@
   <div class="tool-hero-inner">
     <div class="hero-eyebrow">For entertainment only</div>
     <h1>SMT Slots</h1>
-    <p>A slot machine with electronic components instead of fruits. IC chips pay the jackpot. SMD resistors pay the least. Five win lines and a doubling feature. No real money involved.</p>
+    <p>A slot machine with electronic components instead of fruits. IC chips pay the jackpot. SMD resistors pay the least. Five win lines. No real money involved.</p>
   </div>
 </div>
 
 <main>
-<audio id="bg-music" src="smt_slots.mp3" loop preload="auto"></audio>
+<audio id="bg-music-1" src="smt_slots.mp3" loop preload="auto"></audio>
+<audio id="bg-music-2" src="Isan_Coinclock.mp3" loop preload="auto"></audio>
 
 <div class="game-wrap">
 
@@ -589,9 +609,12 @@
     </div>
   </div>
 
-  <!-- Music toggle -->
+  <!-- Music selector -->
   <div class="music-bar">
-    <button class="music-btn" id="music-btn" onclick="toggleMusic()">&#9834; <span id="music-state">OFF</span></button>
+    <span class="music-label">&#9834;</span>
+    <button class="music-sel" id="msel-1" onclick="setMusic(1)">Song 1</button>
+    <button class="music-sel" id="msel-2" onclick="setMusic(2)">Song 2</button>
+    <button class="music-sel sel" id="msel-off" onclick="setMusic(0)">Off</button>
   </div>
 
 </div>
@@ -620,45 +643,33 @@ function showContact() {
 /* ============================================================
    MUSIC
    ============================================================ */
-var musicStarted = false;
-var musicMuted = false;
+var musicActive = 0; /* 0=off, 1=song1, 2=song2 */
 
-function setMusicState(on) {
-  var btn = document.getElementById('music-btn');
-  var state = document.getElementById('music-state');
-  state.textContent = on ? 'ON' : 'OFF';
-  if (on) { btn.classList.remove('muted'); } else { btn.classList.add('muted'); }
+function setMusicSel(n) {
+  document.getElementById('msel-1').classList.toggle('sel', n === 1);
+  document.getElementById('msel-2').classList.toggle('sel', n === 2);
+  document.getElementById('msel-off').classList.toggle('sel', n === 0);
+}
+
+function setMusic(n) {
+  var a1 = document.getElementById('bg-music-1');
+  var a2 = document.getElementById('bg-music-2');
+  a1.pause();
+  a2.pause();
+  musicActive = n;
+  setMusicSel(n);
+  if (n === 0) return;
+  var audio = n === 1 ? a1 : a2;
+  audio.volume = 0.5;
+  audio.play().catch(function(e) { console.warn('SMT Slots: audio play failed:', e); });
 }
 
 function startMusic() {
-  if (musicStarted) return;
-  var audio = document.getElementById('bg-music');
+  if (musicActive === 0) return;
+  var audio = document.getElementById('bg-music-' + musicActive);
+  if (!audio.paused) return;
   audio.volume = 0.5;
-  audio.play().then(function() {
-    musicStarted = true;
-    musicMuted = false;
-    setMusicState(true);
-  }).catch(function(e) {
-    console.warn('SMT Slots: audio play failed:', e);
-  });
-}
-
-function toggleMusic() {
-  var audio = document.getElementById('bg-music');
-  if (!musicStarted) {
-    audio.volume = 0.5;
-    audio.play().then(function() {
-      musicStarted = true;
-      musicMuted = false;
-      setMusicState(true);
-    }).catch(function(e) {
-      console.warn('SMT Slots: audio play failed:', e);
-    });
-    return;
-  }
-  musicMuted = !musicMuted;
-  audio.muted = musicMuted;
-  setMusicState(!musicMuted);
+  audio.play().catch(function(e) { console.warn('SMT Slots: audio play failed:', e); });
 }
 
 /* ============================================================
