@@ -313,6 +313,20 @@
     .guide-verdict-chip.warn { background: rgba(255,117,43,0.15); color: var(--yellow); }
     .guide-verdict-chip.fail { background: rgba(207,68,68,0.15); color: var(--red); }
 
+    /* Remove spinner buttons from specific inputs */
+    #thickness::-webkit-outer-spin-button, #thickness::-webkit-inner-spin-button,
+    #length::-webkit-outer-spin-button,    #length::-webkit-inner-spin-button,
+    #width::-webkit-outer-spin-button,     #width::-webkit-inner-spin-button,
+    #scale-input::-webkit-outer-spin-button, #scale-input::-webkit-inner-spin-button,
+    #te-input::-webkit-outer-spin-button,  #te-input::-webkit-inner-spin-button,
+    #pad-count::-webkit-outer-spin-button, #pad-count::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+    #thickness, #length, #width, #scale-input, #te-input, #pad-count {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
     @media print {
       :root {
         --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
