@@ -294,37 +294,89 @@ Omit the guide banner entirely if no guide exists yet.
 
 ## 9. Main Tool Grid
 
-Two-column grid, max-width 960px. Panels are rounded cards with borders.
-Defined in style.css; add page-specific overrides inline only when needed.
+Two-column grid. Panels are flat tiles inside a framed container -- NOT floating rounded
+cards. The style.css defaults for `.tool-main` and `.panel` do not match the canonical
+look. **Every tool page must override these in its inline `<style>` block.**
 
 ```html
 <div class="tool-main">
 
   <div class="panel">
-    <span class="panel-label">Panel Title</span>
+    <div class="panel-label">Panel Title</div>
     <!-- content -->
   </div>
 
   <div class="panel">
-    <span class="panel-label">Panel Title</span>
+    <div class="panel-label">Panel Title</div>
     <!-- content -->
   </div>
 
   <div class="panel panel-full">
-    <span class="panel-label">Full Width Panel</span>
+    <div class="panel-label">Full Width Panel</div>
     <!-- content -->
   </div>
 
 </div>
 ```
 
-Key values from style.css:
-- Grid: 1fr 1fr, gap 1.5rem, padding 2.5rem 2rem 5rem
-- Panel: background --bg2, border 1px --border, border-radius 8px, padding 2rem
-- Panel label: Inter 700, 0.78rem, letter-spacing 0.1em, uppercase, --accent color,
-  bottom border 1px --border, margin-bottom 1.5rem
+**Required page-specific CSS overrides (copy into every tool's inline `<style>`):**
 
-On mobile (max-width 768px) the grid collapses to single column via style.css.
+```css
+.tool-main {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+@media (max-width: 680px) {
+  .tool-main { grid-template-columns: 1fr; margin: 1rem; padding: 0; }
+}
+
+.panel {
+  background: var(--bg2);
+  padding: 1.75rem;
+}
+
+.panel-full {
+  grid-column: 1 / -1;
+  background: var(--bg2);
+  padding: 1.75rem;
+}
+
+.panel-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.panel-label::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--accent);
+}
+```
+
+**Key rules:**
+- `gap: 1.5px` with `background: var(--border)` creates hairline separators between panels.
+  The outer `border: 1px solid var(--border)` frames the entire grid.
+- Panels have no individual border and no border-radius. Flat tiles only.
+- `panel-label` uses a `<div>`, not a `<span>`. It renders with a `::before` orange bar
+  instead of a bottom border. Do not add a border-bottom to panel-label.
+- Mobile breakpoint for this pattern is **680px**, not 768px.
+- The style.css `.panel` (border-radius 8px, individual border) is intentionally NOT used
+  for tool panels. It exists for other contexts only.
 
 ---
 
@@ -624,7 +676,7 @@ Tool file checklist:
 - [ ] Header with logo linking to `/` and `.tool-badge`
 - [ ] Tool hero: `.tool-hero` > `.tool-hero-inner` > `.hero-eyebrow` + `h1` + `p`
 - [ ] Guide banner if a guide URL is available
-- [ ] `.tool-main` grid with `.panel` and `.panel-full`
+- [ ] `.tool-main`, `.panel`, `.panel-full`, `.panel-label` overridden in inline `<style>` per Section 9 (flat tile pattern, NOT style.css defaults)
 - [ ] Print bar with report title input and `.print-btn`
 - [ ] `printReport()` function using hardcoded light-theme colors (#d4720a, #167a40, #c42b08)
 - [ ] `@media print` with `:root` light-theme override (inline, not in style.css)
