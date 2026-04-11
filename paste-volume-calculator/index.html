@@ -15,6 +15,52 @@
   <meta property="og:description" content="Calculate solder paste deposit volume, aperture volume, and estimated solder joint volume after reflow. Based on IPC-7525A area ratio and lead-free aperture guidelines.">
   <link rel="stylesheet" href="/style.css">
   <style>
+    /* Tool layout -- flat tiled panels matching Stencil Architect */
+    .tool-main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 680px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; padding: 0; }
+    }
+
+    .panel {
+      background: var(--bg2);
+      padding: 1.75rem;
+    }
+
+    .panel-full {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      padding: 1.75rem;
+    }
+
+    .panel-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-label::before {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: var(--accent);
+    }
+
     /* Shape toggle */
     .shape-toggle {
       display: flex;
@@ -503,7 +549,7 @@ Circular: AR = D / (4 x T)</div>
   <!-- LEFT COLUMN: INPUTS -->
 
   <div class="panel">
-    <span class="panel-label">Stencil</span>
+    <div class="panel-label">Stencil</div>
     <div class="field">
       <label for="thickness">Foil Thickness</label>
       <div class="input-wrap">
@@ -515,7 +561,7 @@ Circular: AR = D / (4 x T)</div>
   </div>
 
   <div class="panel">
-    <span class="panel-label">Aperture Shape &amp; Dimensions</span>
+    <div class="panel-label">Aperture Shape &amp; Dimensions</div>
 
     <div class="shape-toggle">
       <button id="btn-rect" class="active" onclick="setShape('rect')">Rectangular / Square</button>
@@ -565,7 +611,7 @@ Circular: AR = D / (4 x T)</div>
   </div>
 
   <div class="panel">
-    <span class="panel-label">Transfer Efficiency</span>
+    <div class="panel-label">Transfer Efficiency</div>
     <div class="field">
       <label for="te-slider">Transfer Efficiency (TE)</label>
       <div class="te-row">
@@ -578,7 +624,7 @@ Circular: AR = D / (4 x T)</div>
   </div>
 
   <div class="panel">
-    <span class="panel-label">Paste Properties</span>
+    <div class="panel-label">Paste Properties</div>
     <div class="field">
       <label for="mcv">Metal Content by Volume (MCV)</label>
       <select id="mcv" onchange="calculate()">
@@ -603,7 +649,7 @@ Circular: AR = D / (4 x T)</div>
   <!-- RESULTS -->
 
   <div class="panel panel-full" id="results-panel">
-    <span class="panel-label">Results</span>
+    <div class="panel-label">Results</div>
     <div class="results-empty" id="results-empty">Enter stencil thickness and aperture dimensions above to calculate.</div>
     <div id="results-content" style="display:none">
 
