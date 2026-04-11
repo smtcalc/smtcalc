@@ -16,40 +16,44 @@
 <link rel="stylesheet" href="/style.css">
 <style>
 
+  /* GUIDE WRAPPER */
   .tool-wrap {
-    max-width: 980px;
-    margin: 2rem auto;
-    padding: 0 2rem;
+    max-width: 960px;
+    margin: 0 auto;
   }
 
-  .panel-grid {
+  /* MAIN GRID */
+  .tool-main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5px;
     background: var(--border);
     border: 1px solid var(--border);
-    margin-bottom: 1.5px;
   }
-
-  .panel-grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1.5px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    margin-bottom: 1.5px;
-  }
-
-  .sc-full {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 1.75rem;
-    margin-bottom: 1.5px;
+  @media (max-width: 680px) {
+    .tool-main { grid-template-columns: 1fr; margin: 1rem; }
   }
 
   .panel {
     background: var(--bg2);
     padding: 1.75rem;
+    border: none;
+    border-radius: 0;
+  }
+
+  .panel-full {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    padding: 1.75rem;
+  }
+
+  /* Full-width sections inside tool-main */
+  .status-banner, .results-placeholder, .bake-table-wrap,
+  .info-grid, .assumption-note, .accordion {
+    grid-column: 1 / -1;
   }
 
   .panel-label {
@@ -419,53 +423,8 @@
 
   /* PRINT BAR */
   .print-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.75rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
     margin-bottom: 3rem;
-    flex-wrap: wrap;
   }
-  .print-bar label {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .print-bar input[type=text] {
-    flex: 1;
-    min-width: 200px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    padding: 0.55rem 0.9rem;
-    outline: none;
-  }
-  .print-bar input[type=text]:focus { border-color: var(--accent); }
-  .print-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.7rem 1.25rem;
-    min-height: 44px;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-  }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-
   /* PLACEHOLDER */
   .results-placeholder {
     padding: 3rem 2rem;
@@ -480,7 +439,7 @@
   }
 
   @media (max-width: 700px) {
-    .panel-grid, .panel-grid-3, .info-grid { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
     .tool-wrap { padding: 0 1rem; }
     .bake-table th, .bake-table td { padding: 0.6rem 0.65rem; }
   }
@@ -835,7 +794,7 @@
 
 <div class="tool-hero">
   <div class="tool-hero-inner">
-    <div class="hero-eyebrow">Component Handling</div>
+    <div class="hero-eyebrow">Component Handling / Moisture Management</div>
     <h1>MSL Bake Calculator</h1>
     <p>Calculate required bake time for moisture-sensitive components based on J-STD-033D. Enter the component MSL level, package thickness, and actual floor exposure to get drying times at all standard temperatures plus 60&deg;C for dry cabinet use.</p>
   </div>
@@ -1057,8 +1016,10 @@
 
   </div><!-- /.guide-content -->
 
-  <!-- INPUTS -->
-  <div class="panel-grid">
+</div><!-- /.tool-wrap -->
+
+<div class="tool-main">
+
 
     <!-- LEFT: Component -->
     <div class="panel">
@@ -1151,7 +1112,6 @@
       </div>
 
     </div>
-  </div>
 
   <!-- STATUS BANNER -->
   <div class="status-banner" id="statusBanner">
@@ -1301,14 +1261,13 @@
 
   </div><!-- end accordion -->
 
-  <!-- PRINT BAR -->
-  <div class="print-bar">
-    <label>Report Reference</label>
-    <input type="text" id="printRef" placeholder="e.g. Work Order 2026-0312, BGA U23, MSL 3">
-    <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
-  </div>
+</div><!-- /.tool-main -->
 
-</div><!-- end tool-wrap -->
+<div class="print-bar">
+  <label>Report Reference</label>
+  <input type="text" id="printRef" placeholder="e.g. Work Order 2026-0312, BGA U23, MSL 3">
+  <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
+</div>
 
 <script>
 function toggleAccordion(btn) {

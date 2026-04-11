@@ -17,36 +17,32 @@
   <style>
 
   /* LAYOUT */
-  .tool-wrap {
+  .tool-main {
     max-width: 960px;
-    margin: 0 auto;
-    padding: 0 2rem 3rem;
-  }
-
-  .main-grid {
+    margin: 2rem auto;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5px;
     background: var(--border);
     border: 1px solid var(--border);
-    margin-bottom: 1.5px;
   }
 
   @media (max-width: 680px) {
-    .tool-wrap { padding: 0 1rem 2rem; }
-    .main-grid { grid-template-columns: 1fr; }
+    .tool-main { grid-template-columns: 1fr; margin: 1rem; }
   }
 
   .panel {
     background: var(--bg2);
     padding: 1.75rem;
+    border: none;
+    border-radius: 0;
   }
 
   .panel-full {
+    grid-column: 1 / -1;
     background: var(--bg2);
     padding: 1.75rem;
-    border: 1px solid var(--border);
-    margin-bottom: 1.5px;
   }
 
   .panel-label {
@@ -264,7 +260,6 @@
   .inline-guide {
     max-width: 960px;
     margin: 2rem auto;
-    padding: 0 2rem;
   }
   @media (max-width: 680px) {
     .inline-guide { padding: 0 1rem; }
@@ -466,9 +461,7 @@
   </div>
 </div><!-- /.inline-guide -->
 
-<div class="tool-wrap">
-
-  <div class="main-grid">
+<div class="tool-main">
 
     <!-- LEFT: Inputs -->
     <div class="panel">
@@ -569,8 +562,6 @@
       </div>
     </div>
 
-  </div><!-- /.main-grid -->
-
   <!-- FULL WIDTH: Aperture -->
   <div class="panel-full">
     <div class="panel-label">Stencil Aperture</div>
@@ -579,7 +570,7 @@
     </div>
   </div>
 
-</div><!-- /.tool-wrap -->
+</div><!-- /.tool-main -->
 
 <div class="print-bar">
   <label>Report Title</label>

@@ -16,31 +16,30 @@
 <link rel="stylesheet" href="/style.css">
 <style>
 
-  /* MAIN WRAP */
-  .tool-wrap {
-    max-width: 900px;
+  /* MAIN GRID */
+  .tool-main {
+    max-width: 960px;
     margin: 2rem auto;
-    padding: 0 2rem;
-  }
-
-  /* PANEL GRID */
-  .main-grid {
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5px;
     background: var(--border);
     border: 1px solid var(--border);
-    margin-bottom: 1.5px;
+  }
+  @media (max-width: 680px) {
+    .tool-main { grid-template-columns: 1fr; margin: 1rem; }
   }
   .panel {
     background: var(--bg2);
     padding: 1.75rem;
+    border: none;
+    border-radius: 0;
   }
   .panel-full {
+    grid-column: 1 / -1;
     background: var(--bg2);
     padding: 1.75rem;
-    border: 1px solid var(--border);
-    margin-bottom: 1.5px;
   }
   .panel-label {
     font-family: 'Inter', sans-serif;
@@ -352,51 +351,7 @@
   }
 
   /* PRINT BAR */
-  .print-bar {
-    max-width: 900px;
-    margin: 0 auto 3rem;
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .print-bar label {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .print-bar input[type=text] {
-    flex: 1;
-    min-width: 200px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    padding: 0.55rem 0.9rem;
-    outline: none;
-  }
-  .print-bar input[type=text]:focus { border-color: var(--accent); }
-  .print-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.7rem 1.25rem;
-    min-height: 44px;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-  }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .print-bar { margin-bottom: 3rem; }
 
   /* FORMULA BLOCK */
   .formula-block {
@@ -446,10 +401,7 @@
   </div>
 </div>
 
-<div class="tool-wrap">
-
-  <!-- MAIN GRID: INPUTS + RESULTS -->
-  <div class="main-grid">
+<div class="tool-main">
 
     <!-- LEFT: INPUTS -->
     <div class="panel">
@@ -558,7 +510,6 @@
       </div>
 
     </div><!-- end results panel -->
-  </div><!-- end main grid -->
 
   <!-- FORMULA REFERENCE -->
   <div class="panel-full">
@@ -739,9 +690,9 @@
       </div>
     </div>
 
-  </div><!-- end accordion -->
+    </div><!-- end accordion -->
 
-</div><!-- end tool-wrap -->
+</div><!-- /.tool-main -->
 
 <!-- PRINT BAR -->
 <div class="print-bar">

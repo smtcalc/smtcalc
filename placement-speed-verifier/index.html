@@ -16,30 +16,37 @@
   <link rel="stylesheet" href="/style.css">
 <style>
 
+    /* GUIDE WRAPPER */
     .tool-wrap {
-      max-width: 980px;
-      margin: 2rem auto;
+      max-width: 960px;
+      margin: 0 auto;
       padding: 0 2rem;
     }
 
-    /* PANELS */
-    .panel-grid {
+    /* MAIN GRID */
+    .tool-main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.5px;
       background: var(--border);
       border: 1px solid var(--border);
-      margin-bottom: 1.5px;
     }
-
-    .sc-full {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      padding: 1.75rem;
-      margin-bottom: 1.5px;
+    @media (max-width: 680px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
     }
 
     .panel {
+      background: var(--bg2);
+      padding: 1.75rem;
+      border: none;
+      border-radius: 0;
+    }
+
+    .panel-full {
+      grid-column: 1 / -1;
       background: var(--bg2);
       padding: 1.75rem;
     }
@@ -276,7 +283,6 @@
 
     @media (max-width: 600px) {
       .results-grid { grid-template-columns: repeat(2, 1fr); }
-      .panel-grid { grid-template-columns: 1fr; }
     }
 
     .result-box {
@@ -474,55 +480,6 @@
       text-align: right;
     }
 
-    /* PRINT BAR */
-    .print-bar {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      padding: 1.25rem 0;
-      border-top: 1px solid var(--border);
-      margin-top: 1rem;
-    }
-
-    .print-bar label {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .print-bar input[type=text] {
-      flex: 1;
-      min-width: 200px;
-      background: var(--bg3);
-      border: 1px solid var(--border2);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.95rem;
-      padding: 0.55rem 0.9rem;
-      outline: none;
-    }
-    .print-bar input[type=text]:focus { border-color: var(--accent); }
-
-    .print-btn {
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--muted);
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.55rem 1.25rem;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-      white-space: nowrap;
-    }
-    .print-btn:hover { border-color: var(--accent); color: var(--accent); }
-
     @media (max-width: 640px) {
       .tool-wrap { padding: 0 1rem; }
     }
@@ -546,16 +503,15 @@
 
 <div class="tool-hero">
   <div class="tool-hero-inner">
-    <div class="hero-eyebrow">Placement / Performance</div>
+    <div class="hero-eyebrow">Pick and Place / Throughput</div>
     <h1>Placement Speed Verifier</h1>
     <p>Calculate the actual globally derated placement rate of your SMT line from real production data. Enter total placement time and your product mix to see the true CPH your line delivered, not the nameplate figure.</p>
   </div>
 </div>
 
-<div class="tool-wrap">
+<div class="tool-main">
 
   <!-- TIME + NAMEPLATE PANEL -->
-  <div class="panel-grid">
     <div class="panel">
       <div class="panel-label">Measurement Period</div>
       <div class="field">
@@ -590,10 +546,9 @@
         Derating % = (actual CPH / nameplate CPH) x 100. For a multi-machine line, use combined nameplate CPH so the comparison is meaningful. Typical real-world values range from 30% to 60% of nameplate speed.
       </div>
     </div>
-  </div>
 
   <!-- PRODUCT TABLE -->
-  <div class="sc-full">
+  <div class="panel-full">
     <div class="panel-label">Product Mix</div>
     <div style="overflow-x:auto">
       <table class="product-table">
@@ -615,7 +570,7 @@
   </div>
 
   <!-- RESULTS -->
-  <div class="sc-full" id="resultsPanel">
+  <div class="panel-full" id="resultsPanel">
     <div class="panel-label">Result Summary</div>
     <div class="results-grid">
       <div class="result-box primary">
@@ -684,13 +639,14 @@
       <div class="status-msg" id="statusMsg">Enter data above to see derating assessment.</div>
     </div>
 
-    <div class="print-bar">
-      <label>Report Label</label>
-      <input type="text" id="reportTitle" placeholder="e.g. Line 1 / 2026-03-08 / Shift A">
-      <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
-    </div>
   </div>
 
+</div><!-- /.tool-main -->
+
+<div class="print-bar">
+  <label>Report Label</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Line 1 / 2026-03-08 / Shift A">
+  <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
 </div>
 
 <script>

@@ -16,31 +16,36 @@
 <link rel="stylesheet" href="/style.css">
 <style>
 
-  /* WRAPPER */
+  /* GUIDE WRAPPER */
   .tool-wrap {
-    max-width: 980px;
-    margin: 2rem auto;
-    padding: 0 2rem;
+    max-width: 960px;
+    margin: 0 auto;
   }
 
-  /* PANELS */
-  .panel-grid {
+  /* MAIN GRID */
+  .tool-main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5px;
     background: var(--border);
     border: 1px solid var(--border);
-    margin-bottom: 1.5px;
   }
-
-  .sc-full {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 1.75rem;
-    margin-bottom: 1.5px;
+  @media (max-width: 680px) {
+    .tool-main { grid-template-columns: 1fr; margin: 1rem; }
   }
 
   .panel {
+    background: var(--bg2);
+    padding: 1.75rem;
+    border: none;
+    border-radius: 0;
+  }
+
+  .panel-full {
+    grid-column: 1 / -1;
     background: var(--bg2);
     padding: 1.75rem;
   }
@@ -303,7 +308,6 @@
 
   @media (max-width: 600px) {
     .results-grid { grid-template-columns: repeat(2, 1fr); }
-    .panel-grid { grid-template-columns: 1fr; }
   }
 
   .result-box {
@@ -480,55 +484,6 @@
   .status-msg.ok   { border-left-color: var(--green); color: var(--muted); }
   .status-msg.warn { border-left-color: var(--yellow); color: var(--muted); }
   .status-msg.over { border-left-color: var(--red); color: var(--muted); }
-
-  /* PRINT BAR */
-  .print-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--border);
-    margin-top: 1rem;
-  }
-
-  .print-bar label {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .print-bar input[type=text] {
-    flex: 1;
-    min-width: 200px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    padding: 0.55rem 0.9rem;
-    outline: none;
-  }
-  .print-bar input[type=text]:focus { border-color: var(--accent); }
-
-  .print-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.55rem 1.25rem;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
-  }
-  .print-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   /* INLINE GUIDE */
   .guide-toggle-btn {
@@ -1018,8 +973,11 @@
 
   </div><!-- /.guide-content -->
 
+</div><!-- /.tool-wrap -->
+
+<div class="tool-main">
+
   <!-- LINE PARAMS + SHIFT -->
-  <div class="panel-grid">
     <div class="panel">
       <div class="panel-label">Line Parameters</div>
       <div class="field">
@@ -1059,10 +1017,9 @@
         No material cost, overhead, or labour is deducted. Use for capacity planning and top-line scheduling - not margin analysis.
       </div>
     </div>
-  </div>
 
   <!-- PRODUCT MIX -->
-  <div class="sc-full">
+  <div class="panel-full">
     <div class="panel-label">Product Mix</div>
     <div class="product-table-wrap">
     <table class="product-table">
@@ -1084,7 +1041,7 @@
   </div>
 
   <!-- RESULTS -->
-  <div class="sc-full" id="resultsPanel">
+  <div class="panel-full" id="resultsPanel">
     <div class="panel-label">Line Summary</div>
     <div class="results-grid">
       <div class="result-box primary">
@@ -1152,13 +1109,14 @@
     </div>
     <div class="status-msg" id="statusMsg">Enter parameters above to evaluate line capacity.</div>
 
-    <div class="print-bar">
-      <label>Report Title</label>
-      <input type="text" id="reportTitle" placeholder="e.g. Q2 2026 Capacity Plan">
-      <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
-    </div>
   </div>
 
+</div><!-- /.tool-main -->
+
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Q2 2026 Capacity Plan">
+  <button class="print-btn" onclick="printReport()">&#x2399; Print Report</button>
 </div>
 
 <script>

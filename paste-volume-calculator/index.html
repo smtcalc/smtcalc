@@ -19,7 +19,7 @@
     .tool-main {
       max-width: 960px;
       margin: 2rem auto;
-      padding: 2rem;
+      padding: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.5px;
@@ -27,12 +27,14 @@
       border: 1px solid var(--border);
     }
     @media (max-width: 680px) {
-      .tool-main { grid-template-columns: 1fr; margin: 1rem; padding: 0; }
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
     }
 
     .panel {
       background: var(--bg2);
       padding: 1.75rem;
+      border: none;
+      border-radius: 0;
     }
 
     .panel-full {
@@ -248,7 +250,6 @@
     .inline-guide {
       max-width: 960px;
       margin: 2rem auto 2rem;
-      padding: 0 2rem;
     }
 
     .guide-toggle-btn {
