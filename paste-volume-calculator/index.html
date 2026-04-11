@@ -103,6 +103,40 @@
       color: var(--muted);
     }
 
+    /* Aperture scale factor */
+    .scale-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .scale-row input[type=range] {
+      flex: 1;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .scale-val-display {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      min-width: 3.5rem;
+      text-align: right;
+    }
+    .scale-val-display.reduce { color: var(--red); }
+    .scale-val-display.enlarge { color: var(--green); }
+    .scale-val-display.neutral { color: var(--muted); }
+    .scaled-dims {
+      display: none;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.8;
+    }
+    .scaled-dims span { color: var(--text); }
+
     /* TE slider row */
     .te-row {
       display: flex;
@@ -361,8 +395,8 @@ Circular: AR = D / (4 x T)</div>
           <div class="guide-step">
             <div class="guide-step-num">2</div>
             <div class="guide-step-text">
-              <h4>Enter aperture dimensions</h4>
-              <p>Enter the actual aperture cut in the stencil, not the PCB pad size. For lead-free paste, IPC-7525A recommends near 1:1 aperture-to-pad ratio for most components. A small reduction (0.025-0.05 mm per side) is acceptable.</p>
+              <h4>Enter pad dimensions and set the scale factor</h4>
+              <p>Enter the PCB land pad dimensions from your layout. The aperture scale factor then converts them to the actual aperture cut in the stencil. 100% means a 1:1 aperture-to-pad ratio, which is the IPC-7525A recommendation for most lead-free components. Fine-pitch ICs typically use 80-90%. BGAs usually stay at 100%. The calculator shows the resulting aperture size before you commit.</p>
             </div>
           </div>
           <div class="guide-step">
@@ -421,31 +455,43 @@ Circular: AR = D / (4 x T)</div>
 
     <div id="dim-rect" class="visible">
       <div class="field">
-        <label for="length">Aperture Length</label>
+        <label for="length">Pad Length</label>
         <div class="input-wrap">
           <input type="number" id="length" min="0.05" max="20" step="0.01" placeholder="0.50" oninput="calculate()">
           <span class="input-unit">mm</span>
         </div>
       </div>
       <div class="field">
-        <label for="width">Aperture Width</label>
+        <label for="width">Pad Width</label>
         <div class="input-wrap">
           <input type="number" id="width" min="0.05" max="20" step="0.01" placeholder="0.30" oninput="calculate()">
           <span class="input-unit">mm</span>
         </div>
       </div>
-      <div class="field-note">Enter the actual aperture cut in the stencil. For lead-free design, this is typically 1:1 with the PCB pad (minor reduction of 0.025-0.05 mm per side is acceptable per IPC-7525A).</div>
     </div>
 
     <div id="dim-circle">
       <div class="field">
-        <label for="diameter">Aperture Diameter</label>
+        <label for="diameter">Pad Diameter</label>
         <div class="input-wrap">
           <input type="number" id="diameter" min="0.05" max="20" step="0.01" placeholder="0.40" oninput="calculate()">
           <span class="input-unit">mm</span>
         </div>
       </div>
-      <div class="field-note">Circular apertures are common for BGA and CSP pads. For lead-free, IPC-7525A recommends no reduction vs. the pad land diameter for standard BGAs.</div>
+    </div>
+
+    <div class="field">
+      <label for="scale-slider">Aperture Scale Factor</label>
+      <div class="scale-row">
+        <input type="range" id="scale-slider" min="70" max="120" step="1" value="100" oninput="syncScale('slider')">
+        <span class="scale-val-display neutral" id="scale-display">0%</span>
+      </div>
+      <div class="input-wrap" style="margin-bottom:0.4rem">
+        <input type="number" id="scale-input" min="70" max="120" step="1" value="100" oninput="syncScale('input')">
+        <span class="input-unit">%</span>
+      </div>
+      <div class="scaled-dims" id="scaled-dims-box"></div>
+      <div class="field-note">Enter the PCB pad dimensions above. The scale factor converts them to the actual aperture cut in the stencil. 100% = 1:1 (recommended for lead-free per IPC-7525A). Fine-pitch components typically use 80-90%. BGAs usually stay at 100%.</div>
     </div>
   </div>
 
@@ -564,6 +610,24 @@ function setShape(s) {
   calculate();
 }
 
+function syncScale(source) {
+  var slider  = document.getElementById('scale-slider');
+  var input   = document.getElementById('scale-input');
+  var display = document.getElementById('scale-display');
+  if (source === 'slider') {
+    input.value = slider.value;
+  } else {
+    var v = Math.min(120, Math.max(70, parseInt(input.value) || 100));
+    input.value = v;
+    slider.value = v;
+  }
+  var pct  = parseInt(input.value) || 100;
+  var diff = pct - 100;
+  display.textContent = diff === 0 ? '0%' : (diff > 0 ? '+' + diff + '%' : diff + '%');
+  display.className = 'scale-val-display ' + (diff < 0 ? 'reduce' : diff > 0 ? 'enlarge' : 'neutral');
+  calculate();
+}
+
 function syncTE(v) {
   document.getElementById('te-display').textContent = v + '%';
   document.getElementById('te-input').value = v;
@@ -590,26 +654,38 @@ function calculate() {
   var MCV = parseFloat(document.getElementById('mcv').value);
   var pads = parseInt(document.getElementById('pad-count').value);
 
-  var L, W, D;
+  var scalePct = parseInt(document.getElementById('scale-input').value) || 100;
+  var scaleFactor = scalePct / 100;
+
+  var L_nom, W_nom, D_nom, L, W, D;
   var V_ap, AR, ASP;
 
   if (currentShape === 'rect') {
-    L = parseFloat(document.getElementById('length').value);
-    W = parseFloat(document.getElementById('width').value);
-    if (isNaN(T) || isNaN(L) || isNaN(W) || T <= 0 || L <= 0 || W <= 0) {
+    L_nom = parseFloat(document.getElementById('length').value);
+    W_nom = parseFloat(document.getElementById('width').value);
+    if (isNaN(T) || isNaN(L_nom) || isNaN(W_nom) || T <= 0 || L_nom <= 0 || W_nom <= 0) {
       showEmpty(); return;
     }
+    L = L_nom * scaleFactor;
+    W = W_nom * scaleFactor;
     V_ap = L * W * T * 1000; // nL (1 mm^3 = 1000 nL)
     AR = (L * W) / (2 * (L + W) * T);
     ASP = Math.min(L, W) / T;
+    var dimsBox = document.getElementById('scaled-dims-box');
+    dimsBox.style.display = 'block';
+    dimsBox.innerHTML = 'Pad: <span>' + L_nom.toFixed(3) + ' x ' + W_nom.toFixed(3) + ' mm</span> &#8594; Aperture: <span>' + L.toFixed(3) + ' x ' + W.toFixed(3) + ' mm</span>';
   } else {
-    D = parseFloat(document.getElementById('diameter').value);
-    if (isNaN(T) || isNaN(D) || T <= 0 || D <= 0) {
+    D_nom = parseFloat(document.getElementById('diameter').value);
+    if (isNaN(T) || isNaN(D_nom) || T <= 0 || D_nom <= 0) {
       showEmpty(); return;
     }
+    D = D_nom * scaleFactor;
     V_ap = Math.PI * Math.pow(D / 2, 2) * T * 1000; // nL
     AR = D / (4 * T);
     ASP = null;
+    var dimsBox = document.getElementById('scaled-dims-box');
+    dimsBox.style.display = 'block';
+    dimsBox.innerHTML = 'Pad: <span>' + D_nom.toFixed(3) + ' mm</span> &#8594; Aperture: <span>' + D.toFixed(3) + ' mm</span>';
   }
 
   if (isNaN(TE) || TE <= 0) { showEmpty(); return; }
@@ -724,13 +800,22 @@ function printReport() {
   var mcv  = document.getElementById('mcv');
   var pads = document.getElementById('pad-count').value;
 
+  var scalePct  = parseInt(document.getElementById('scale-input').value) || 100;
+  var scaleFactor = scalePct / 100;
+
   var shapeStr, dimStr;
   if (currentShape === 'circle') {
     shapeStr = 'Circular';
-    dimStr = 'Diameter: ' + (document.getElementById('diameter').value || '--') + ' mm';
+    var dNom = parseFloat(document.getElementById('diameter').value);
+    var dAp  = (dNom * scaleFactor).toFixed(3);
+    dimStr = 'Pad D: ' + (dNom || '--') + ' mm  /  Aperture D: ' + dAp + ' mm  (' + scalePct + '%)';
   } else {
     shapeStr = 'Rectangular';
-    dimStr = 'L: ' + (document.getElementById('length').value || '--') + ' mm  x  W: ' + (document.getElementById('width').value || '--') + ' mm';
+    var lNom = parseFloat(document.getElementById('length').value);
+    var wNom = parseFloat(document.getElementById('width').value);
+    var lAp  = (lNom * scaleFactor).toFixed(3);
+    var wAp  = (wNom * scaleFactor).toFixed(3);
+    dimStr = 'Pad: ' + (lNom || '--') + ' x ' + (wNom || '--') + ' mm  /  Aperture: ' + lAp + ' x ' + wAp + ' mm  (' + scalePct + '%)';
   }
 
   var arEl    = document.getElementById('r-ar');
