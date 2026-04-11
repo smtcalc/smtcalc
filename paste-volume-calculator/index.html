@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solder Paste Volume Calculator - SMTCalc</title>
+  <meta name="description" content="Calculate solder paste deposit volume, aperture volume, and estimated solder joint volume after reflow. Based on IPC-7525A area ratio and lead-free aperture guidelines.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/paste-volume-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/paste-volume-calculator/">
+  <meta property="og:title" content="Solder Paste Volume Calculator - SMTCalc">
+  <meta property="og:description" content="Calculate solder paste deposit volume, aperture volume, and estimated solder joint volume after reflow. Based on IPC-7525A area ratio and lead-free aperture guidelines.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Shape toggle */
+    .shape-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .shape-toggle button {
+      flex: 1;
+      background: var(--bg3);
+      color: var(--muted);
+      border: none;
+      border-right: 1px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.6rem 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .shape-toggle button:last-child { border-right: none; }
+    .shape-toggle button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .shape-toggle button:not(.active):hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    #dim-circle { display: none; }
+    #dim-circle.visible { display: block; }
+    #dim-rect { display: none; }
+    #dim-rect.visible { display: block; }
+
+    /* AR verdict block */
+    .verdict-block {
+      border-left: 3px solid var(--border2);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      background: var(--bg3);
+    }
+    .verdict-block.pass { border-left-color: var(--green); }
+    .verdict-block.warn { border-left-color: var(--yellow); }
+    .verdict-block.fail { border-left-color: var(--red); }
+
+    .verdict-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+    .verdict-title.pass { color: var(--green); }
+    .verdict-title.warn { color: var(--yellow); }
+    .verdict-title.fail { color: var(--red); }
+
+    .verdict-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Progress bar */
+    .bar-wrap { margin-bottom: 1rem; }
+    .bar-track {
+      height: 6px;
+      background: var(--bg4);
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .bar-fill.pass { background: var(--green); }
+    .bar-fill.warn { background: var(--yellow); }
+    .bar-fill.fail { background: var(--red); }
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* TE slider row */
+    .te-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .te-row input[type=range] {
+      flex: 1;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .te-value {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: var(--text);
+      min-width: 3.5rem;
+      text-align: right;
+    }
+    .te-number-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+      outline: none;
+      margin-top: 0.4rem;
+    }
+    .te-number-input:focus { border-color: var(--accent); }
+
+    /* Metal content select */
+    .field select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      padding: 0.6rem 0.9rem;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field select:focus { border-color: var(--accent); }
+
+    /* Note box (advisory/informational notes in results) */
+    .note-box {
+      background: rgba(255,146,56,0.08);
+      border: 1px solid rgba(255,146,56,0.25);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 0.75rem;
+    }
+    .note-box strong { color: var(--text); }
+
+    /* Guide wrapper */
+    .guide-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem 1rem;
+    }
+
+    /* Guide inner content */
+    .guide-section { margin-bottom: 1.5rem; }
+    .guide-section:last-child { margin-bottom: 0; }
+
+    .guide-section-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .guide-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .guide-two-col { grid-template-columns: 1fr; }
+    }
+
+    .guide-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.1rem;
+    }
+
+    .guide-card-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.83rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .guide-formula {
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      color: var(--accent);
+      background: var(--bg4);
+      padding: 0.45rem 0.7rem;
+      margin-bottom: 0.6rem;
+      border-radius: 3px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+
+    .guide-card-body {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .guide-step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      align-items: flex-start;
+    }
+    .guide-step-num {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .guide-step-text { flex: 1; }
+    .guide-step-text h4 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .guide-step-text p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .guide-verdict-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .guide-verdict-chip {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+    }
+    .guide-verdict-chip.pass { background: rgba(31,168,85,0.15); color: var(--green); }
+    .guide-verdict-chip.warn { background: rgba(255,117,43,0.15); color: var(--yellow); }
+    .guide-verdict-chip.fail { background: rgba(207,68,68,0.15); color: var(--red); }
+
+    @media print {
+      :root {
+        --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
+        --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
+        --accent: #c07000;
+      }
+      .guide-wrap, .print-bar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Paste Volume Calculator</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="hero-eyebrow">Stencil / Paste Process</div>
+    <h1>Solder Paste Volume Calculator</h1>
+    <p>Calculate aperture volume, paste deposit volume after transfer efficiency, and estimated solder volume after reflow. Includes IPC-7525A area ratio verdict and lead-free aperture reduction guidance.</p>
+  </div>
+</div>
+
+<div class="guide-wrap">
+  <div class="accordion">
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        How This Calculator Works
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="accordion-content">
+
+        <div class="guide-section">
+          <div class="guide-section-title">01 -- The Calculation Chain</div>
+          <div class="guide-two-col">
+            <div class="guide-card">
+              <div class="guide-card-title">Step 1: Aperture Volume</div>
+              <div class="guide-formula">Rectangular: V_ap = L x W x T
+Circular: V_ap = pi x (D/2)^2 x T</div>
+              <div class="guide-card-body">The theoretical volume of paste the aperture can hold if filled 100%. L, W, and D are the actual aperture dimensions. T is stencil foil thickness.</div>
+            </div>
+            <div class="guide-card">
+              <div class="guide-card-title">Step 2: Paste Deposit Volume</div>
+              <div class="guide-formula">V_deposit = V_ap x (TE / 100)</div>
+              <div class="guide-card-body">Transfer efficiency (TE) is the ratio of actual deposited volume to aperture volume. A well-designed aperture with area ratio above 0.66 typically achieves 85-100% TE. Below 0.66 it becomes erratic.</div>
+            </div>
+            <div class="guide-card">
+              <div class="guide-card-title">Step 3: Solder Volume After Reflow</div>
+              <div class="guide-formula">V_solder = V_deposit x MCV</div>
+              <div class="guide-card-body">Flux vehicle evaporates during reflow. What remains is the metal. Metal content by volume (MCV) is typically 45-55% for standard pastes. This is the actual solder volume forming the joint.</div>
+            </div>
+            <div class="guide-card">
+              <div class="guide-card-title">Area Ratio (IPC-7525A)</div>
+              <div class="guide-formula">AR = (L x W) / (2 x (L+W) x T)
+Circular: AR = D / (4 x T)</div>
+              <div class="guide-card-body">Compares aperture opening area to sidewall area. Above 0.66, paste releases to the pad. Below 0.66, it tends to stick to the walls. IPC-7525A minimum is 0.66 for both laser and electroform stencils.
+              <div class="guide-verdict-row">
+                <span class="guide-verdict-chip fail">&lt;0.50 Unreliable</span>
+                <span class="guide-verdict-chip warn">0.50-0.65 Marginal</span>
+                <span class="guide-verdict-chip pass">&ge;0.66 Reliable</span>
+              </div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">02 -- How To Use It</div>
+          <div class="guide-step">
+            <div class="guide-step-num">1</div>
+            <div class="guide-step-text">
+              <h4>Enter stencil thickness</h4>
+              <p>Use the actual foil thickness ordered from your stencil supplier. Standard values: 0.10, 0.12, 0.15, 0.20 mm. For mixed assemblies with fine-pitch components, this is typically 0.10 or 0.12 mm.</p>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">2</div>
+            <div class="guide-step-text">
+              <h4>Enter aperture dimensions</h4>
+              <p>Enter the actual aperture cut in the stencil, not the PCB pad size. For lead-free paste, IPC-7525A recommends near 1:1 aperture-to-pad ratio for most components. A small reduction (0.025-0.05 mm per side) is acceptable.</p>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">3</div>
+            <div class="guide-step-text">
+              <h4>Set transfer efficiency</h4>
+              <p>If you have SPI data, use your measured average TE. Without SPI data, use 90% as a starting estimate for a well-tuned process with area ratio above 0.66. Drop this toward 70-75% if you have marginal area ratios or known print issues.</p>
+            </div>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">4</div>
+            <div class="guide-step-text">
+              <h4>Select metal content by volume</h4>
+              <p>Check your paste datasheet. Most standard lead-free pastes are 88-92% metal by weight, which corresponds to roughly 47-52% by volume depending on alloy density. If you are unsure, use the 50% default.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">03 -- Limitations</div>
+          <div class="guide-card">
+            <div class="guide-card-body">
+              This calculator gives geometric estimates. Real deposited volume is influenced by paste rheology, squeegee parameters, stencil coating, board surface finish, print speed, and separation speed. None of those are modeled here. The solder volume after reflow figure does not account for copper dissolution from the pad, intermetallic compound formation, or wetting angle effects on fillet shape. Use these numbers as a process design starting point and a sanity check, not as a substitute for SPI measurement and actual joint cross-section analysis.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tool-main">
+
+  <!-- LEFT COLUMN: INPUTS -->
+
+  <div class="panel">
+    <span class="panel-label">Stencil</span>
+    <div class="field">
+      <label for="thickness">Foil Thickness</label>
+      <div class="input-wrap">
+        <input type="number" id="thickness" min="0.05" max="0.50" step="0.01" placeholder="0.12" oninput="calculate()">
+        <span class="input-unit">mm</span>
+      </div>
+      <div class="field-note">Typical range: 0.10-0.20 mm. Verify against your stencil order confirmation.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <span class="panel-label">Aperture Shape &amp; Dimensions</span>
+
+    <div class="shape-toggle">
+      <button id="btn-rect" class="active" onclick="setShape('rect')">Rectangular / Square</button>
+      <button id="btn-circle" onclick="setShape('circle')">Circular</button>
+    </div>
+
+    <div id="dim-rect" class="visible">
+      <div class="field">
+        <label for="length">Aperture Length</label>
+        <div class="input-wrap">
+          <input type="number" id="length" min="0.05" max="20" step="0.01" placeholder="0.50" oninput="calculate()">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="width">Aperture Width</label>
+        <div class="input-wrap">
+          <input type="number" id="width" min="0.05" max="20" step="0.01" placeholder="0.30" oninput="calculate()">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <div class="field-note">Enter the actual aperture cut in the stencil. For lead-free design, this is typically 1:1 with the PCB pad (minor reduction of 0.025-0.05 mm per side is acceptable per IPC-7525A).</div>
+    </div>
+
+    <div id="dim-circle">
+      <div class="field">
+        <label for="diameter">Aperture Diameter</label>
+        <div class="input-wrap">
+          <input type="number" id="diameter" min="0.05" max="20" step="0.01" placeholder="0.40" oninput="calculate()">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <div class="field-note">Circular apertures are common for BGA and CSP pads. For lead-free, IPC-7525A recommends no reduction vs. the pad land diameter for standard BGAs.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <span class="panel-label">Transfer Efficiency</span>
+    <div class="field">
+      <label for="te-slider">Transfer Efficiency (TE)</label>
+      <div class="te-row">
+        <input type="range" id="te-slider" min="40" max="130" value="90" step="1" oninput="syncTE(this.value)">
+        <span class="te-value" id="te-display">90%</span>
+      </div>
+      <input type="number" id="te-input" class="te-number-input" min="40" max="130" step="1" value="90" oninput="syncTEInput(this.value)" placeholder="90">
+      <div class="field-note">Typical range: 85-100% for AR &ge; 0.66. Below 0.66 AR, TE drops toward 60-80% and becomes inconsistent. IPC allows 50-150% (40-140% for fine features). Use your SPI average if available.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <span class="panel-label">Paste Properties</span>
+    <div class="field">
+      <label for="mcv">Metal Content by Volume (MCV)</label>
+      <select id="mcv" onchange="calculate()">
+        <option value="0.45">45% -- low metal load / fine powder paste</option>
+        <option value="0.47">47% -- typical Type 4 or 5 paste</option>
+        <option value="0.50" selected>50% -- standard lead-free paste (default)</option>
+        <option value="0.52">52% -- high metal load paste</option>
+        <option value="0.55">55% -- very high metal load paste</option>
+      </select>
+      <div class="field-note">Most standard SAC305 pastes are 88-92% metal by weight, approximately 47-52% by volume. Check your paste datasheet. IPC-HDBK-001H states 24-45% by volume for the general range; higher-load modern pastes commonly reach 50-55%.</div>
+    </div>
+    <div class="field">
+      <label for="pad-count">Number of Pads (optional)</label>
+      <div class="input-wrap">
+        <input type="number" id="pad-count" min="1" max="10000" step="1" placeholder="2" oninput="calculate()">
+        <span class="input-unit">pads</span>
+      </div>
+      <div class="field-note">Enter to get totals per component. Leave blank for single-pad results only.</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+
+  <div class="panel panel-full" id="results-panel">
+    <span class="panel-label">Results</span>
+    <div class="results-empty" id="results-empty">Enter stencil thickness and aperture dimensions above to calculate.</div>
+    <div id="results-content" style="display:none">
+
+      <div class="verdict-block" id="ar-verdict">
+        <div class="verdict-title" id="ar-verdict-title">--</div>
+        <div class="verdict-desc" id="ar-verdict-desc">--</div>
+      </div>
+
+      <div class="bar-wrap">
+        <div class="bar-track"><div class="bar-fill" id="ar-bar" style="width:0%"></div></div>
+        <div class="bar-labels"><span>0</span><span>&#9650; 0.66 threshold</span><span>1.0+</span></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Area Ratio</div>
+          <div class="stat-value" id="r-ar">--</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Aspect Ratio</div>
+          <div class="stat-value" id="r-asp">--</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Aperture Volume</div>
+          <div class="stat-value" id="r-vap">--<span class="stat-unit"> nL</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Paste Deposit</div>
+          <div class="stat-value" id="r-vdep">--<span class="stat-unit"> nL</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Solder After Reflow</div>
+          <div class="stat-value" id="r-vsol">--<span class="stat-unit"> nL</span></div>
+        </div>
+        <div class="stat-box" id="stat-total-box" style="display:none">
+          <div class="stat-label">Total per Component</div>
+          <div class="stat-value" id="r-vtotal">--<span class="stat-unit"> nL</span></div>
+        </div>
+      </div>
+
+      <div class="note-box" id="r-notes"></div>
+
+    </div>
+  </div>
+
+</div><!-- /.tool-main -->
+
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. 0402 paste volume check -- product X">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+var currentShape = 'rect';
+
+function setShape(s) {
+  currentShape = s;
+  document.getElementById('btn-rect').classList.toggle('active', s === 'rect');
+  document.getElementById('btn-circle').classList.toggle('active', s === 'circle');
+  document.getElementById('dim-rect').classList.toggle('visible', s === 'rect');
+  document.getElementById('dim-circle').classList.toggle('visible', s === 'circle');
+  calculate();
+}
+
+function syncTE(v) {
+  document.getElementById('te-display').textContent = v + '%';
+  document.getElementById('te-input').value = v;
+  calculate();
+}
+
+function syncTEInput(v) {
+  var n = parseFloat(v);
+  if (!isNaN(n) && n >= 40 && n <= 130) {
+    document.getElementById('te-slider').value = n;
+    document.getElementById('te-display').textContent = n + '%';
+  }
+  calculate();
+}
+
+function fmt(v, dec) {
+  if (isNaN(v)) return '--';
+  return v.toFixed(dec);
+}
+
+function calculate() {
+  var T = parseFloat(document.getElementById('thickness').value);
+  var TE = parseFloat(document.getElementById('te-input').value) / 100;
+  var MCV = parseFloat(document.getElementById('mcv').value);
+  var pads = parseInt(document.getElementById('pad-count').value);
+
+  var L, W, D;
+  var V_ap, AR, ASP;
+
+  if (currentShape === 'rect') {
+    L = parseFloat(document.getElementById('length').value);
+    W = parseFloat(document.getElementById('width').value);
+    if (isNaN(T) || isNaN(L) || isNaN(W) || T <= 0 || L <= 0 || W <= 0) {
+      showEmpty(); return;
+    }
+    V_ap = L * W * T * 1000; // nL (1 mm^3 = 1000 nL)
+    AR = (L * W) / (2 * (L + W) * T);
+    ASP = Math.min(L, W) / T;
+  } else {
+    D = parseFloat(document.getElementById('diameter').value);
+    if (isNaN(T) || isNaN(D) || T <= 0 || D <= 0) {
+      showEmpty(); return;
+    }
+    V_ap = Math.PI * Math.pow(D / 2, 2) * T * 1000; // nL
+    AR = D / (4 * T);
+    ASP = null;
+  }
+
+  if (isNaN(TE) || TE <= 0) { showEmpty(); return; }
+
+  var V_dep = V_ap * TE;
+  var V_sol = V_dep * MCV;
+
+  // AR verdict
+  var arClass, arTitle, arDesc;
+  if (AR >= 0.66) {
+    arClass = 'pass';
+    arTitle = 'Area Ratio OK -- Reliable paste release expected';
+    arDesc = 'AR = ' + fmt(AR, 2) + ', above the IPC-7525A minimum of 0.66. Both laser-cut and electroform stencils should achieve consistent paste release at this ratio.';
+  } else if (AR >= 0.50) {
+    arClass = 'warn';
+    arTitle = 'Area Ratio Marginal -- paste release may be inconsistent';
+    arDesc = 'AR = ' + fmt(AR, 2) + ', below the IPC-7525A minimum of 0.66. Some post-processed laser-cut stencils can still perform adequately in this range, but transfer efficiency will be lower and variable. Consider reducing stencil thickness.';
+  } else {
+    arClass = 'fail';
+    arTitle = 'Area Ratio Insufficient -- poor paste release likely';
+    arDesc = 'AR = ' + fmt(AR, 2) + ', well below 0.66. Paste is more likely to adhere to aperture walls than release to the pad. The deposit will be incomplete and inconsistent. Reduce stencil thickness or increase aperture size.';
+  }
+
+  // Aspect ratio note
+  var aspNote = '';
+  if (currentShape === 'rect' && ASP !== null) {
+    if (ASP < 1.5) {
+      aspNote = 'Aspect ratio ' + fmt(ASP, 2) + ' is below the IPC-7525A guideline of 1.5 for rectangular apertures. The aperture is narrow relative to stencil thickness, which may limit squeegee fill and paste volume consistency.';
+    }
+  }
+
+  // Bar fill: AR 0-1.0 mapped to 0-100%, capped
+  var barPct = Math.min(AR / 1.0 * 100, 100).toFixed(1) + '%';
+
+  // Notes
+  var notes = '';
+  if (aspNote) notes += aspNote + ' ';
+  if (AR < 0.66 && AR >= 0.50) {
+    notes += 'The transfer efficiency you entered may be optimistic for this area ratio. At AR below 0.66, measured TE is often in the 60-80% range with high variability between prints.';
+  }
+  if (AR < 0.50) {
+    notes += 'Redesign is strongly recommended before production. Step stencil or thinner foil in the affected area are the practical solutions.';
+  }
+  if (!notes) {
+    notes = 'Results are geometric estimates. Actual deposited volume is also influenced by paste rheology, squeegee pressure, stencil coating, and board surface finish. Use SPI data to validate process-level volume.';
+  }
+
+  showResults();
+
+  var verdictEl = document.getElementById('ar-verdict');
+  verdictEl.className = 'verdict-block ' + arClass;
+  document.getElementById('ar-verdict-title').className = 'verdict-title ' + arClass;
+  document.getElementById('ar-verdict-title').textContent = arTitle;
+  document.getElementById('ar-verdict-desc').textContent = arDesc;
+
+  var barEl = document.getElementById('ar-bar');
+  barEl.style.width = barPct;
+  barEl.className = 'bar-fill ' + arClass;
+
+  var arEl = document.getElementById('r-ar');
+  arEl.textContent = fmt(AR, 2);
+  arEl.className = 'stat-value ' + arClass;
+
+  if (currentShape === 'rect' && ASP !== null) {
+    var aspEl = document.getElementById('r-asp');
+    aspEl.textContent = fmt(ASP, 2);
+    aspEl.className = 'stat-value' + (ASP < 1.5 ? ' warn' : ' pass');
+    aspEl.parentElement.style.display = '';
+  } else {
+    document.getElementById('r-asp').parentElement.style.display = 'none';
+  }
+
+  document.getElementById('r-vap').innerHTML = fmt(V_ap, 1) + '<span class="stat-unit"> nL</span>';
+  document.getElementById('r-vdep').innerHTML = fmt(V_dep, 1) + '<span class="stat-unit"> nL</span>';
+  document.getElementById('r-vsol').innerHTML = fmt(V_sol, 1) + '<span class="stat-unit"> nL</span>';
+
+  var totalBox = document.getElementById('stat-total-box');
+  if (!isNaN(pads) && pads >= 1) {
+    totalBox.style.display = '';
+    var Vtotal = V_dep * pads;
+    document.getElementById('r-vtotal').innerHTML = fmt(Vtotal, 0) + '<span class="stat-unit"> nL</span>';
+  } else {
+    totalBox.style.display = 'none';
+  }
+
+  document.getElementById('r-notes').textContent = notes;
+}
+
+function showEmpty() {
+  document.getElementById('results-empty').style.display = '';
+  document.getElementById('results-content').style.display = 'none';
+}
+
+function showResults() {
+  document.getElementById('results-empty').style.display = 'none';
+  document.getElementById('results-content').style.display = '';
+}
+
+function printReport() {
+  var title = document.getElementById('reportTitle').value.trim();
+  var panel = document.getElementById('results-content');
+  if (!panel || panel.style.display === 'none') {
+    alert('Run the calculator first before printing.');
+    return;
+  }
+
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
+
+  var T    = document.getElementById('thickness').value || '--';
+  var te   = document.getElementById('te-input').value || '--';
+  var mcv  = document.getElementById('mcv');
+  var pads = document.getElementById('pad-count').value;
+
+  var shapeStr, dimStr;
+  if (currentShape === 'circle') {
+    shapeStr = 'Circular';
+    dimStr = 'Diameter: ' + (document.getElementById('diameter').value || '--') + ' mm';
+  } else {
+    shapeStr = 'Rectangular';
+    dimStr = 'L: ' + (document.getElementById('length').value || '--') + ' mm  x  W: ' + (document.getElementById('width').value || '--') + ' mm';
+  }
+
+  var arEl    = document.getElementById('r-ar');
+  var arVal   = arEl ? arEl.textContent : '--';
+  var arCls   = arEl ? arEl.className : '';
+  var arColor = arCls.indexOf('pass') >= 0 ? '#167a40' : arCls.indexOf('warn') >= 0 ? '#d4720a' : '#c42b08';
+
+  var vTitle  = document.getElementById('ar-verdict-title').textContent;
+  var vDesc   = document.getElementById('ar-verdict-desc').textContent;
+
+  var aspEl   = document.getElementById('r-asp');
+  var aspHide = aspEl.parentElement.style.display === 'none';
+  var aspVal  = aspHide ? '' : aspEl.textContent;
+
+  var vapVal   = document.getElementById('r-vap').textContent.replace(/\s/g, ' ');
+  var vdepVal  = document.getElementById('r-vdep').textContent.replace(/\s/g, ' ');
+  var vsolVal  = document.getElementById('r-vsol').textContent.replace(/\s/g, ' ');
+  var vtotalEl  = document.getElementById('stat-total-box');
+  var vtotalVal = vtotalEl.style.display !== 'none' ? document.getElementById('r-vtotal').textContent.replace(/\s/g, ' ') : '';
+
+  var notes = document.getElementById('r-notes').textContent;
+
+  var arBarPct = Math.min(parseFloat(arVal) / 1.0 * 100, 100).toFixed(1) + '%';
+  var mcvPct   = mcv ? (parseFloat(mcv.value) * 100).toFixed(0) : '--';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Paste Volume Calculator' + (title ? ' - ' + title : '') + '</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+    '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
+    '.ph { border-bottom: 3px solid #d4720a; padding-bottom: 12px; margin-bottom: 20px; }' +
+    '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
+    '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
+    '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
+    '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #d4720a; border-bottom: 1px solid #eee; padding-bottom: 6px; margin: 18px 0 12px; }' +
+    '.inputs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }' +
+    '.ibox { border: 1px solid #eee; padding: 10px 14px; }' +
+    '.ibox-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+    '.ibox-value { font-family: "Barlow Condensed", sans-serif; font-size: 16px; font-weight: 700; color: #222; }' +
+    '.verdict-row { display: flex; align-items: center; gap: 20px; margin-bottom: 12px; }' +
+    '.verdict-num { font-family: "Barlow Condensed", sans-serif; font-size: 52px; font-weight: 900; color: ' + arColor + '; line-height: 1; }' +
+    '.verdict-wrap { flex: 1; }' +
+    '.verdict-label { font-family: "Barlow Condensed", sans-serif; font-size: 18px; font-weight: 900; color: ' + arColor + '; margin-bottom: 4px; }' +
+    '.verdict-desc { font-size: 12px; color: #555; line-height: 1.5; }' +
+    '.bar-track { height: 8px; background: #eee; overflow: hidden; margin-bottom: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+    '.bar-fill { height: 100%; width: ' + arBarPct + '; background: ' + arColor + '; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+    '.bar-labels { display: flex; justify-content: space-between; font-family: "Share Tech Mono", monospace; font-size: 9px; color: #888; margin-bottom: 16px; }' +
+    '.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }' +
+    '.stat-box { border: 1px solid #eee; padding: 10px 14px; }' +
+    '.stat-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+    '.stat-value { font-family: "Barlow Condensed", sans-serif; font-size: 20px; font-weight: 900; color: #222; }' +
+    '.notes-box { border: 1px solid #eee; border-left: 4px solid #d4720a; padding: 10px 14px; font-size: 11px; color: #555; line-height: 1.5; }' +
+    '@media print { @page { size: A4 portrait; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
+    '</style></head><body>' +
+    '<div class="ph"><div class="ph-tool">Paste Volume Calculator -- SMTCalc.com</div>' +
+    (title ? '<div class="ph-title">' + title + '</div>' : '') +
+    '<div class="ph-meta">Printed: ' + dateStr + '</div></div>' +
+    '<div class="section-label">Input Parameters</div>' +
+    '<div class="inputs-grid">' +
+    '<div class="ibox"><div class="ibox-label">Stencil Thickness</div><div class="ibox-value">' + T + ' mm</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Aperture Shape</div><div class="ibox-value">' + shapeStr + '</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Dimensions</div><div class="ibox-value">' + dimStr + '</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Transfer Efficiency</div><div class="ibox-value">' + te + '%</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Metal Content (vol)</div><div class="ibox-value">' + mcvPct + '%</div></div>' +
+    (pads ? '<div class="ibox"><div class="ibox-label">Pad Count</div><div class="ibox-value">' + pads + '</div></div>' : '') +
+    '</div>' +
+    '<div class="section-label">Area Ratio Result</div>' +
+    '<div class="verdict-row"><div class="verdict-num">' + arVal + '</div><div class="verdict-wrap"><div class="verdict-label">' + vTitle + '</div><div class="verdict-desc">' + vDesc + '</div></div></div>' +
+    '<div class="bar-track"><div class="bar-fill"></div></div>' +
+    '<div class="bar-labels"><span>0</span><span>0.66 threshold (IPC-7525A)</span><span>1.0</span></div>' +
+    '<div class="section-label">Volume Results</div>' +
+    '<div class="stats-grid">' +
+    '<div class="stat-box"><div class="stat-label">Aperture Volume</div><div class="stat-value">' + vapVal + '</div></div>' +
+    '<div class="stat-box"><div class="stat-label">Paste Deposit</div><div class="stat-value">' + vdepVal + '</div></div>' +
+    '<div class="stat-box"><div class="stat-label">Solder After Reflow</div><div class="stat-value">' + vsolVal + '</div></div>' +
+    (vtotalVal ? '<div class="stat-box"><div class="stat-label">Total per Component</div><div class="stat-value">' + vtotalVal + '</div></div>' : '') +
+    (aspVal ? '<div class="stat-box"><div class="stat-label">Aspect Ratio</div><div class="stat-value">' + aspVal + '</div></div>' : '') +
+    '</div>' +
+    '<div class="notes-box">' + notes + '</div>' +
+    '</body></html>';
+
+  var win = window.open('', '_blank', 'width=800,height=900');
+  win.document.write(html);
+  win.document.close();
+  win.onload = function() { win.focus(); win.print(); };
+}
+
+function toggleAccordion(btn) {
+  var item = btn.parentElement;
+  var content = item.querySelector('.accordion-content');
+  var isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  content.classList.toggle('open', !isOpen);
+}
+
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+</script>
+</body>
+</html>
