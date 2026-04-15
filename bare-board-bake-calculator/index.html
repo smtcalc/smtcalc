@@ -350,6 +350,22 @@
     color: var(--accent);
   }
 
+  /* ASSUMPTION NOTE */
+  .assumption-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid rgba(74,159,212,0.5);
+    padding: 1rem 1.25rem;
+  }
+  .assumption-note p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+  }
+  .assumption-note p:last-child { margin-bottom: 0; }
+  .assumption-note strong { color: var(--text); font-weight: 600; }
+
   /* PRINT BAR */
   .print-bar { margin-bottom: 3rem; }
 
@@ -398,6 +414,14 @@
     <div class="hero-eyebrow">PCB Handling / Moisture</div>
     <h1>Bare Board<br>Bake Calculator</h1>
     <p>Calculate the required drying time for bare printed circuit boards before assembly. Based on PCB material group, storage conditions, and target moisture level, using the Arrhenius-derived diffusion model from the Solectron Aquaboard study.</p>
+  </div>
+</div>
+
+<div style="max-width: 960px; margin: 2rem auto 1.5rem;">
+  <div class="assumption-note" style="margin-bottom: 0;">
+    <p><strong>When Baking Is Required</strong></p>
+    <p style="margin-bottom: 0.75rem;">Most bare boards do not require baking if they have been stored in proper dry packaging and used within a reasonable timeframe. Baking is only necessary when boards were stored without moisture-barrier packaging, stored for an extended period without environmental control, or were exposed to high humidity conditions.</p>
+    <p style="margin-bottom: 0.75rem;">Responsibility for baking depends on your supply chain position. If you are the OEM sending boards to a subcontractor, you must assess whether baking is needed based on your storage conditions, and either perform the bake yourself or have your contract explicitly assign it to the subcontractor. If you are the subcontractor receiving boards, you must assess whether they require baking before assembly and document the bake if you perform it. Either way, the responsibility boundary must be clear in your supply agreement.</p>
   </div>
 </div>
 
@@ -556,7 +580,6 @@
   </div>
 
   <!-- ACCORDION GUIDE -->
-  <div class="panel-full" style="padding:0;">
   <div class="accordion">
 
     <div class="accordion-item">
@@ -692,7 +715,6 @@
     </div>
 
     </div><!-- end accordion -->
-  </div><!-- /.panel-full -->
 
 </div><!-- /.tool-main -->
 
