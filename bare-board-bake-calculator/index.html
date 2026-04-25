@@ -580,7 +580,7 @@
   </div>
 
   <!-- ACCORDION GUIDE -->
-  <div class="accordion">
+  <div class="accordion" style="grid-column: 1 / -1;">
 
     <div class="accordion-item">
       <button class="accordion-header" onclick="toggleAccordion(this)">
@@ -912,14 +912,14 @@
     var plotW = W - PAD_L - PAD_R;
     var plotH = H - PAD_T - PAD_B;
 
-    // Colors matching design system (dark theme)
-    var COLORS = { 1: '#eb6b34', 2: '#5ba8d4', 3: '#d43e10' };
-    var BG     = '#2e2723';
-    var BG2    = '#3a302a';
-    var BORDER = '#3d342e';
-    var MUTED  = '#a89f96';
-    var TEXT   = '#fdfbf9';
-    var ACCENT = '#eb6b34';
+    // Colors matching design system (light theme)
+    var COLORS = { 1: '#e08318', 2: '#4a9fd4', 3: '#d43e10' };
+    var BG     = '#f0f4f0';
+    var BG2    = '#e6ece7';
+    var BORDER = 'rgba(28,42,31,0.14)';
+    var MUTED  = '#4a5e50';
+    var TEXT   = '#1c2a1f';
+    var ACCENT = '#186640';
 
     // Temperature points 40..120 in 2-degree steps
     var temps = [];
