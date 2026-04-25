@@ -27,8 +27,8 @@
       padding: 160px 2rem 100px;
       text-align: center;
       background-image:
-        linear-gradient(rgba(253,238,229,0.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(253,238,229,0.055) 1px, transparent 1px);
+        linear-gradient(rgba(28,42,31,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(28,42,31,0.055) 1px, transparent 1px);
       background-size: 36px 36px;
     }
 
@@ -40,15 +40,15 @@
       width: min(800px, 95vw);
       height: auto;
       pointer-events: none;
-      filter: invert(1) sepia(1) saturate(6) hue-rotate(-55deg) brightness(0.9) opacity(0.12);
-      mix-blend-mode: screen;
+      filter: sepia(1) saturate(4) hue-rotate(80deg) brightness(0.35) opacity(0.07);
+      mix-blend-mode: multiply;
     }
 
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 50% 60% at 50% 60%, rgba(19,13,8,1) 0%, transparent 100%);
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(240,244,240,0.7) 100%);
       z-index: 1;
       pointer-events: none;
     }
@@ -121,7 +121,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: linear-gradient(135deg, #ff9238 0%, #ef8529 100%);
+      background: linear-gradient(135deg, #186640 0%, #0f5533 100%);
       color: #ffffff;
       font-weight: 600;
       font-size: 1.1rem;
