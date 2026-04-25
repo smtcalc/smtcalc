@@ -191,9 +191,9 @@
       line-height: 1.55;
       display: none;
     }
-    .verdict-box.pass { background: rgba(31,168,85,0.1); border: 1px solid rgba(31,168,85,0.3); color: var(--text); }
-    .verdict-box.warn { background: rgba(255,117,43,0.1); border: 1px solid rgba(255,117,43,0.35); color: var(--text); }
-    .verdict-box.fail { background: rgba(207,68,68,0.1); border: 1px solid rgba(207,68,68,0.3); color: var(--text); }
+    .verdict-box.pass { background: rgba(26,158,85,0.1); border: 1px solid rgba(26,158,85,0.3); color: var(--text); }
+    .verdict-box.warn { background: rgba(176,106,16,0.1); border: 1px solid rgba(176,106,16,0.35); color: var(--text); }
+    .verdict-box.fail { background: rgba(176,51,51,0.1); border: 1px solid rgba(176,51,51,0.3); color: var(--text); }
     .verdict-box strong { display: block; margin-bottom: 0.3rem; }
 
     /* EMPTY STATE */
@@ -942,7 +942,7 @@ function drawChart(effectiveInvestment, netSavings) {
 
   // Zero line
   var y0 = yPos(0);
-  ctx.strokeStyle = 'rgba(253,238,229,0.15)';
+  ctx.strokeStyle = 'rgba(28,42,31,0.15)';
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -952,7 +952,7 @@ function drawChart(effectiveInvestment, netSavings) {
   ctx.setLineDash([]);
 
   // Grid lines (horizontal)
-  ctx.strokeStyle = 'rgba(253,238,229,0.07)';
+  ctx.strokeStyle = 'rgba(28,42,31,0.07)';
   ctx.lineWidth = 1;
   for (var g = 0; g <= 4; g++) {
     var gy = padT + (g / 4) * chartH;
@@ -971,8 +971,8 @@ function drawChart(effectiveInvestment, netSavings) {
 
   // Gradient fill
   var grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-  grad.addColorStop(0,   'rgba(255,146,56,0.25)');
-  grad.addColorStop(1,   'rgba(255,146,56,0.03)');
+  grad.addColorStop(0,   'rgba(24,102,64,0.25)');
+  grad.addColorStop(1,   'rgba(24,102,64,0.03)');
   ctx.fillStyle = grad;
   ctx.fill();
 
