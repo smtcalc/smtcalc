@@ -65,6 +65,7 @@ The project filename convention for working files is [tool-slug]-index.html.
 |-------------------------------|----------------------------------|--------------------------------|
 | /                             | Landing page                     |                                |
 | /about/                       | About                            |                                |
+| /philosophy                   | Philosophy about the website     |                                |
 | /stencil-architect/           | Stencil Architect                | Canonical HTML reference       |
 | /smt-capacity-calculator/     | SMT Capacity Calculator          |                                |
 | /msl-bake-calculator/         | MSL Bake Calculator              | Based on J-STD-033D            |
@@ -79,6 +80,9 @@ The project filename convention for working files is [tool-slug]-index.html.
 | /bare-board-bake-calculator/  | Bare Board Bake Calculator       |                                |
 | /pip-calculator/              | Pin-in-Paste Calculator          |                                |
 | /smt-slots/                   | SMT Slots                        | Entertainment only, not a calculator |
+| /aoi-roi-calculator           | AOI ROI Calculator               |                                |
+| /paste-volume-calculator/     | Solder Paste Volume Calculator   |                                |
+| /smt-defect-diagnostics/      | SMT Defect Diagnostics           |                                |
 
 The Solder Ball Aperture Calculator was built but is unpublished pending fact-checking.
 Do not add it to the landing page or sitemap until Kimmo confirms it is ready.
