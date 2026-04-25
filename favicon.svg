@@ -1,21 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Background -->
-  <rect width="32" height="32" rx="4" fill="#0a0a0a"/>
-
-  <!-- Stencil aperture grid: 3x3 holes, representing a stencil -->
-  <!-- Orange filled squares = open apertures -->
-  <!-- Top row -->
-  <rect x="4"  y="4"  width="7" height="7" rx="1" fill="#f5a623"/>
-  <rect x="13" y="4"  width="7" height="7" rx="1" fill="#f5a623" opacity="0.4"/>
-  <rect x="22" y="4"  width="6" height="7" rx="1" fill="#f5a623"/>
-
-  <!-- Middle row -->
-  <rect x="4"  y="13" width="7" height="7" rx="1" fill="#f5a623" opacity="0.4"/>
-  <rect x="13" y="13" width="7" height="7" rx="1" fill="#f5a623"/>
-  <rect x="22" y="13" width="6" height="7" rx="1" fill="#f5a623" opacity="0.4"/>
-
-  <!-- Bottom row -->
-  <rect x="4"  y="22" width="7" height="6" rx="1" fill="#f5a623"/>
-  <rect x="13" y="22" width="7" height="6" rx="1" fill="#f5a623" opacity="0.4"/>
-  <rect x="22" y="22" width="6" height="6" rx="1" fill="#f5a623"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(6.25,0,0,6.25,0,0)">
+        <path d="M32,3.337L32,28.663C32,30.505 30.505,32 28.663,32L3.337,32C1.495,32 0,30.505 0,28.663L0,3.337C0,1.495 1.495,0 3.337,0L28.663,0C30.505,0 32,1.495 32,3.337Z" style="fill:rgb(247,250,246);"/>
+    </g>
+    <g>
+        <g>
+            <g>
+                <g transform="matrix(6.25,0,0,6.25,-3.272432,-3.206763)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(24,102,64);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,109.48327,-3.206763)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(24,102,64);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,-3.138054,-3.206763)">
+                    <rect x="13" y="4" width="7" height="7" style="fill:rgb(10,225,120);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,109.496324,53.115136)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(10,225,120);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,109.522432,109.456763)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(24,102,64);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,-3.272432,53.115136)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(10,225,120);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,-3.125,53.115136)">
+                    <rect x="13" y="4" width="7" height="7" style="fill:rgb(24,102,64);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,-3.259378,109.456763)">
+                    <rect x="4" y="4" width="7" height="7" style="fill:rgb(24,102,64);"/>
+                </g>
+                <g transform="matrix(6.25,0,0,6.25,-3.111946,109.456763)">
+                    <rect x="13" y="4" width="7" height="7" style="fill:rgb(10,225,120);"/>
+                </g>
+            </g>
+        </g>
+    </g>
 </svg>
