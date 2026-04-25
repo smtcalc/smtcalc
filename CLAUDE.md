@@ -89,8 +89,10 @@ Do not add it to the landing page or sitemap until Kimmo confirms it is ready.
 
 Full details are in STYLE_GUIDE.md. Key facts:
 
-**Theme:** Dark theme with warm brown undertones. Clean solid backgrounds, no noise textures
-or decorative glows.
+**Theme:** Light theme, "Technical Green." Clean solid backgrounds, no noise textures
+or decorative glows. Page backgrounds are near-white with a faint green tint. Accent
+color is forest green. The navigation header is dark (near-black green) to contrast
+with the light page body.
 
 **Shared stylesheet:** All pages link to `/style.css` at the project root. It provides all
 shared tokens, components, and responsive rules. No separate Google Fonts link tags are
@@ -98,22 +100,30 @@ needed in page heads -- fonts are imported inside style.css. Each page adds only
 page-specific styles in an inline `<style>` block.
 
 **Colors (CSS custom properties in style.css :root):**
-- --bg:           #130d08  (page background, warm near-black)
-- --bg2:          #19120d  (section backgrounds, panels)
-- --bg3:          #201812  (input fields, stat boxes)
-- --bg4:          #261e18  (active states, unit badges)
-- --bg5:          #2e2620  (hover states, deepest inset)
-- --accent:       #ff9238  (orange, primary accent)
-- --accent-hover: #ef8529  (orange hover state)
-- --accent2:      #ff752b  (red-orange, error/destructive)
-- --green:        #1fa855  (PASS/OK)
-- --yellow:       #ff752b  (WARNING, same as --accent2)
-- --red:          #cf4444  (FAIL)
-- --text:         #fdeee5  (primary text, warm off-white)
-- --muted:        #c4b3a6  (secondary text, labels)
-- --border:       rgba(253,238,229,0.12)
-- --border2:      rgba(253,238,229,0.22)
+- --bg:           #f7faf6  (page background, near-white with green tint)
+- --bg2:          #f0f4f0  (section backgrounds, panels)
+- --bg3:          #e6ece7  (input fields, stat boxes)
+- --bg4:          #dbe4dc  (active states, unit badges)
+- --bg5:          #cfd9d1  (hover states, deepest inset)
+- --accent:       #186640  (forest green, primary accent)
+- --accent-hover: #0f5533  (darker green hover state)
+- --accent2:      #b03333  (red, error/destructive)
+- --green:        #1a9e55  (PASS/OK)
+- --yellow:       #b06a10  (WARNING, amber)
+- --red:          #b03333  (FAIL, same as --accent2)
+- --text:         #1c2a1f  (primary text, near-black green)
+- --muted:        #4a5e50  (secondary text, labels)
+- --border:       rgba(28,42,31,0.12)
+- --border2:      rgba(28,42,31,0.22)
 - --mono:         'Share Tech Mono', monospace
+
+**Navigation header colors (hardcoded in style.css, not CSS variables):**
+The header stays dark on all pages regardless of the light page theme.
+- Header background: rgba(22,42,28,0.97)
+- Logo text: color #f0f4f0 (the "SMT" part must be hardcoded, not var(--text))
+- Logo span (accent): color #3ecf7a
+- Nav links: color #c8d8cc, hover #3ecf7a
+- Tool badge: color #8aad96
 
 **Typography:**
 - Manrope 800: tool hero h1, landing page h1
@@ -122,10 +132,20 @@ page-specific styles in an inline `<style>` block.
 - Inter 400-500: body text, field notes, guide prose
 - Share Tech Mono 400: input values, units, stat values, formula text
 
-**Print reports always use a light theme.** The printReport() JS uses hardcoded light
-colors (#fff background, #d4720a accent, #167a40 pass, #c42b08 fail). Each tool page
-keeps its own @media print block inline with a :root light-theme override. Do not move
-print overrides to style.css.
+**Print reports use hardcoded colors.** The printReport() JS uses hardcoded colors
+(#fff background, #d4720a accent, #167a40 pass, #c42b08 fail) that are independent
+of the page theme. Each tool page keeps its own @media print block inline to hide
+nav, print-bar, and other screen-only elements. Do not move print rules to style.css.
+
+**Inline SVG and canvas charts must use light-theme colors explicitly.** CSS variables
+do not apply inside canvas 2D drawing calls or SVG fill/stroke attributes. Use the
+hex equivalents of the design tokens directly: background #f0f4f0, grid lines
+rgba(28,42,31,0.14), axis labels #4a5e50, accent #186640.
+
+**Semantic color use for rgba tints:**
+- Info/accent context: rgba(24,102,64,...) -- green tint
+- Warning context: rgba(176,106,16,...) -- amber tint
+- Error/fail context: rgba(176,51,51,...) -- red tint
 
 **Canonical reference implementation:** stencil-architect/index.html
 When in doubt about any markup or styling pattern, check that file first.
@@ -173,8 +193,8 @@ Tool file must have:
 - Guide banner if a guide URL is available
 - Main grid with .tool-main, .panel, .panel-full
 - Print bar with report title input and .print-btn
-- printReport() using hardcoded light-theme colors (#d4720a, #167a40, #c42b08)
-- @media print with inline :root light-theme override (not in style.css)
+- printReport() using hardcoded colors (#d4720a accent, #167a40 pass, #c42b08 fail)
+- @media print block (inline, not in style.css) hiding header, print-bar, guide toggles
 - Footer with JS-obfuscated contact email
 - No characters above ASCII codepoint 127
 
