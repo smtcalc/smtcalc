@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOI ROI Calculator - Return on Investment | SMTCalc</title>
+  <meta name="description" content="Calculate the return on investment for an AOI machine purchase. Compare manual vs automated inspection labor costs, apply DCF analysis, and get payback period in years.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/aoi-roi-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/aoi-roi-calculator/">
+  <meta property="og:title" content="AOI ROI Calculator - Return on Investment | SMTCalc">
+  <meta property="og:description" content="Calculate the return on investment for an AOI machine purchase. Compare manual vs automated inspection labor costs, apply DCF analysis, and get payback period in years.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+
+    /* MAIN GRID */
+    .tool-main {
+      max-width: 1020px;
+      margin: 2rem auto;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 700px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
+    }
+    .panel {
+      background: var(--bg2);
+      padding: 1.75rem;
+      border: none;
+      border-radius: 0;
+    }
+    .panel-full {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      padding: 1.75rem;
+    }
+    .panel-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* FIELDS */
+    .field { margin-bottom: 1.2rem; }
+    .field label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .field-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      line-height: 1.45;
+    }
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .input-wrap input[type="number"] {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 1rem;
+      padding: 0.55rem 0.75rem;
+      min-width: 0;
+      -moz-appearance: textfield;
+    }
+    .input-wrap input[type="number"]::-webkit-outer-spin-button,
+    .input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .input-wrap input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .input-unit {
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.55rem 0.65rem;
+      white-space: nowrap;
+    }
+
+    /* SECTION DIVIDER */
+    .section-divider {
+      grid-column: 1 / -1;
+      height: 1.5px;
+      background: var(--border);
+    }
+
+    /* COMPUTED ROW -- for derived/calculated fields shown read-only */
+    .computed-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .computed-row:last-child { border-bottom: none; }
+    .computed-label {
+      font-size: 0.88rem;
+      color: var(--muted);
+      flex: 1;
+    }
+    .computed-value {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .computed-value.highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* RESULTS STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .stat-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+    }
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 1.6rem;
+      color: var(--text);
+    }
+    .stat-unit {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .stat-value.pass { color: var(--green); }
+    .stat-value.warn { color: var(--yellow); }
+    .stat-value.fail { color: var(--red); }
+
+    /* VERDICT BOX */
+    .verdict-box {
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      display: none;
+    }
+    .verdict-box.pass { background: rgba(31,168,85,0.1); border: 1px solid rgba(31,168,85,0.3); color: var(--text); }
+    .verdict-box.warn { background: rgba(255,117,43,0.1); border: 1px solid rgba(255,117,43,0.35); color: var(--text); }
+    .verdict-box.fail { background: rgba(207,68,68,0.1); border: 1px solid rgba(207,68,68,0.3); color: var(--text); }
+    .verdict-box strong { display: block; margin-bottom: 0.3rem; }
+
+    /* EMPTY STATE */
+    .results-empty {
+      color: var(--muted);
+      font-size: 0.97rem;
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    /* CHART */
+    .chart-wrap {
+      margin-top: 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      display: none;
+    }
+    canvas#roiChart { width: 100% !important; height: 220px !important; }
+
+    /* FORMULA NOTE */
+    .formula-note {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 700px) {
+      .savings-inner { grid-template-columns: 1fr !important; }
+      .prod-inner { grid-template-columns: 1fr !important; }
+    }
+
+    @media print {
+      :root {
+        --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
+        --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
+        --accent: #c07000;
+      }
+      .print-bar, .guide-banner { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">AOI ROI Calculator</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="hero-eyebrow">Quality / Inspection</div>
+    <h1>AOI ROI Calculator</h1>
+    <p>
+      Calculate the return on investment for an Automated Optical Inspection machine.
+      Compare manual vs. AOI labor costs, apply discounted cash flow analysis,
+      and get payback period in years.
+    </p>
+  </div>
+</div>
+
+<div class="tool-main">
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: COMMON INPUTS                                     -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Production Parameters</div>
+    <div class="prod-inner" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem;">
+
+      <div class="field">
+        <label for="pcbYear">PCBs per Year</label>
+        <div class="input-wrap">
+          <input type="number" id="pcbYear" min="0" step="1000" value="20000">
+          <span class="input-unit">pcs/yr</span>
+        </div>
+        <div class="field-note">Total boards inspected per year.</div>
+      </div>
+
+      <div class="field">
+        <label for="pcbBatch">PCBs per Batch</label>
+        <div class="input-wrap">
+          <input type="number" id="pcbBatch" min="1" step="1" value="50">
+          <span class="input-unit">pcs</span>
+        </div>
+        <div class="field-note">Average production lot size.</div>
+      </div>
+
+      <div class="field">
+        <label for="diversityMain">Product Diversity</label>
+        <div class="input-wrap">
+          <input type="number" id="diversityMain" min="1" step="1" value="10">
+          <span class="input-unit">types/yr</span>
+        </div>
+        <div class="field-note">Different PCB designs requiring AOI programming per year.</div>
+      </div>
+
+      <div class="field">
+        <label for="compPerPcb">Components per PCB</label>
+        <div class="input-wrap">
+          <input type="number" id="compPerPcb" min="1" step="10" value="200">
+          <span class="input-unit">joints</span>
+        </div>
+        <div class="field-note">Total solder joints or component placements per board.</div>
+      </div>
+
+      <div class="field">
+        <label for="laborRateOp">Operator Wage Cost / Hour</label>
+        <div class="input-wrap">
+          <input type="number" id="laborRateOp" min="0" step="1" value="35">
+          <span class="input-unit">curr/h</span>
+        </div>
+        <div class="field-note">Total cost including social charges and overhead.</div>
+      </div>
+
+      <div class="field">
+        <label for="laborRateProg">Programmer Wage Cost / Hour</label>
+        <div class="input-wrap">
+          <input type="number" id="laborRateProg" min="0" step="1" value="45">
+          <span class="input-unit">curr/h</span>
+        </div>
+        <div class="field-note">Engineer or technician programming and maintaining the AOI library.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: MANUAL INSPECTION                                 -->
+  <!-- ============================================================ -->
+
+  <div class="panel">
+    <div class="panel-label">Manual Inspection</div>
+
+    <div class="field">
+      <label for="manualTimePerPcb">Inspection Time per PCB</label>
+      <div class="input-wrap">
+        <input type="number" id="manualTimePerPcb" min="0" step="5" value="120">
+        <span class="input-unit">seconds</span>
+      </div>
+      <div class="field-note">Net visual inspection time per board, excluding handling.</div>
+    </div>
+
+    <div class="field">
+      <label for="manualHandling">Handling Time per PCB</label>
+      <div class="input-wrap">
+        <input type="number" id="manualHandling" min="0" step="5" value="30">
+        <span class="input-unit">seconds</span>
+      </div>
+      <div class="field-note">Pick up, flip, set down, mark, paperwork.</div>
+    </div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:1.25rem 0;">
+
+    <div class="computed-row">
+      <span class="computed-label">Total time per PCB (incl. handling)</span>
+      <span class="computed-value" id="manTotalTimePcb">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Total inspection hours per year</span>
+      <span class="computed-value" id="manTotalHoursYear">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">FTEs required</span>
+      <span class="computed-value" id="manFTE">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label highlight">Manual inspection cost/year</span>
+      <span class="computed-value highlight" id="manTotalCost">--</span>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: AOI INSPECTION                                    -->
+  <!-- ============================================================ -->
+
+  <div class="panel">
+    <div class="panel-label">AOI Inspection</div>
+
+    <div class="field">
+      <label for="aoiTimePerPcb">AOI Cycle Time per PCB</label>
+      <div class="input-wrap">
+        <input type="number" id="aoiTimePerPcb" min="0" step="5" value="30">
+        <span class="input-unit">seconds</span>
+      </div>
+      <div class="field-note">Pure machine scan time. Check vendor spec sheet.</div>
+    </div>
+
+    <div class="field">
+      <label for="aoiClassifyTime">Classification + Handling per PCB</label>
+      <div class="input-wrap">
+        <input type="number" id="aoiClassifyTime" min="0" step="5" value="20">
+        <span class="input-unit">seconds</span>
+      </div>
+      <div class="field-note">Operator time to review flagged results and handle the board.</div>
+    </div>
+
+    <div class="field">
+      <label for="aoiProgTimePerType">Programming Time per New Type</label>
+      <div class="input-wrap">
+        <input type="number" id="aoiProgTimePerType" min="0" step="0.5" value="4">
+        <span class="input-unit">hours</span>
+      </div>
+      <div class="field-note">Initial program creation including test run and optimization.</div>
+    </div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:1.25rem 0;">
+
+    <div class="computed-row">
+      <span class="computed-label">Total time per PCB (scan + classify)</span>
+      <span class="computed-value" id="aoiTotalTimePcb">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">AOI run hours per year</span>
+      <span class="computed-value" id="aoiRunHours">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Programming hours per year</span>
+      <span class="computed-value" id="aoiProgHours">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Total AOI labor hours per year</span>
+      <span class="computed-value" id="aoiTotalHours">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">FTEs required (operator + programmer)</span>
+      <span class="computed-value" id="aoiFTE">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label highlight">AOI operating cost/year</span>
+      <span class="computed-value highlight" id="aoiTotalCost">--</span>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: OPERATIONAL SAVINGS                               -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Operational Savings</div>
+
+    <div class="savings-inner" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.25rem; align-items:start;">
+
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Manual inspection cost/year</span>
+          <span class="computed-value" id="savManCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">AOI operating cost/year</span>
+          <span class="computed-value" id="savAoiCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label highlight">Labor savings per year (a)</span>
+          <span class="computed-value highlight" id="savingsPerYear">--</span>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:0;">
+        <label for="maintenanceCost">AOI Annual Maintenance Cost</label>
+        <div class="input-wrap">
+          <input type="number" id="maintenanceCost" min="0" step="500" value="3000">
+          <span class="input-unit">curr/yr</span>
+        </div>
+        <div class="field-note">Service contract or estimated parts + service calls.</div>
+      </div>
+
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Net operational savings/year (a)</span>
+          <span class="computed-value highlight" id="netSavings">--</span>
+        </div>
+        <div class="field-note" style="margin-top:0.5rem;">Gross labor savings minus annual maintenance cost.</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 5: INVESTMENT + DCF                                  -->
+  <!-- ============================================================ -->
+
+  <div class="panel">
+    <div class="panel-label">AOI Investment</div>
+
+    <div class="field">
+      <label for="purchasePrice">Purchase Price (B)</label>
+      <div class="input-wrap">
+        <input type="number" id="purchasePrice" min="0" step="1000" value="80000">
+        <span class="input-unit">curr</span>
+      </div>
+      <div class="field-note">Total installed cost: machine, installation, training, options.</div>
+    </div>
+
+    <div class="field">
+      <label for="economicLife">Economic Life (n)</label>
+      <div class="input-wrap">
+        <input type="number" id="economicLife" min="1" max="20" step="1" value="7">
+        <span class="input-unit">years</span>
+      </div>
+      <div class="field-note">Typical AOI useful life is 7-12 years before major capability gap.</div>
+    </div>
+
+    <div class="field">
+      <label for="interestRate">Interest / Discount Rate (i)</label>
+      <div class="input-wrap">
+        <input type="number" id="interestRate" min="0" max="50" step="0.5" value="5">
+        <span class="input-unit">%</span>
+      </div>
+      <div class="field-note">Capital cost rate or internal hurdle rate. 5-10% is typical.</div>
+    </div>
+
+    <div class="field">
+      <label for="residualPct">Residual Value at End of Life</label>
+      <div class="input-wrap">
+        <input type="number" id="residualPct" min="0" max="50" step="1" value="10">
+        <span class="input-unit">% of B</span>
+      </div>
+      <div class="field-note">Estimated resale or scrap value as % of purchase price. 5-15% is typical.</div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 6: DCF BREAKDOWN                                     -->
+  <!-- ============================================================ -->
+
+  <div class="panel">
+    <div class="panel-label">DCF Analysis</div>
+
+    <div class="computed-row">
+      <span class="computed-label">Base investment (B)</span>
+      <span class="computed-value" id="dcfB">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Residual value (R = B x %)</span>
+      <span class="computed-value" id="dcfR">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">DCF factor (1/(1+i)^n)</span>
+      <span class="computed-value" id="dcfFactor">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Present value of residual (PV_R = R x DCF)</span>
+      <span class="computed-value" id="dcfPVR">--</span>
+    </div>
+    <div class="computed-row">
+      <span class="computed-label">Net operational savings/year (a)</span>
+      <span class="computed-value" id="dcfA">--</span>
+    </div>
+
+    <div class="formula-note">
+      Payback = (B - PV_R) / a<br>
+      PV_R = R / (1+i)^n<br>
+      a = manual labor cost/yr - AOI labor cost/yr - maintenance/yr
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 7: RESULTS                                           -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Investment Justification</div>
+
+    <div id="emptyResults" class="results-empty">Enter values above to calculate.</div>
+
+    <div id="resultsBlock" style="display:none;">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Payback Period</div>
+          <div class="stat-value" id="resPayback">--</div>
+          <div class="stat-label" id="resPaybackUnit" style="margin-top:0.25rem;">years</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Net Savings / Year</div>
+          <div class="stat-value" id="resNetSavings">--</div>
+          <div class="stat-label" style="margin-top:0.25rem;">currency units</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">5-Year Net Savings</div>
+          <div class="stat-value" id="res5yr">--</div>
+          <div class="stat-label" style="margin-top:0.25rem;">currency units</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Labor FTE Reduction</div>
+          <div class="stat-value" id="resFTEReduction">--</div>
+          <div class="stat-label" style="margin-top:0.25rem;">FTE</div>
+        </div>
+      </div>
+
+      <div id="verdictBox" class="verdict-box">
+        <strong id="verdictTitle"></strong>
+        <span id="verdictText"></span>
+      </div>
+
+      <div class="chart-wrap" id="chartWrap">
+        <div style="font-family:var(--mono); font-size:0.78rem; color:var(--muted); margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.1em;">Cumulative Net Position (years 0-10)</div>
+        <canvas id="roiChart"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /tool-main -->
+
+<!-- PRINT BAR -->
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. AOI investment evaluation 2025">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<!-- GUIDE ACCORDION -->
+<div style="max-width:1020px; margin:2rem auto 4rem; padding:0 0;">
+
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        What does this calculator do?
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          This tool calculates whether the labor savings from replacing manual visual inspection with an AOI machine justify the investment cost, and how many years it takes to break even.
+        </p>
+        <p>
+          The model compares annual labor cost for manual inspection against annual labor cost for AOI operation and programming. It then applies a Discounted Cash Flow (DCF) analysis to the machine purchase, accounting for the time value of money and a residual value at end of life. The result is a payback period in years.
+        </p>
+        <p>
+          Note that this model covers <strong>labor cost savings only</strong>. It does not model the financial value of catching more defects before they escape downstream. In many real situations, the defect containment value exceeds the labor savings. This tool gives you the conservative floor case.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        How to use it
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          Start with production parameters at the top: how many boards per year, batch size, number of different PCB designs, components per board, and wage rates. These feed both the manual and AOI sections.
+        </p>
+        <p>
+          Manual inspection: enter your actual measured or estimated inspection time per board. Be realistic. If your inspectors spend 3 minutes per board, enter 180 seconds. Include handling time separately.
+        </p>
+        <p>
+          AOI inspection: enter the machine cycle time from the vendor spec sheet. Add operator classification time, which is the time an operator spends reviewing flagged pseudo-defects (false calls) and confirming real ones. Enter programming time per new board type.
+        </p>
+        <p>
+          Investment section: enter the full installed price including training and options, the expected machine life, your internal capital cost or discount rate, and an estimated residual value.
+        </p>
+        <p>
+          Results update automatically. The payback period is calculated as (B - PV_R) / a where B is purchase price, PV_R is the present value of the residual, and a is net annual savings.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        Understanding the DCF model
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          A simple payback calculation (investment divided by annual savings) ignores the fact that money today is worth more than money received in the future. The DCF model corrects for this.
+        </p>
+        <p>
+          The residual value R (what the machine is worth at end of life) is discounted back to today using the factor 1/(1+i)^n, where i is the discount rate and n is the machine life in years. This gives the Present Value of the Residual (PV_R). The effective net investment you are making today is therefore B - PV_R, not just B.
+        </p>
+        <p>
+          Annual savings a are the net labor cost difference minus maintenance. Dividing (B - PV_R) by a gives the payback period in years.
+        </p>
+        <p>
+          This is the same model used by MEK/Marantz Electronics in their published ROI calculator. It is a well-established approach for capital equipment justification.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        What this model does not capture
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          <strong>Defect containment value.</strong> The strongest ROI argument for AOI is typically not labor savings but the cost of defects that escape to functional test, system integration, field returns, or warranty claims. A single field return in a safety-critical product can cost orders of magnitude more than the annual labor delta. This model gives you only the conservative floor case.
+        </p>
+        <p>
+          <strong>Process feedback loop value.</strong> An AOI machine connected to your SPC system provides real-time yield data per product, per component, per stencil aperture. This data drives continuous improvement and defect prevention. That value is real but very difficult to quantify in advance.
+        </p>
+        <p>
+          <strong>False call management overhead.</strong> Every AOI system generates pseudo-defects. Operators must review and disposition them. If the false call rate is high, classification time per board rises and erodes the labor savings. Set your classification time input accordingly.
+        </p>
+        <p>
+          <strong>Coverage limitations.</strong> AOI catches what it can see optically. Solder joint quality under QFN or BGA packages is invisible to 2D AOI. Cold joints and poor wetting on well-placed components are difficult to distinguish from good joints without 3D measurement. Do not assume 100% defect containment.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        Interpreting the payback verdict
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          The verdict thresholds used here are practical guidelines, not hard rules. Under 3 years is a strong business case on labor savings alone. Between 3 and 5 years is acceptable for most capital investment frameworks, especially when quality and feedback loop benefits are considered. Over 5 years means the labor cost savings alone are weak and you need to build a separate case around defect containment value or regulatory requirements.
+        </p>
+        <p>
+          For low-volume, high-mix production, payback from labor savings is almost always poor because AOI programming overhead is high relative to batch size. The real justification there is quality and customer requirement compliance, not labor cost.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ----------------------------------------------------------------
+// CONSTANTS
+// ----------------------------------------------------------------
+var WORKING_HOURS_PER_YEAR = 1720; // net productive hours (2080 - holidays - sick - overhead)
+var FTE_HOURS = 1720;
+
+// ----------------------------------------------------------------
+// UTILITIES
+// ----------------------------------------------------------------
+function fmt(n, decimals) {
+  if (!isFinite(n)) return '--';
+  decimals = decimals === undefined ? 0 : decimals;
+  return n.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function fmtTime(seconds) {
+  if (seconds < 60) return seconds.toFixed(0) + ' s';
+  return (seconds / 60).toFixed(1) + ' min';
+}
+
+function val(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+// ----------------------------------------------------------------
+// MAIN CALCULATION
+// ----------------------------------------------------------------
+function calculate() {
+
+  // --- Common inputs ---
+  var pcbYear      = val('pcbYear');
+  var pcbBatch     = val('pcbBatch');
+  var diversity    = val('diversityMain');
+  var compPerPcb   = val('compPerPcb');
+  var laborRateOp  = val('laborRateOp');
+  var laborRateProg= val('laborRateProg');
+
+  // --- Manual inspection ---
+  var manTimeNet   = val('manualTimePerPcb');   // seconds
+  var manHandling  = val('manualHandling');       // seconds
+  var manTotalSec  = manTimeNet + manHandling;    // per board
+  var manHoursYear = (manTotalSec * pcbYear) / 3600;
+  var manFTE       = manHoursYear / FTE_HOURS;
+  var manCostYear  = manHoursYear * laborRateOp;
+
+  document.getElementById('manTotalTimePcb').textContent  = fmtTime(manTotalSec);
+  document.getElementById('manTotalHoursYear').textContent = fmt(manHoursYear, 0) + ' h';
+  document.getElementById('manFTE').textContent            = manFTE.toFixed(2) + ' FTE';
+  document.getElementById('manTotalCost').textContent      = fmt(manCostYear, 0);
+
+  // --- AOI inspection ---
+  var aoiScanSec   = val('aoiTimePerPcb');       // seconds
+  var aoiClassSec  = val('aoiClassifyTime');      // seconds per board (operator)
+  var aoiTotalSec  = aoiScanSec + aoiClassSec;   // per board total
+
+  var aoiRunHours  = (aoiTotalSec * pcbYear) / 3600;
+  var aoiProgHours = diversity * val('aoiProgTimePerType');
+  var aoiTotalHours = aoiRunHours + aoiProgHours;
+
+  // Split operator (run) vs programmer cost
+  var aoiOpCost    = aoiRunHours * laborRateOp;
+  var aoiProgCost  = aoiProgHours * laborRateProg;
+  var aoiCostYear  = aoiOpCost + aoiProgCost;
+
+  var aoiFTE = aoiTotalHours / FTE_HOURS;
+
+  document.getElementById('aoiTotalTimePcb').textContent  = fmtTime(aoiTotalSec);
+  document.getElementById('aoiRunHours').textContent      = fmt(aoiRunHours, 0) + ' h';
+  document.getElementById('aoiProgHours').textContent     = fmt(aoiProgHours, 0) + ' h';
+  document.getElementById('aoiTotalHours').textContent    = fmt(aoiTotalHours, 0) + ' h';
+  document.getElementById('aoiFTE').textContent           = aoiFTE.toFixed(2) + ' FTE';
+  document.getElementById('aoiTotalCost').textContent     = fmt(aoiCostYear, 0);
+
+  // --- Savings ---
+  var maintenance  = val('maintenanceCost');
+  var grossSavings = manCostYear - aoiCostYear;
+  var netSavings   = grossSavings - maintenance;  // annual net savings (a)
+
+  document.getElementById('savManCost').textContent     = fmt(manCostYear, 0);
+  document.getElementById('savAoiCost').textContent     = fmt(aoiCostYear, 0);
+  document.getElementById('savingsPerYear').textContent = fmt(grossSavings, 0);
+  document.getElementById('netSavings').textContent     = fmt(netSavings, 0);
+
+  // --- DCF ---
+  var B = val('purchasePrice');
+  var n = val('economicLife');
+  var i = val('interestRate') / 100;
+  var residualPct = val('residualPct') / 100;
+
+  var R    = B * residualPct;
+  var dcfF = (n > 0 && i >= 0) ? (1 / Math.pow(1 + i, n)) : 1;
+  var PV_R = R * dcfF;
+
+  document.getElementById('dcfB').textContent      = fmt(B, 0);
+  document.getElementById('dcfR').textContent      = fmt(R, 0);
+  document.getElementById('dcfFactor').textContent = dcfF.toFixed(4);
+  document.getElementById('dcfPVR').textContent    = fmt(PV_R, 0);
+  document.getElementById('dcfA').textContent      = fmt(netSavings, 0);
+
+  // --- Payback ---
+  var effectiveInvestment = B - PV_R;
+  var paybackYears = (netSavings > 0) ? (effectiveInvestment / netSavings) : Infinity;
+  var fiveYearNet  = (netSavings * 5) - effectiveInvestment;
+  var fteReduction = manFTE - aoiFTE;
+
+  // --- Update results block ---
+  var empty = document.getElementById('emptyResults');
+  var block = document.getElementById('resultsBlock');
+
+  if (pcbYear <= 0 || B <= 0) {
+    empty.style.display = '';
+    block.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  block.style.display = '';
+
+  var paybackEl = document.getElementById('resPayback');
+  var verdictBox = document.getElementById('verdictBox');
+  var verdictTitle = document.getElementById('verdictTitle');
+  var verdictText  = document.getElementById('verdictText');
+
+  if (!isFinite(paybackYears) || paybackYears < 0) {
+    paybackEl.textContent = 'N/A';
+    paybackEl.className = 'stat-value fail';
+    verdictBox.className = 'verdict-box fail';
+    verdictBox.style.display = '';
+    verdictTitle.textContent = 'No labor cost savings';
+    verdictText.textContent  = 'AOI operating costs exceed manual inspection costs with these inputs. This does not mean AOI is a bad investment -- but the justification must come from defect containment value, not labor savings. Revisit your inspection time estimates or explore high-mix, low-volume considerations.';
+  } else {
+    var py = paybackYears.toFixed(2);
+    document.getElementById('resPaybackUnit').textContent = paybackYears === 1 ? 'year' : 'years';
+
+    if (paybackYears <= 3) {
+      paybackEl.textContent = py;
+      paybackEl.className = 'stat-value pass';
+      verdictBox.className = 'verdict-box pass';
+      verdictBox.style.display = '';
+      verdictTitle.textContent = 'Strong business case (under 3 years)';
+      verdictText.textContent  = 'Labor savings alone justify the investment well within a typical capital budget horizon. Any additional value from defect containment and quality feedback makes this case even stronger.';
+    } else if (paybackYears <= 5) {
+      paybackEl.textContent = py;
+      paybackEl.className = 'stat-value warn';
+      verdictBox.className = 'verdict-box warn';
+      verdictBox.style.display = '';
+      verdictTitle.textContent = 'Acceptable business case (3 to 5 years)';
+      verdictText.textContent  = 'Within a standard capital investment acceptance window. Supplement with a defect containment value estimate to strengthen the case, particularly if your product has high rework or field failure costs.';
+    } else {
+      paybackEl.textContent = py;
+      paybackEl.className = 'stat-value fail';
+      verdictBox.className = 'verdict-box fail';
+      verdictBox.style.display = '';
+      verdictTitle.textContent = 'Weak labor-cost case (over 5 years)';
+      verdictText.textContent  = 'Labor savings alone do not justify the investment on typical capital budget criteria. This is common in low-volume high-mix production. Build a separate case based on defect escape cost, customer quality requirements, or regulatory compliance.';
+    }
+  }
+
+  document.getElementById('resNetSavings').textContent = fmt(netSavings, 0);
+  document.getElementById('res5yr').textContent        = fmt(fiveYearNet, 0);
+  document.getElementById('resFTEReduction').textContent = fteReduction.toFixed(2);
+
+  // --- Chart ---
+  drawChart(effectiveInvestment, netSavings);
+}
+
+// ----------------------------------------------------------------
+// CHART
+// ----------------------------------------------------------------
+function drawChart(effectiveInvestment, netSavings) {
+  var wrap = document.getElementById('chartWrap');
+  wrap.style.display = '';
+  var canvas = document.getElementById('roiChart');
+  var ctx = canvas.getContext('2d');
+
+  var years = 10;
+  var labels = [];
+  var values = [];
+  for (var y = 0; y <= years; y++) {
+    labels.push('Y' + y);
+    values.push(-effectiveInvestment + netSavings * y);
+  }
+
+  var W = canvas.offsetWidth || 700;
+  var H = 200;
+  canvas.width  = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  canvas.style.height = H + 'px';
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  ctx.clearRect(0, 0, W, H);
+
+  var padL = 64, padR = 16, padT = 14, padB = 28;
+  var chartW = W - padL - padR;
+  var chartH = H - padT - padB;
+
+  var minV = Math.min.apply(null, values);
+  var maxV = Math.max.apply(null, values);
+  var range = maxV - minV || 1;
+
+  function xPos(i) { return padL + (i / years) * chartW; }
+  function yPos(v) { return padT + chartH - ((v - minV) / range) * chartH; }
+
+  // Zero line
+  var y0 = yPos(0);
+  ctx.strokeStyle = 'rgba(253,238,229,0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(padL, y0);
+  ctx.lineTo(padL + chartW, y0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Grid lines (horizontal)
+  ctx.strokeStyle = 'rgba(253,238,229,0.07)';
+  ctx.lineWidth = 1;
+  for (var g = 0; g <= 4; g++) {
+    var gy = padT + (g / 4) * chartH;
+    ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(padL + chartW, gy); ctx.stroke();
+  }
+
+  // Fill area
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(values[0]));
+  for (var p = 1; p <= years; p++) {
+    ctx.lineTo(xPos(p), yPos(values[p]));
+  }
+  ctx.lineTo(xPos(years), yPos(minV < 0 ? Math.min(minV, 0) : 0));
+  ctx.lineTo(xPos(0),     yPos(minV < 0 ? Math.min(minV, 0) : 0));
+  ctx.closePath();
+
+  // Gradient fill
+  var grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+  grad.addColorStop(0,   'rgba(255,146,56,0.25)');
+  grad.addColorStop(1,   'rgba(255,146,56,0.03)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.strokeStyle = '#ff9238';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(values[0]));
+  for (var q = 1; q <= years; q++) {
+    ctx.lineTo(xPos(q), yPos(values[q]));
+  }
+  ctx.stroke();
+
+  // Dots
+  for (var d = 0; d <= years; d++) {
+    var v = values[d];
+    var dotColor = v >= 0 ? '#1fa855' : '#cf4444';
+    ctx.beginPath();
+    ctx.arc(xPos(d), yPos(v), 3.5, 0, 2 * Math.PI);
+    ctx.fillStyle = dotColor;
+    ctx.fill();
+  }
+
+  // X axis labels
+  ctx.fillStyle = '#c4b3a6';
+  ctx.font = '11px Share Tech Mono, monospace';
+  ctx.textAlign = 'center';
+  for (var l = 0; l <= years; l++) {
+    ctx.fillText(labels[l], xPos(l), H - 8);
+  }
+
+  // Y axis labels
+  ctx.textAlign = 'right';
+  var ySteps = [0, 0.25, 0.5, 0.75, 1.0];
+  for (var s = 0; s < ySteps.length; s++) {
+    var yv = minV + ySteps[s] * range;
+    var label = (yv >= 1000 || yv <= -1000) ? (yv / 1000).toFixed(0) + 'k' : yv.toFixed(0);
+    ctx.fillText(label, padL - 6, yPos(yv) + 4);
+  }
+}
+
+// ----------------------------------------------------------------
+// PRINT
+// ----------------------------------------------------------------
+function printReport() {
+  var title = document.getElementById('reportTitle').value || 'AOI ROI Analysis';
+  var rows = [
+    ['PCBs per year',            document.getElementById('pcbYear').value],
+    ['Components per PCB',       document.getElementById('compPerPcb').value],
+    ['Operator wage/hour',       document.getElementById('laborRateOp').value],
+    ['Programmer wage/hour',     document.getElementById('laborRateProg').value],
+    ['Manual time/PCB',          document.getElementById('manualTimePerPcb').value + ' s'],
+    ['Manual cost/year',         document.getElementById('manTotalCost').textContent],
+    ['AOI cycle time/PCB',       document.getElementById('aoiTimePerPcb').value + ' s'],
+    ['AOI operating cost/year',  document.getElementById('aoiTotalCost').textContent],
+    ['Net savings/year (a)',     document.getElementById('netSavings').textContent],
+    ['Purchase price (B)',       document.getElementById('dcfB').textContent],
+    ['Economic life (n)',        document.getElementById('economicLife').value + ' yr'],
+    ['Discount rate (i)',        document.getElementById('interestRate').value + '%'],
+    ['PV of residual (PV_R)',    document.getElementById('dcfPVR').textContent],
+    ['Payback period',           document.getElementById('resPayback').textContent + ' years'],
+    ['5-year net savings',       document.getElementById('res5yr').textContent],
+    ['FTE reduction',            document.getElementById('resFTEReduction').textContent]
+  ];
+
+  var rowsHtml = rows.map(function(r) {
+    return '<tr><td style="padding:6px 12px 6px 0; color:#5c5248; font-size:0.88rem;">' + r[0] + '</td>'
+         + '<td style="padding:6px 0; font-family:monospace; font-size:0.9rem; color:#140f0a;">' + r[1] + '</td></tr>';
+  }).join('');
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>' + title + '</title>'
+    + '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    + '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">'
+    + '<style>body{margin:0;padding:40px;background:#fff;color:#140f0a;font-family:Barlow,sans-serif;font-size:0.97rem;}'
+    + 'h1{font-family:"Barlow Condensed",sans-serif;font-size:2rem;font-weight:700;color:#140f0a;margin:0 0 4px;}'
+    + '.sub{color:#5c5248;font-size:0.88rem;margin-bottom:2rem;}'
+    + 'table{border-collapse:collapse;width:100%;max-width:520px;}'
+    + 'tr{border-bottom:1px solid #e0d8d0;}'
+    + '.verdict{margin-top:2rem;padding:12px 16px;border-radius:6px;font-size:0.92rem;}'
+    + '.verdict.pass{background:#e8f5ee;border:1px solid #167a40;color:#167a40;}'
+    + '.verdict.warn{background:#fff3e8;border:1px solid #d4720a;color:#d4720a;}'
+    + '.verdict.fail{background:#fceaea;border:1px solid #c42b08;color:#c42b08;}'
+    + '.footer{margin-top:3rem;font-size:0.78rem;color:#9c9088;}@media print{body{padding:20px;}}</style></head><body>'
+    + '<h1>' + title + '</h1>'
+    + '<div class="sub">AOI ROI Calculator -- smtcalc.com</div>'
+    + '<table>' + rowsHtml + '</table>'
+    + '<div class="verdict ' + (document.getElementById('verdictBox').className.split(' ')[1] || 'warn') + '">'
+    + document.getElementById('verdictTitle').textContent + '. '
+    + document.getElementById('verdictText').textContent + '</div>'
+    + '<div class="footer">Generated by SMTCalc.com -- Free tools for electronics manufacturing professionals</div>'
+    + '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 600);
+}
+
+// ----------------------------------------------------------------
+// ACCORDION
+// ----------------------------------------------------------------
+function toggleAccordion(btn) {
+  var item = btn.parentElement;
+  var content = item.querySelector('.accordion-content');
+  var isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  content.classList.toggle('open', !isOpen);
+}
+
+// ----------------------------------------------------------------
+// CONTACT
+// ----------------------------------------------------------------
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// ----------------------------------------------------------------
+// LIVE CALCULATION
+// ----------------------------------------------------------------
+var inputs = document.querySelectorAll('input[type="number"]');
+for (var k = 0; k < inputs.length; k++) {
+  inputs[k].addEventListener('input', calculate);
+}
+
+calculate();
+</script>
+
+</body>
+</html>
