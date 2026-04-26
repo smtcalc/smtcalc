@@ -87,7 +87,8 @@ Common safe alternatives:
 - Base `@media print` rule (hiding header, nav, guide-banner, print-bar)
 
 Each tool page adds ONLY its page-specific styles in an inline `<style>` block.
-The `@media print` :root color override for light-theme printing stays per-page (inline).
+Each tool page keeps its own `@media print` block inline to hide screen-only elements.
+No `:root` color override is needed in print -- the site is already light-themed.
 
 Link in every page `<head>` immediately after the favicon:
 
@@ -103,25 +104,26 @@ No separate Google Fonts `<link>` tags are needed. Fonts are loaded via `@import
 
 ## 4. Color System
 
-The site uses a dark theme with warm brown undertones. All tokens are defined in style.css.
+The site uses a light theme ("Technical Green") with a near-white background and forest
+green accent. All tokens are defined in style.css.
 
 ```css
 :root {
-  --bg:           #130d08;                    /* Page background, deepest level */
-  --bg2:          #19120d;                    /* Section backgrounds, panels */
-  --bg3:          #201812;                    /* Input fields, stat boxes */
-  --bg4:          #261e18;                    /* Active states, unit badges */
-  --bg5:          #2e2620;                    /* Hover states, deepest inset */
-  --accent:       #ff9238;                    /* Orange: primary accent */
-  --accent-hover: #ef8529;                    /* Orange: hover state */
-  --accent2:      #ff752b;                    /* Red-orange: destructive / error */
-  --text:         #fdeee5;                    /* Primary text, warm off-white */
-  --muted:        #c4b3a6;                    /* Secondary text, labels */
-  --border:       rgba(253,238,229,0.12);     /* Primary border */
-  --border2:      rgba(253,238,229,0.22);     /* Secondary border */
-  --green:        #1fa855;                    /* PASS / OK verdict */
-  --yellow:       #ff752b;                    /* WARNING (same as --accent2) */
-  --red:          #cf4444;                    /* FAIL verdict */
+  --bg:           #f7faf6;                  /* Page background, near-white with green tint */
+  --bg2:          #f0f4f0;                  /* Section backgrounds, panels */
+  --bg3:          #e6ece7;                  /* Input fields, stat boxes */
+  --bg4:          #dbe4dc;                  /* Active states, unit badges */
+  --bg5:          #cfd9d1;                  /* Hover states, deepest inset */
+  --accent:       #186640;                  /* Forest green: primary accent */
+  --accent-hover: #0f5533;                  /* Darker green: hover state */
+  --accent2:      #b03333;                  /* Red: destructive / error */
+  --text:         #1c2a1f;                  /* Primary text, near-black green */
+  --muted:        #4a5e50;                  /* Secondary text, labels */
+  --border:       rgba(28,42,31,0.12);      /* Primary border */
+  --border2:      rgba(28,42,31,0.22);      /* Secondary border */
+  --green:        #1a9e55;                  /* PASS / OK verdict */
+  --yellow:       #b06a10;                  /* WARNING, amber */
+  --red:          #b03333;                  /* FAIL verdict (same as --accent2) */
   --mono:         'Share Tech Mono', monospace;
 }
 ```
@@ -130,29 +132,38 @@ The site uses a dark theme with warm brown undertones. All tokens are defined in
 
 | State     | Color          | Variable  |
 |-----------|----------------|-----------|
-| PASS / OK | #1fa855 green  | --green   |
-| MARGINAL  | #ff752b orange | --yellow  |
-| FAIL      | #cf4444 red    | --red     |
+| PASS / OK | #1a9e55 green  | --green   |
+| MARGINAL  | #b06a10 amber  | --yellow  |
+| FAIL      | #b03333 red    | --red     |
 
 **rgba reference (for transparency expressions in page-specific CSS):**
 
-| Token    | Hex     | RGB base            |
-|----------|---------|---------------------|
-| --accent | #ff9238 | rgba(255,146,56,...) |
-| --green  | #1fa855 | rgba(31,168,85,...)  |
-| --red    | #cf4444 | rgba(207,68,68,...)  |
+| Token    | Hex     | RGB base              |
+|----------|---------|-----------------------|
+| --accent | #186640 | rgba(24,102,64,...)   |
+| --green  | #1a9e55 | rgba(26,158,85,...)   |
+| --yellow | #b06a10 | rgba(176,106,16,...)  |
+| --red    | #b03333 | rgba(176,51,51,...)   |
 
-Header background (hardcoded in style.css): `rgba(19,13,8,0.95)`
+**Navigation header (hardcoded in style.css, not CSS variables):**
+The header is dark on all pages regardless of the light page theme.
+- Header background: rgba(22,42,28,0.97), border-bottom: rgba(62,207,122,0.15)
+- Logo "SMT" text: color #f0f4f0 (hardcoded -- NOT var(--text), which is dark)
+- Logo "Calc" span: color #3ecf7a
+- Nav links: color #c8d8cc, hover color #3ecf7a
+- Tool badge: color #8aad96, border rgba(62,207,122,0.22)
 
-**Print reports always use a light theme.** The `printReport()` JS builds its own HTML
-with hardcoded light colors. Do not change these:
+**Print reports use independent hardcoded colors.** The `printReport()` JS builds its own
+HTML with these fixed values -- do not change them:
 - Background: #ffffff
 - Accent / labels: #d4720a
 - PASS: #167a40
 - FAIL: #c42b08
 
-The `@media print` block in each tool page uses an inline `:root` override to reset
-dark tokens to light values. Do not remove or move this to style.css.
+**Semantic rgba tint usage:**
+- Info / accent context: rgba(24,102,64,...) -- green tint
+- Warning context: rgba(176,106,16,...) -- amber tint
+- Error / fail context: rgba(176,51,51,...) -- red tint
 
 ---
 
@@ -215,14 +226,14 @@ Fixed, 80px tall. Defined entirely in style.css.
 </header>
 ```
 
-Logo renders as: **SMT** in `--text`, **Calc** in `--accent` (orange).
+Logo renders as: **SMT** in color #f0f4f0 (hardcoded light, visible on dark nav), **Calc** in #3ecf7a.
 On the landing page, `<div class="tool-badge">` is replaced by `<nav>`.
 
 Key values from style.css:
 - Height: 80px
-- Background: rgba(26,22,20,0.95) with backdrop-filter: blur(10px)
-- Logo: Inter 900, 1.75rem, letter-spacing -0.02em
-- Tool badge: Inter 600, 0.78rem, letter-spacing 0.06em, border-radius 4px
+- Background: rgba(22,42,28,0.97) with backdrop-filter: blur(10px)
+- Logo: Inter 900, 1.75rem, letter-spacing -0.02em, color #f0f4f0 (hardcoded)
+- Tool badge: Inter 600, 0.78rem, letter-spacing 0.06em, color #8aad96
 
 ---
 
@@ -287,7 +298,7 @@ Shown between hero and tool grid when a guide exists. Defined in style.css.
 </div>
 ```
 
-Background: rgba(255,146,56,0.07), bottom border: rgba(255,146,56,0.2).
+Background: rgba(24,102,64,0.07), bottom border: rgba(24,102,64,0.18).
 Omit the guide banner entirely if no guide exists yet.
 
 ---
@@ -372,7 +383,7 @@ look. **Every tool page must override these in its inline `<style>` block.**
 - `gap: 1.5px` with `background: var(--border)` creates hairline separators between panels.
   The outer `border: 1px solid var(--border)` frames the entire grid.
 - Panels have no individual border and no border-radius. Flat tiles only.
-- `panel-label` uses a `<div>`, not a `<span>`. It renders with a `::before` orange bar
+- `panel-label` uses a `<div>`, not a `<span>`. It renders with a `::before` green bar
   instead of a bottom border. Do not add a border-bottom to panel-label.
 - Mobile breakpoint for this pattern is **680px**, not 768px.
 - The style.css `.panel` (border-radius 8px, individual border) is intentionally NOT used
@@ -470,7 +481,7 @@ Defined in style.css. Use CSS variables, not hardcoded rgba.
 </div>
 ```
 
-Background: rgba(255,146,56,0.1), border: 1px rgba(255,146,56,0.35), border-radius 6px.
+Background: rgba(176,51,51,0.08), border: 1px rgba(176,51,51,0.28), border-radius 6px.
 
 ### Info Box
 
@@ -480,7 +491,7 @@ Background: rgba(255,146,56,0.1), border: 1px rgba(255,146,56,0.35), border-radi
 </div>
 ```
 
-Background: rgba(31,168,85,0.1), border: 1px rgba(31,168,85,0.3), border-radius 6px.
+Background: rgba(24,102,64,0.08), border: 1px rgba(24,102,64,0.22), border-radius 6px.
 
 ### Empty State
 
@@ -537,8 +548,8 @@ Shown below the main tool grid. Defined in style.css.
 ```
 
 Key values from style.css:
-- print-btn: background --accent, color #fff, Inter 600, border-radius 4px
-- Hover: background --accent-hover
+- print-btn: background --accent (#186640), color #fff, Inter 600, border-radius 4px
+- Hover: background --accent-hover (#0f5533)
 
 ### printReport() function
 
@@ -555,20 +566,17 @@ Share Tech Mono). These are print-only and separate from the site fonts.
 ### Page print hide rules
 
 Each tool page keeps its own `@media print` block inline (not in style.css).
-Minimum required:
+The site is already light-themed, so no `:root` color override is needed for print.
+The block only needs to hide screen-only elements:
 
 ```css
 @media print {
-  :root {
-    --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
-    --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
-    --accent: #c07000;
-  }
-  /* Add page-specific hide rules here */
+  header, .print-bar, .guide-toggle-btn, .guide-content { display: none !important; }
+  /* Add any other page-specific screen-only elements here */
 }
 ```
 
-style.css handles hiding header, .guide-banner, .print-bar, and nav in print.
+style.css also hides header, .guide-banner, .print-bar, and nav globally in print.
 
 ---
 
@@ -613,11 +621,8 @@ Defined in style.css. Every page uses the same markup with JS-obfuscated contact
 <footer>
   <div class="footer-inner">
     <div class="footer-copy">
-      &copy; 2026 <a href="/">SMTCalc.com</a>
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
       <span class="footer-sep">|</span>
-      Free tools for electronics manufacturing professionals.
-    </div>
-    <div class="footer-copy">
       <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
     </div>
   </div>
@@ -678,8 +683,8 @@ Tool file checklist:
 - [ ] Guide banner if a guide URL is available
 - [ ] `.tool-main`, `.panel`, `.panel-full`, `.panel-label` overridden in inline `<style>` per Section 9 (flat tile pattern, NOT style.css defaults)
 - [ ] Print bar with report title input and `.print-btn`
-- [ ] `printReport()` function using hardcoded light-theme colors (#d4720a, #167a40, #c42b08)
-- [ ] `@media print` with `:root` light-theme override (inline, not in style.css)
+- [ ] `printReport()` function using hardcoded colors (#d4720a accent, #167a40 pass, #c42b08 fail)
+- [ ] `@media print` block inline (not in style.css) hiding header, print-bar, guide toggles
 - [ ] Footer with JS-obfuscated contact email
 - [ ] No characters above ASCII codepoint 127 anywhere in the file
 - [ ] body font-weight 400 (set in style.css, verify not overridden)
@@ -688,21 +693,26 @@ Tool file checklist:
 
 ## 18. Inline SVG / Canvas Charts
 
-Some tools contain inline SVG diagrams or canvas-based charts. Colors must match the theme.
-Use the token values, not the old blue-dark hex values.
+Some tools contain inline SVG diagrams or canvas-based charts. CSS variables do not apply
+inside canvas 2D drawing calls or SVG fill/stroke attributes -- use hex values directly.
 
 **Color mapping for chart elements:**
 
-| Element              | Token      | Hex     |
-|----------------------|------------|---------|
-| Chart background     | --bg3      | #2e2723 |
-| Shaded region        | --bg4      | #3a302a |
-| Grid lines / axes    | --border2  | #4a4039 |
-| Chart border         | --border   | #3d342e |
-| Axis labels / text   | --muted    | #a89f96 |
-| Primary curve        | --accent   | #eb6b34 |
-| Dimmed / secondary   | n/a        | #7a3c1a |
-| Pass / OK indicator  | --green    | #1fa855 |
+| Element              | Token      | Hex / value             |
+|----------------------|------------|-------------------------|
+| Chart background     | --bg2      | #f0f4f0                 |
+| Shaded region        | --bg3      | #e6ece7                 |
+| Grid lines / axes    | --border   | rgba(28,42,31,0.14)     |
+| Chart border         | --border2  | rgba(28,42,31,0.22)     |
+| Axis labels / text   | --muted    | #4a5e50                 |
+| Primary curve        | --accent   | #186640                 |
+| Dimmed / secondary   | n/a        | #7ab090                 |
+| Pass / OK indicator  | --green    | #1a9e55                 |
+| Warning indicator    | --yellow   | #b06a10                 |
+| Fail indicator       | --red      | #b03333                 |
+
+**SVG document icons** (guide toggle buttons) use `stroke="#186640"`. Never hardcode the
+old orange `#d4720a` for SVG icons in page content -- that color is print-report only.
 
 ---
 
