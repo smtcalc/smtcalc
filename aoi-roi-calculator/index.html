@@ -18,7 +18,7 @@
 
     /* MAIN GRID */
     .tool-main {
-      max-width: 1020px;
+      max-width: 960px;
       margin: 2rem auto;
       padding: 0;
       display: grid;
@@ -61,15 +61,22 @@
     }
 
     /* FIELDS */
-    .field { margin-bottom: 1.2rem; }
+    .field {
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+    }
     .field label {
-      display: block;
+      display: flex;
+      align-items: flex-end;
       font-family: var(--mono);
       font-size: 0.75rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 0.4rem;
+      min-height: 2.4em;
+      line-height: 1.2;
     }
     .field-note {
       font-size: 0.82rem;
@@ -620,7 +627,7 @@
 </div>
 
 <!-- GUIDE ACCORDION -->
-<div style="max-width:1020px; margin:2rem auto 4rem; padding:0 0;">
+<div style="max-width:960px; margin:2rem auto 4rem; padding:0 0;">
 
   <div class="accordion">
 
