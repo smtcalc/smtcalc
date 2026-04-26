@@ -20,28 +20,15 @@
     .hero {
       position: relative;
       overflow: hidden;
-      min-height: 90vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 160px 2rem 100px;
+      padding: 100px 2rem 60px;
       text-align: center;
       background-image:
         linear-gradient(rgba(28,42,31,0.055) 1px, transparent 1px),
         linear-gradient(90deg, rgba(28,42,31,0.055) 1px, transparent 1px);
       background-size: 36px 36px;
-    }
-
-    .hero-pcb {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(800px, 95vw);
-      height: auto;
-      pointer-events: none;
-      filter: sepia(1) saturate(4) hue-rotate(80deg) brightness(0.35) opacity(0.07);
-      mix-blend-mode: multiply;
     }
 
     .hero::before {
@@ -60,9 +47,6 @@
       width: 100%;
     }
 
-    @media (max-width: 768px) {
-      .hero-pcb { display: none; }
-    }
 
     .hero-eyebrow {
       display: inline-block;
@@ -110,51 +94,6 @@
       line-height: 1.6;
     }
 
-    .hero-cta {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, #186640 0%, #0f5533 100%);
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 1.1rem;
-      text-decoration: none;
-      padding: 1rem 2.5rem;
-      border-radius: 4px;
-      transition: filter 0.2s, transform 0.1s;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--bg4);
-      color: var(--text);
-      font-weight: 600;
-      font-size: 1.1rem;
-      text-decoration: none;
-      padding: 1rem 2.5rem;
-      border: 1px solid var(--border2);
-      border-radius: 4px;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--muted);
-      background: var(--bg5);
-    }
 
     /* STATS BAR */
     .stats-bar {
@@ -379,9 +318,6 @@
 
   <section class="hero">
 
-    <!-- PCB traces illustration, top-right corner -->
-    <img class="hero-pcb" src="/hero-calculator.webp" alt="" aria-hidden="true">
-
     <div class="hero-content">
       <h1>
         Practical
@@ -391,10 +327,6 @@
       <p class="hero-desc">
         Free, no-nonsense calculators and process tools built by electronics manufacturing professionals. No login, no fluff - just tools that work.
       </p>
-      <div class="hero-cta">
-        <a href="#tools" class="btn-primary">Browse Tools</a>
-        <a href="/about/" class="btn-secondary">About This Site</a>
-      </div>
     </div>
   </section>
 
