@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMT Equipment ROI Calculator - Pick &amp; Place Investment Analysis | SMTCalc</title>
+  <meta name="description" content="Evaluate the financial return of a pick and place machine upgrade. Compare current line vs planned investment, simple payback, NPV, IRR over a configurable horizon.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/smt-roi-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/smt-roi-calculator/">
+  <meta property="og:title" content="SMT Equipment ROI Calculator | SMTCalc">
+  <meta property="og:description" content="Evaluate the financial return of a pick and place machine upgrade. Compare current line vs planned investment, simple payback, NPV, IRR over a configurable horizon.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+
+    /* MAIN GRID */
+    .tool-main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 760px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
+    }
+    .panel {
+      background: var(--bg2);
+      padding: 1.75rem;
+      border: none;
+      border-radius: 0;
+    }
+    .panel-full {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      padding: 1.75rem;
+    }
+    .panel-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* FIELDS */
+    .field {
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .field label {
+      display: flex;
+      align-items: flex-end;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      min-height: 2.4em;
+      line-height: 1.2;
+    }
+    .field-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      line-height: 1.45;
+    }
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .input-wrap input[type="number"],
+    .input-wrap input[type="text"] {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      padding: 0.55rem 0.75rem;
+      min-width: 0;
+      -moz-appearance: textfield;
+    }
+    .input-wrap input[type="number"]::-webkit-outer-spin-button,
+    .input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .input-wrap input[type="number"]:focus,
+    .input-wrap input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .input-wrap input.invalid {
+      border-color: var(--red);
+      background: rgba(176,51,51,0.06);
+    }
+    .input-unit {
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.55rem 0.65rem;
+      white-space: nowrap;
+    }
+    .input-wrap input[type="text"].label-input {
+      border-radius: 4px;
+      border-right: 1px solid var(--border);
+    }
+    .field-error {
+      font-size: 0.78rem;
+      color: var(--red);
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .field.has-error .field-error { display: block; }
+
+    /* COMPUTED ROW */
+    .computed-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .computed-row:last-child { border-bottom: none; }
+    .computed-label {
+      font-size: 0.86rem;
+      color: var(--muted);
+      flex: 1;
+    }
+    .computed-value {
+      font-family: var(--mono);
+      font-size: 0.97rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .computed-value.highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .computed-value.pos { color: var(--green); }
+    .computed-value.neg { color: var(--red); }
+
+    /* MACHINE TABLE / ROWS */
+    .machine-grid {
+      background: var(--border);
+      border: 1px solid var(--border);
+      display: grid;
+      gap: 1px;
+    }
+    .machine-row {
+      background: var(--bg3);
+      padding: 1rem 1.1rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 0.8fr 0.7fr 0.9fr 0.9fr auto;
+      gap: 0.6rem;
+      align-items: end;
+    }
+    .machine-row.row-header {
+      background: var(--bg4);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.6rem 1.1rem;
+      align-items: center;
+    }
+    .machine-row.row-header > div { padding: 0; }
+    @media (max-width: 900px) {
+      .machine-row { grid-template-columns: 1fr 1fr; }
+      .machine-row.row-header { display: none; }
+      .machine-row .cell::before {
+        content: attr(data-label);
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.25rem;
+      }
+    }
+    .cell input[type="number"],
+    .cell input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      padding: 0.45rem 0.55rem;
+      -moz-appearance: textfield;
+    }
+    .cell input[type="number"]::-webkit-outer-spin-button,
+    .cell input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .cell input.invalid { border-color: var(--red); background: rgba(176,51,51,0.06); }
+    .cell .replace-check {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+    .replace-check input[type="checkbox"] { accent-color: var(--accent); }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-remove {
+      background: var(--bg2);
+      color: var(--red);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 1rem;
+      width: 32px; height: 32px;
+      line-height: 1;
+      padding: 0;
+    }
+    .btn-remove:hover { background: rgba(176,51,51,0.1); }
+    .btn-remove:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-add {
+      background: var(--bg3);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.55rem 0.9rem;
+      margin-top: 0.85rem;
+    }
+    .btn-add:hover { background: var(--bg4); }
+    .btn-add:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* TOGGLE GROUP */
+    .toggle-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .toggle-group button {
+      flex: 1;
+      background: var(--bg3);
+      border: none;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.65rem 0.5rem;
+      min-height: 40px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .toggle-group button.active {
+      background: var(--accent);
+      color: #f0f4f0;
+    }
+
+    /* CURRENCY SELECTOR */
+    .currency-select {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      padding: 0.5rem 0.75rem;
+    }
+    .currency-select:focus { outline: none; border-color: var(--accent); }
+
+    /* RESULTS STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .stat-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem 1.25rem;
+    }
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+    }
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 1.45rem;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .stat-value.pass { color: var(--green); }
+    .stat-value.warn { color: var(--yellow); }
+    .stat-value.fail { color: var(--red); }
+    .stat-sub {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* RESULT GROUP */
+    .result-group {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .result-group h4 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.65rem;
+    }
+
+    .results-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 760px) {
+      .results-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* VERDICT BOX */
+    .verdict-box {
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      display: none;
+    }
+    .verdict-box.pass { background: rgba(26,158,85,0.1); border: 1px solid rgba(26,158,85,0.3); color: var(--text); }
+    .verdict-box.warn { background: rgba(176,106,16,0.1); border: 1px solid rgba(176,106,16,0.35); color: var(--text); }
+    .verdict-box.fail { background: rgba(176,51,51,0.1); border: 1px solid rgba(176,51,51,0.3); color: var(--text); }
+    .verdict-box strong { display: block; margin-bottom: 0.3rem; }
+
+    /* CASHFLOW TABLE */
+    .cf-table-wrap {
+      margin-top: 1rem;
+      overflow-x: auto;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    table.cf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      min-width: 580px;
+    }
+    table.cf-table thead th {
+      background: var(--bg4);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: right;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.cf-table thead th:first-child { text-align: left; }
+    table.cf-table tbody td {
+      padding: 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      color: var(--text);
+    }
+    table.cf-table tbody td:first-child {
+      text-align: left;
+      color: var(--muted);
+    }
+    table.cf-table tbody tr.breakeven {
+      background: rgba(26,158,85,0.13);
+    }
+    table.cf-table tbody tr.breakeven td:first-child {
+      color: var(--green);
+      font-weight: 700;
+    }
+    table.cf-table tbody tr.breakeven td {
+      color: var(--green);
+    }
+    table.cf-table tbody tr:last-child td { border-bottom: none; }
+
+    /* EMPTY STATE */
+    .results-empty {
+      color: var(--muted);
+      font-size: 0.97rem;
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    .formula-note {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .scope-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    @media print {
+      :root {
+        --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
+        --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
+        --accent: #167a40;
+      }
+      .print-bar, .guide-banner, header, .row-actions, .btn-add { display: none !important; }
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">SMT Equipment ROI Calculator</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="hero-eyebrow">Capital Investment / Process Engineering</div>
+    <h1>SMT Equipment ROI Calculator</h1>
+    <p>
+      Evaluate the financial case for a pick and place line upgrade. Compare your
+      current configuration against a planned investment, see annual savings,
+      simple payback, NPV, IRR, and a year-by-year cumulative cash flow over your
+      analysis horizon. Built to be defensible to a finance department, not just
+      a headline payback figure.
+    </p>
+  </div>
+</div>
+
+<div class="tool-main">
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: PRODUCTION PARAMETERS                             -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Production Parameters</div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem;">
+
+      <div class="field">
+        <label for="annualHours">Annual Production Hours</label>
+        <div class="input-wrap">
+          <input type="number" id="annualHours" min="500" max="8760" step="50" value="2000">
+          <span class="input-unit">h/yr</span>
+        </div>
+        <div class="field-error">Enter a value between 500 and 8760.</div>
+      </div>
+
+      <div class="field">
+        <label for="oee">Overall Equipment Efficiency (OEE)</label>
+        <div class="input-wrap">
+          <input type="number" id="oee" min="30" max="99" step="1" value="75">
+          <span class="input-unit">%</span>
+        </div>
+        <div class="field-note">Applied to all machines equally. Accounts for changeover, downtime, and speed loss.</div>
+        <div class="field-error">Enter a value between 30 and 99.</div>
+      </div>
+
+      <div class="field">
+        <label for="placementsPerBoard">Average Placements per Board</label>
+        <div class="input-wrap">
+          <input type="number" id="placementsPerBoard" min="1" max="99999" step="10" value="500">
+          <span class="input-unit">cmp</span>
+        </div>
+        <div class="field-error">Enter a value between 1 and 99999.</div>
+      </div>
+
+      <div class="field">
+        <label for="boardMix">Board Mix (Unique Products)</label>
+        <div class="input-wrap">
+          <input type="number" id="boardMix" min="1" max="500" step="1" value="10">
+          <span class="input-unit">types</span>
+        </div>
+        <div class="field-note">Used to estimate changeover overhead. Higher mix reduces effective throughput.</div>
+        <div class="field-error">Enter a value between 1 and 500.</div>
+      </div>
+
+      <div class="field">
+        <label for="laborRate">Operator Labor Cost / Hour (loaded)</label>
+        <div class="input-wrap">
+          <input type="number" id="laborRate" min="0" step="0.5" value="45.00">
+          <span class="input-unit" id="laborRateUnit">EUR/h</span>
+        </div>
+        <div class="field-note">Include employer taxes, benefits, and floor overhead. Typically 1.3x to 1.8x the base wage.</div>
+        <div class="field-error">Enter a non-negative value.</div>
+      </div>
+
+      <div class="field">
+        <label for="boardsPerYear">Boards Produced per Year</label>
+        <div class="input-wrap">
+          <input type="number" id="boardsPerYear" min="1" step="1000" value="50000">
+          <span class="input-unit">pcs/yr</span>
+        </div>
+        <div class="field-note">Actual shipped quantity. Used to calculate cost per board.</div>
+        <div class="field-error">Enter a positive value.</div>
+      </div>
+
+      <div class="field">
+        <label for="currencyCode">Currency</label>
+        <select id="currencyCode" class="currency-select" style="width:100%;">
+          <option value="EUR" selected>EUR (Euro)</option>
+          <option value="USD">USD (US Dollar)</option>
+          <option value="GBP">GBP (Pound Sterling)</option>
+          <option value="OTH">Other / Generic</option>
+        </select>
+        <div class="field-note">Prefix applied to all currency displays in this tool.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: CURRENT LINE                                      -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Current Line Configuration</div>
+
+    <div class="machine-grid" id="currentMachineGrid">
+      <div class="machine-row row-header">
+        <div>Machine Label</div>
+        <div>Nameplate CPH</div>
+        <div>Derate %</div>
+        <div>Operators</div>
+        <div>Maintenance / yr</div>
+        <div>Book Value</div>
+        <div></div>
+      </div>
+    </div>
+
+    <button class="btn-add" id="addCurrentBtn" type="button">+ Add Machine</button>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:1.5rem 0 1.25rem;">
+
+    <div class="results-grid-2">
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Total nameplate CPH</span>
+          <span class="computed-value" id="curNameplateCPH">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label highlight">Total effective CPH (derated)</span>
+          <span class="computed-value highlight" id="curEffectiveCPH">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Annual placement capacity (CPH x OEE x hours)</span>
+          <span class="computed-value" id="curAnnualCapacity">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Implied annual board capacity</span>
+          <span class="computed-value" id="curBoardCapacity">--</span>
+        </div>
+      </div>
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Total operators</span>
+          <span class="computed-value" id="curOperators">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Annual labor cost</span>
+          <span class="computed-value" id="curLaborCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Annual maintenance cost</span>
+          <span class="computed-value" id="curMaintCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label highlight">Total annual operating cost</span>
+          <span class="computed-value highlight" id="curOpCost">--</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-note" style="margin-top:0.75rem;">
+      Effective CPH per machine = Nameplate x Derate. Real-world derate is typically 60% to 80% of the IPC-9850 nameplate.
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: PLANNED INVESTMENT                                -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Planned Investment</div>
+
+    <div class="field">
+      <label>Investment Scope</label>
+      <div class="toggle-group" id="scopeToggle">
+        <button type="button" class="active" data-scope="full">Full Replacement</button>
+        <button type="button" data-scope="partial">Partial Replacement</button>
+      </div>
+      <div class="field-note" id="scopeNote">All current machines will be replaced by the new equipment listed below.</div>
+    </div>
+
+    <div id="partialNote" class="scope-note" style="display:none;">
+      Tick the checkbox on each current machine row above to mark it as being replaced. Unticked machines carry forward their existing operators, maintenance, and CPH into the planned scenario.
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <div style="font-family:'Inter',sans-serif; font-weight:700; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:0.85rem;">New Equipment</div>
+
+      <div class="machine-grid" id="newMachineGrid">
+        <div class="machine-row row-header" style="grid-template-columns:1.2fr 0.85fr 0.7fr 0.7fr 0.85fr 0.85fr 0.85fr 0.7fr 0.85fr auto;">
+          <div>Machine Label</div>
+          <div>Nameplate CPH</div>
+          <div>Derate %</div>
+          <div>Operators</div>
+          <div>Maintenance / yr</div>
+          <div>Purchase Price</div>
+          <div>Install Cost</div>
+          <div>Life (yr)</div>
+          <div>Residual</div>
+          <div></div>
+        </div>
+      </div>
+
+      <button class="btn-add" id="addNewBtn" type="button">+ Add New Machine</button>
+    </div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:1.5rem 0 1.25rem;">
+
+    <div class="results-grid-2">
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Total new equipment effective CPH</span>
+          <span class="computed-value" id="newEffectiveCPH">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Carried-forward (kept) effective CPH</span>
+          <span class="computed-value" id="keptEffectiveCPH">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label highlight">Planned total effective CPH</span>
+          <span class="computed-value highlight" id="planEffectiveCPH">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Planned annual placement capacity</span>
+          <span class="computed-value" id="planAnnualCapacity">--</span>
+        </div>
+      </div>
+      <div>
+        <div class="computed-row">
+          <span class="computed-label">Total planned operators</span>
+          <span class="computed-value" id="planOperators">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Planned annual labor cost</span>
+          <span class="computed-value" id="planLaborCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label">Planned annual maintenance cost</span>
+          <span class="computed-value" id="planMaintCost">--</span>
+        </div>
+        <div class="computed-row">
+          <span class="computed-label highlight">Planned total annual operating cost</span>
+          <span class="computed-value highlight" id="planOpCost">--</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: FINANCIAL PARAMETERS                              -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">Financial Parameters</div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem;">
+
+      <div class="field">
+        <label for="horizon">Analysis Horizon</label>
+        <div class="input-wrap">
+          <input type="number" id="horizon" min="1" max="20" step="1" value="10">
+          <span class="input-unit">years</span>
+        </div>
+        <div class="field-note">Typically matched to the expected useful life of the new equipment.</div>
+        <div class="field-error">Enter a value between 1 and 20.</div>
+      </div>
+
+      <div class="field">
+        <label for="discountRate">Discount Rate / WACC</label>
+        <div class="input-wrap">
+          <input type="number" id="discountRate" min="0" max="30" step="0.5" value="8">
+          <span class="input-unit">%</span>
+        </div>
+        <div class="field-note">Use your company cost of capital or a hurdle rate. 8 to 12% is typical for capital equipment.</div>
+        <div class="field-error">Enter a value between 0 and 30.</div>
+      </div>
+
+      <div class="field">
+        <label for="laborEsc">Annual Labor Cost Escalation</label>
+        <div class="input-wrap">
+          <input type="number" id="laborEsc" min="0" max="10" step="0.25" value="3">
+          <span class="input-unit">%/yr</span>
+        </div>
+        <div class="field-note">Expected annual increase in labor and operating costs.</div>
+        <div class="field-error">Enter a value between 0 and 10.</div>
+      </div>
+
+      <div class="field">
+        <label>Revenue Uplift</label>
+        <div class="toggle-group" id="upliftToggle">
+          <button type="button" class="active" data-uplift="off">Disabled</button>
+          <button type="button" data-uplift="on">Enabled</button>
+        </div>
+      </div>
+
+      <div class="field" id="sellingPriceField" style="display:none;">
+        <label for="sellingPrice">Selling Price per Board</label>
+        <div class="input-wrap">
+          <input type="number" id="sellingPrice" min="0" step="1" value="0">
+          <span class="input-unit" id="sellingPriceUnit">EUR</span>
+        </div>
+        <div class="field-error">Enter a non-negative value.</div>
+      </div>
+
+      <div class="field" id="extraBoardsField" style="display:none;">
+        <label for="extraBoards">Additional Boards Enabled / Year</label>
+        <div class="input-wrap">
+          <input type="number" id="extraBoards" min="0" step="100" value="0">
+          <span class="input-unit">pcs/yr</span>
+        </div>
+        <div class="field-note">Only enter this if the new capacity directly enables incremental revenue that would not otherwise occur.</div>
+        <div class="field-error">Enter a non-negative value.</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 5: RESULTS                                           -->
+  <!-- ============================================================ -->
+
+  <div class="panel-full">
+    <div class="panel-label">ROI Analysis Results</div>
+
+    <div id="resultsEmpty" class="results-empty">Enter at least one current machine and one new machine with a purchase price to calculate.</div>
+
+    <div id="resultsBlock" style="display:none;">
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Simple Payback</div>
+          <div class="stat-value" id="resPayback">--</div>
+          <div class="stat-sub" id="resPaybackSub">years</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Net Annual Saving (Y1)</div>
+          <div class="stat-value" id="resAnnualSaving">--</div>
+          <div class="stat-sub">labor + maintenance delta</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">NPV (analysis horizon)</div>
+          <div class="stat-value" id="resNPV">--</div>
+          <div class="stat-sub" id="resNPVSub">discounted cash flow</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">IRR</div>
+          <div class="stat-value" id="resIRR">--</div>
+          <div class="stat-sub" id="resIRRSub">internal rate of return</div>
+        </div>
+      </div>
+
+      <div id="verdictBox" class="verdict-box">
+        <strong id="verdictTitle"></strong>
+        <span id="verdictText"></span>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap:1rem; margin-top:1.25rem;">
+
+        <!-- Group A -->
+        <div class="result-group">
+          <h4>A. Capacity Comparison</h4>
+          <div class="computed-row">
+            <span class="computed-label">Current effective CPH</span>
+            <span class="computed-value" id="rA_curCPH">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Planned effective CPH</span>
+            <span class="computed-value" id="rA_planCPH">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">CPH increase</span>
+            <span class="computed-value" id="rA_cphDelta">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Current annual placements</span>
+            <span class="computed-value" id="rA_curPlace">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Planned annual placements</span>
+            <span class="computed-value" id="rA_planPlace">--</span>
+          </div>
+        </div>
+
+        <!-- Group B -->
+        <div class="result-group">
+          <h4>B. Annual Cost Comparison (Year 1)</h4>
+          <div class="computed-row">
+            <span class="computed-label">Current labor cost</span>
+            <span class="computed-value" id="rB_curLab">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Planned labor cost</span>
+            <span class="computed-value" id="rB_planLab">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Labor saving</span>
+            <span class="computed-value" id="rB_labSave">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Current maintenance</span>
+            <span class="computed-value" id="rB_curMaint">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Planned maintenance</span>
+            <span class="computed-value" id="rB_planMaint">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Maintenance delta</span>
+            <span class="computed-value" id="rB_maintDelta">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label highlight">Net annual operating saving</span>
+            <span class="computed-value highlight" id="rB_netSave">--</span>
+          </div>
+        </div>
+
+        <!-- Group C -->
+        <div class="result-group">
+          <h4>C. Investment Summary</h4>
+          <div class="computed-row">
+            <span class="computed-label">Total equipment purchase</span>
+            <span class="computed-value" id="rC_purchase">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Total installation</span>
+            <span class="computed-value" id="rC_install">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Proceeds from replaced machines (book values)</span>
+            <span class="computed-value" id="rC_proceeds">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">PV of new equipment residuals</span>
+            <span class="computed-value" id="rC_pvResidual">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label highlight">Net investment</span>
+            <span class="computed-value highlight" id="rC_netInvest">--</span>
+          </div>
+        </div>
+
+        <!-- Group D -->
+        <div class="result-group">
+          <h4>D. Payback and Returns</h4>
+          <div class="computed-row">
+            <span class="computed-label">Simple payback period</span>
+            <span class="computed-value" id="rD_payback">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Break-even year (cumulative)</span>
+            <span class="computed-value" id="rD_breakeven">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">NPV over horizon</span>
+            <span class="computed-value" id="rD_npv">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">IRR</span>
+            <span class="computed-value" id="rD_irr">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Annualized ROI</span>
+            <span class="computed-value" id="rD_roi">--</span>
+          </div>
+        </div>
+
+        <!-- Group E -->
+        <div class="result-group">
+          <h4>E. Cost per Board</h4>
+          <div class="computed-row">
+            <span class="computed-label">Current cost per board</span>
+            <span class="computed-value" id="rE_curCpb">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Planned cost per board</span>
+            <span class="computed-value" id="rE_planCpb">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label highlight">Cost reduction per board</span>
+            <span class="computed-value highlight" id="rE_cpbDelta">--</span>
+          </div>
+        </div>
+
+        <!-- Group F (revenue uplift, conditional) -->
+        <div class="result-group" id="rGroupF" style="display:none;">
+          <h4>F. Revenue Impact</h4>
+          <div class="computed-row">
+            <span class="computed-label">Additional annual revenue</span>
+            <span class="computed-value" id="rF_addRev">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label">Additional annual gross profit</span>
+            <span class="computed-value" id="rF_addProfit">--</span>
+          </div>
+          <div class="computed-row">
+            <span class="computed-label highlight">NPV including revenue uplift</span>
+            <span class="computed-value highlight" id="rF_npvUplift">--</span>
+          </div>
+          <div class="field-note" style="margin-top:0.5rem;">
+            Assumes the same cost-per-board ratio as current production. Gross margin only.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cf-table-wrap">
+        <table class="cf-table" id="cfTable">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Annual Saving (escalated)</th>
+              <th>Cumulative Saving</th>
+              <th>Discounted Saving</th>
+              <th>Cumulative NPV</th>
+            </tr>
+          </thead>
+          <tbody id="cfTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="formula-note">
+        NPV = sum over years t=1..n of [a_t / (1+r)^t] - I_net + R_n / (1+r)^n<br>
+        a_t = (labor_y1 saving + maintenance delta) x (1 + e)^(t-1)<br>
+        I_net = purchase + install - book_values_replaced<br>
+        Simple payback = I_net / a_1, ignoring time value of money
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /tool-main -->
+
+<!-- PRINT BAR -->
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Line 2 P&amp;P upgrade evaluation 2026">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<!-- GUIDE ACCORDION -->
+<div style="max-width:960px; margin:2rem auto 4rem; padding:0;">
+
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        Simple payback vs NPV: how to interpret them
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          Simple payback divides the net investment by the year-one annual saving. It tells you in plain terms how many years of operation you need before the savings have repaid the cheque you wrote. Easy to communicate to anyone, including the operator on the floor or a non-financial manager.
+        </p>
+        <p>
+          The catch is that simple payback ignores the time value of money. A euro saved in year ten is not worth the same as a euro saved next year. Inflation, opportunity cost, and the cost of capital all erode the value of distant savings. NPV (net present value) corrects for this by discounting each future saving back to today using your WACC or hurdle rate.
+        </p>
+        <p>
+          Use simple payback as a sanity check and a communication tool. Use NPV as the actual investment criterion. If NPV is positive at your real cost of capital, the project creates value. If it is negative, even a fast simple payback can be misleading because the savings stream is not worth what it looks like on paper.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        What the derate factor means and typical values
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          Nameplate CPH (components per hour) is the number a vendor prints on the data sheet. It is measured under IPC-9850 conditions, which means optimal feeder layout, large simple components, no vision recognition, no fine-pitch placements, no nozzle changes, and no panelisation gaps. None of those conditions match real production.
+        </p>
+        <p>
+          The derate factor converts nameplate to realistic effective CPH. In typical mixed-technology production, derate is 60% to 80%. High-mix, fine-pitch, or odd-form work can push it down to 50% or below. Pure 0402/0603 chip placement on a high-end placer can stay above 80%.
+        </p>
+        <p>
+          Be honest with the derate when comparing machines. Salespeople will compare nameplate to nameplate. The only fair comparison is effective CPH under your actual product mix. If you do not know your current derate, measure it. Take a representative shift, count placements actually made, and divide by run hours minus changeover.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        Choosing the analysis horizon
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          The analysis horizon should match the expected useful life of the new equipment. For pick and place machines that is typically 8 to 12 years before a major capability gap forces replacement. Mechanical wear is rarely the limit. Software support, feeder compatibility, vision system obsolescence, and connectivity to MES systems usually drive replacement before the iron itself fails.
+        </p>
+        <p>
+          Be cautious about horizons longer than 12 years. SMT placement technology evolves. Component packages get smaller, speeds get higher, and the connectivity expectations from your customers change. A 15 year NPV calculation projects savings into a future where the machine may already be a bottleneck against newer competitors. Discount that risk explicitly or shorten the horizon.
+        </p>
+        <p>
+          Matching horizon to useful life also avoids an artefact of the math: a longer horizon almost always improves NPV because you accumulate more discounted savings. That can make a marginal investment look stronger than it really is. Keep the horizon honest.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        Why labor escalation matters
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          Labor cost does not stand still. Even a modest 3% annual increase compounds significantly over a 10 year analysis horizon. A 1.0 FTE that costs 90,000 today costs roughly 121,000 in year ten at 3% escalation. If your investment removes that FTE, the saving in year ten is 35% larger than the saving in year one.
+        </p>
+        <p>
+          Ignoring labor escalation systematically understates the value of any automation investment. It is one of the most common ways a flat-rate ROI calculation undersells a capital project to the finance team. The escalation rate should reflect your local labor market, not just headline inflation. In some regions skilled SMT operator wages are rising faster than CPI.
+        </p>
+        <p>
+          The maintenance delta also escalates in this model, because parts, service contracts, and consumables track inflation in practice. If your service contract is fixed for the first few years, the model is conservative against you, which is generally the right way to err.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        When the revenue uplift toggle is valid
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-content">
+        <p>
+          Be very careful here. Revenue uplift is the most common way that capital justification documents become fiction. The temptation is to say, "the new machine doubles our capacity, therefore we will sell twice as many boards." That logic is only valid if two conditions both hold: your factory is currently capacity-constrained and turning away orders, and you have confirmed customer demand waiting for the additional capacity.
+        </p>
+        <p>
+          If you are not capacity-constrained, additional capacity sits idle. It does not generate revenue. It generates higher fixed cost per board, because depreciation gets spread over the same volume. Leave the toggle off in that case. Justify the investment on labor and maintenance savings alone.
+        </p>
+        <p>
+          If you are capacity-constrained, get specific. How many additional boards per year do you have firm or strongly probable demand for? At what selling price? Do not take the theoretical capacity increase and multiply it by your average selling price. That number is almost always wrong. Use only the demand you can credibly point to. Document it. Your finance department will ask.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ----------------------------------------------------------------
+// STATE
+// ----------------------------------------------------------------
+var currentMachines = [];
+var newMachines = [];
+var scope = 'full';
+var uplift = 'off';
+var nextCurId = 1;
+var nextNewId = 1;
+
+var CURRENCY_LABELS = {
+  EUR: 'EUR',
+  USD: 'USD',
+  GBP: 'GBP',
+  OTH: 'curr'
+};
+
+// ----------------------------------------------------------------
+// UTILITIES
+// ----------------------------------------------------------------
+function fmt(n, decimals) {
+  if (!isFinite(n) || isNaN(n)) return '--';
+  decimals = decimals === undefined ? 0 : decimals;
+  var sign = n < 0 ? '-' : '';
+  var abs = Math.abs(n);
+  return sign + abs.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function fmtCur(n, decimals) {
+  if (!isFinite(n) || isNaN(n)) return '--';
+  decimals = decimals === undefined ? 0 : decimals;
+  return getCurrencyLabel() + ' ' + fmt(n, decimals);
+}
+
+function fmtPct(n, decimals) {
+  if (!isFinite(n) || isNaN(n)) return '--';
+  decimals = decimals === undefined ? 1 : decimals;
+  return n.toFixed(decimals) + '%';
+}
+
+function fmtYM(years) {
+  if (!isFinite(years) || years < 0) return 'N/A';
+  var whole = Math.floor(years);
+  var months = Math.round((years - whole) * 12);
+  if (months === 12) { whole += 1; months = 0; }
+  return whole + ' yr ' + months + ' mo';
+}
+
+function getCurrencyLabel() {
+  return CURRENCY_LABELS[document.getElementById('currencyCode').value] || 'curr';
+}
+
+function val(id) {
+  var el = document.getElementById(id);
+  if (!el) return 0;
+  var v = parseFloat(el.value);
+  return isFinite(v) ? v : 0;
+}
+
+function checkRange(id, min, max, allowEmpty) {
+  var el = document.getElementById(id);
+  if (!el) return true;
+  var raw = el.value;
+  var field = el.closest('.field');
+  var ok = true;
+  if (raw === '' || raw === null) {
+    ok = !!allowEmpty;
+  } else {
+    var v = parseFloat(raw);
+    if (!isFinite(v) || v < min || v > max) ok = false;
+  }
+  if (field) field.classList.toggle('has-error', !ok);
+  el.classList.toggle('invalid', !ok);
+  return ok;
+}
+
+// ----------------------------------------------------------------
+// MACHINE ROWS
+// ----------------------------------------------------------------
+function makeCurrentRow(label, cph, derate, ops, maint, book) {
+  var id = 'cur_' + (nextCurId++);
+  return {
+    id: id,
+    label: label,
+    cph: cph,
+    derate: derate,
+    ops: ops,
+    maint: maint,
+    book: book,
+    replace: true
+  };
+}
+
+function makeNewRow(label, cph, derate, ops, maint, price, install, life, residual) {
+  var id = 'new_' + (nextNewId++);
+  return {
+    id: id,
+    label: label,
+    cph: cph,
+    derate: derate,
+    ops: ops,
+    maint: maint,
+    price: price,
+    install: install,
+    life: life,
+    residual: residual
+  };
+}
+
+function renderCurrentMachines() {
+  var grid = document.getElementById('currentMachineGrid');
+  var rows = grid.querySelectorAll('.machine-row:not(.row-header)');
+  for (var i = 0; i < rows.length; i++) rows[i].parentNode.removeChild(rows[i]);
+
+  for (var k = 0; k < currentMachines.length; k++) {
+    var m = currentMachines[k];
+    var row = document.createElement('div');
+    row.className = 'machine-row';
+    row.setAttribute('data-id', m.id);
+    var partialBlock = '<div class="replace-check"><input type="checkbox" data-field="replace" ' + (m.replace ? 'checked' : '') + '> Replace this machine</div>';
+    row.innerHTML =
+      '<div class="cell" data-label="Machine"><input type="text" data-field="label" value="' + escapeAttr(m.label) + '">' +
+        '<div class="replace-check partial-only" style="display:' + (scope === 'partial' ? 'flex' : 'none') + ';"><input type="checkbox" data-field="replace" ' + (m.replace ? 'checked' : '') + '> Replace this</div>' +
+      '</div>' +
+      '<div class="cell" data-label="Nameplate CPH"><input type="number" data-field="cph" min="0" step="500" value="' + m.cph + '"></div>' +
+      '<div class="cell" data-label="Derate %"><input type="number" data-field="derate" min="30" max="100" step="1" value="' + m.derate + '"></div>' +
+      '<div class="cell" data-label="Operators"><input type="number" data-field="ops" min="0" step="0.5" value="' + m.ops + '"></div>' +
+      '<div class="cell" data-label="Maintenance"><input type="number" data-field="maint" min="0" step="100" value="' + m.maint + '"></div>' +
+      '<div class="cell" data-label="Book Value"><input type="number" data-field="book" min="0" step="100" value="' + m.book + '"></div>' +
+      '<div class="cell row-actions"><button class="btn-remove" type="button" title="Remove">x</button></div>';
+    grid.appendChild(row);
+  }
+
+  attachRowHandlers(grid, currentMachines, ['label', 'cph', 'derate', 'ops', 'maint', 'book', 'replace']);
+  document.getElementById('addCurrentBtn').disabled = currentMachines.length >= 5;
+}
+
+function renderNewMachines() {
+  var grid = document.getElementById('newMachineGrid');
+  var rows = grid.querySelectorAll('.machine-row:not(.row-header)');
+  for (var i = 0; i < rows.length; i++) rows[i].parentNode.removeChild(rows[i]);
+
+  for (var k = 0; k < newMachines.length; k++) {
+    var m = newMachines[k];
+    var row = document.createElement('div');
+    row.className = 'machine-row';
+    row.style.gridTemplateColumns = '1.2fr 0.85fr 0.7fr 0.7fr 0.85fr 0.85fr 0.85fr 0.7fr 0.85fr auto';
+    row.setAttribute('data-id', m.id);
+    row.innerHTML =
+      '<div class="cell" data-label="Machine"><input type="text" data-field="label" value="' + escapeAttr(m.label) + '"></div>' +
+      '<div class="cell" data-label="Nameplate CPH"><input type="number" data-field="cph" min="0" step="500" value="' + m.cph + '"></div>' +
+      '<div class="cell" data-label="Derate %"><input type="number" data-field="derate" min="30" max="100" step="1" value="' + m.derate + '"></div>' +
+      '<div class="cell" data-label="Operators"><input type="number" data-field="ops" min="0" step="0.5" value="' + m.ops + '"></div>' +
+      '<div class="cell" data-label="Maintenance"><input type="number" data-field="maint" min="0" step="100" value="' + m.maint + '"></div>' +
+      '<div class="cell" data-label="Purchase Price"><input type="number" data-field="price" min="0" step="1000" value="' + m.price + '"></div>' +
+      '<div class="cell" data-label="Install Cost"><input type="number" data-field="install" min="0" step="100" value="' + m.install + '"></div>' +
+      '<div class="cell" data-label="Life (yr)"><input type="number" data-field="life" min="3" max="20" step="1" value="' + m.life + '"></div>' +
+      '<div class="cell" data-label="Residual"><input type="number" data-field="residual" min="0" step="100" value="' + m.residual + '"></div>' +
+      '<div class="cell row-actions"><button class="btn-remove" type="button" title="Remove">x</button></div>';
+    grid.appendChild(row);
+  }
+
+  attachRowHandlers(grid, newMachines, ['label', 'cph', 'derate', 'ops', 'maint', 'price', 'install', 'life', 'residual']);
+  document.getElementById('addNewBtn').disabled = newMachines.length >= 5;
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function attachRowHandlers(grid, store, fields) {
+  var rows = grid.querySelectorAll('.machine-row:not(.row-header)');
+  for (var i = 0; i < rows.length; i++) {
+    (function(row) {
+      var id = row.getAttribute('data-id');
+      var inputs = row.querySelectorAll('input');
+      for (var j = 0; j < inputs.length; j++) {
+        inputs[j].addEventListener('input', function(e) {
+          var field = e.target.getAttribute('data-field');
+          var rec = findById(store, id);
+          if (!rec) return;
+          if (field === 'label') {
+            rec.label = e.target.value;
+          } else if (field === 'replace') {
+            rec.replace = e.target.checked;
+          } else {
+            rec[field] = parseFloat(e.target.value) || 0;
+          }
+          calculate();
+        });
+        inputs[j].addEventListener('change', function(e) {
+          var field = e.target.getAttribute('data-field');
+          var rec = findById(store, id);
+          if (!rec) return;
+          if (field === 'label') rec.label = e.target.value;
+        });
+      }
+      var btn = row.querySelector('.btn-remove');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          if (store.length <= 1) return;
+          for (var x = 0; x < store.length; x++) {
+            if (store[x].id === id) { store.splice(x, 1); break; }
+          }
+          if (store === currentMachines) renderCurrentMachines();
+          else renderNewMachines();
+          calculate();
+        });
+        btn.disabled = store.length <= 1;
+      }
+    })(rows[i]);
+  }
+}
+
+function findById(store, id) {
+  for (var i = 0; i < store.length; i++) if (store[i].id === id) return store[i];
+  return null;
+}
+
+// ----------------------------------------------------------------
+// CALCULATION
+// ----------------------------------------------------------------
+function calculate() {
+  // Validate top-level fields
+  var ok = true;
+  ok = checkRange('annualHours', 500, 8760) && ok;
+  ok = checkRange('oee', 30, 99) && ok;
+  ok = checkRange('placementsPerBoard', 1, 99999) && ok;
+  ok = checkRange('boardMix', 1, 500) && ok;
+  ok = checkRange('laborRate', 0, 1e7) && ok;
+  ok = checkRange('boardsPerYear', 1, 1e9) && ok;
+  ok = checkRange('horizon', 1, 20) && ok;
+  ok = checkRange('discountRate', 0, 30) && ok;
+  ok = checkRange('laborEsc', 0, 10) && ok;
+  if (uplift === 'on') {
+    ok = checkRange('sellingPrice', 0, 1e9) && ok;
+    ok = checkRange('extraBoards', 0, 1e9) && ok;
+  }
+
+  var hours       = val('annualHours');
+  var oee         = val('oee') / 100;
+  var placePerBd  = val('placementsPerBoard');
+  var boardMix    = val('boardMix');
+  var laborRate   = val('laborRate');
+  var boardsYear  = val('boardsPerYear');
+  var horizon     = Math.round(val('horizon'));
+  var disc        = val('discountRate') / 100;
+  var esc         = val('laborEsc') / 100;
+
+  // Mix penalty: every product beyond 1 reduces effective utilization slightly.
+  // 1% loss per product type, capped at 30%.
+  var mixLoss = Math.min(0.30, Math.max(0, (boardMix - 1) * 0.01));
+  var mixFactor = 1 - mixLoss;
+
+  // --- CURRENT LINE ---
+  var curNameplateCPH = 0, curEffCPH = 0, curOps = 0, curMaint = 0;
+  for (var i = 0; i < currentMachines.length; i++) {
+    var m = currentMachines[i];
+    curNameplateCPH += m.cph;
+    curEffCPH       += m.cph * (m.derate / 100);
+    curOps          += m.ops;
+    curMaint        += m.maint;
+  }
+  var curEffUtil    = curEffCPH * mixFactor;
+  var curAnnualPlc  = curEffUtil * oee * hours;
+  var curBoardCap   = (placePerBd > 0) ? (curAnnualPlc / placePerBd) : 0;
+  var curLabor      = curOps * hours * laborRate;
+  var curOpCost     = curLabor + curMaint;
+
+  document.getElementById('curNameplateCPH').textContent = fmt(curNameplateCPH, 0) + ' cph';
+  document.getElementById('curEffectiveCPH').textContent = fmt(curEffCPH, 0) + ' cph';
+  document.getElementById('curAnnualCapacity').textContent = fmt(curAnnualPlc, 0) + ' cmp/yr';
+  document.getElementById('curBoardCapacity').textContent = fmt(curBoardCap, 0) + ' pcs/yr';
+  document.getElementById('curOperators').textContent = curOps.toFixed(1) + ' FTE';
+  document.getElementById('curLaborCost').textContent = fmtCur(curLabor);
+  document.getElementById('curMaintCost').textContent = fmtCur(curMaint);
+  document.getElementById('curOpCost').textContent = fmtCur(curOpCost);
+
+  // --- NEW MACHINES ---
+  var newEffCPH = 0, newOps = 0, newMaint = 0;
+  var totalPurchase = 0, totalInstall = 0;
+  var pvResidual = 0;
+  for (var j = 0; j < newMachines.length; j++) {
+    var nm = newMachines[j];
+    newEffCPH    += nm.cph * (nm.derate / 100);
+    newOps       += nm.ops;
+    newMaint     += nm.maint;
+    totalPurchase += nm.price;
+    totalInstall  += nm.install;
+    var life = Math.max(1, nm.life);
+    var horizonLife = Math.min(horizon, life);
+    var pvR = (disc >= 0) ? (nm.residual / Math.pow(1 + disc, horizonLife)) : nm.residual;
+    pvResidual += pvR;
+  }
+
+  // --- KEPT (CARRIED-FORWARD) MACHINES IF PARTIAL ---
+  var keptEffCPH = 0, keptOps = 0, keptMaint = 0, replacedBookProceeds = 0;
+  var anyReplaceFlagged = false;
+
+  for (var p = 0; p < currentMachines.length; p++) {
+    var cm = currentMachines[p];
+    var willReplace;
+    if (scope === 'full') {
+      willReplace = true;
+    } else {
+      willReplace = !!cm.replace;
+      if (willReplace) anyReplaceFlagged = true;
+    }
+    if (willReplace) {
+      replacedBookProceeds += cm.book;
+    } else {
+      keptEffCPH  += cm.cph * (cm.derate / 100);
+      keptOps     += cm.ops;
+      keptMaint   += cm.maint;
+    }
+  }
+  if (scope === 'full') {
+    // All current machines replaced -- proceeds already summed above
+  }
+
+  var planEffCPH = newEffCPH + keptEffCPH;
+  var planEffUtil = planEffCPH * mixFactor;
+  var planAnnualPlc = planEffUtil * oee * hours;
+  var planOps      = newOps + keptOps;
+  var planLabor    = planOps * hours * laborRate;
+  var planMaint    = newMaint + keptMaint;
+  var planOpCost   = planLabor + planMaint;
+
+  document.getElementById('newEffectiveCPH').textContent  = fmt(newEffCPH, 0) + ' cph';
+  document.getElementById('keptEffectiveCPH').textContent = fmt(keptEffCPH, 0) + ' cph';
+  document.getElementById('planEffectiveCPH').textContent = fmt(planEffCPH, 0) + ' cph';
+  document.getElementById('planAnnualCapacity').textContent = fmt(planAnnualPlc, 0) + ' cmp/yr';
+  document.getElementById('planOperators').textContent = planOps.toFixed(1) + ' FTE';
+  document.getElementById('planLaborCost').textContent = fmtCur(planLabor);
+  document.getElementById('planMaintCost').textContent = fmtCur(planMaint);
+  document.getElementById('planOpCost').textContent = fmtCur(planOpCost);
+
+  // --- DELTAS ---
+  var laborSave = curLabor - planLabor;
+  var maintDelta = curMaint - planMaint; // positive = saving
+  var netAnnualSave = laborSave + maintDelta;
+
+  var netInvest = totalPurchase + totalInstall - replacedBookProceeds;
+
+  // --- DECIDE WHETHER WE HAVE ENOUGH TO SHOW ---
+  var hasInputs = ok && currentMachines.length > 0 && newMachines.length > 0 && totalPurchase > 0;
+
+  if (!hasInputs) {
+    document.getElementById('resultsEmpty').style.display = '';
+    document.getElementById('resultsBlock').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('resultsEmpty').style.display = 'none';
+  document.getElementById('resultsBlock').style.display = '';
+
+  // --- CASH FLOW SCHEDULE ---
+  var cashflows = [-netInvest];
+  var savings = [];
+  var cumSave = 0;
+  var cumNPV = -netInvest;
+  var breakevenYear = -1;
+  var paybackYears = (netAnnualSave > 0) ? (netInvest / netAnnualSave) : Infinity;
+
+  // Revenue uplift terms (year-1 base; escalated by labor escalation as a proxy)
+  var sellingPrice = (uplift === 'on') ? val('sellingPrice') : 0;
+  var extraBoards  = (uplift === 'on') ? val('extraBoards') : 0;
+  var addRev = sellingPrice * extraBoards;
+  // Cost-per-board ratio of current production (cost basis assumption)
+  var curCostPerBoard = (boardsYear > 0) ? (curOpCost / boardsYear) : 0;
+  var addProfit = addRev - (extraBoards * curCostPerBoard);
+
+  var cfRows = [];
+
+  for (var y = 1; y <= horizon; y++) {
+    var escFactor = Math.pow(1 + esc, y - 1);
+    var savingY = netAnnualSave * escFactor;
+    var upliftY = (uplift === 'on') ? (addProfit * escFactor) : 0;
+    var totalY = savingY + upliftY;
+
+    cumSave += totalY;
+
+    var df = (disc > -1) ? Math.pow(1 + disc, y) : 1;
+    var discY = totalY / df;
+    cumNPV += discY;
+
+    cashflows.push(totalY);
+    savings.push(totalY);
+
+    if (breakevenYear === -1 && cumSave >= netInvest) breakevenYear = y;
+
+    cfRows.push({
+      year: y,
+      saving: savingY,
+      uplift: upliftY,
+      total: totalY,
+      cumSave: cumSave,
+      discounted: discY,
+      cumNPV: cumNPV,
+      breakeven: false
+    });
+  }
+
+  if (breakevenYear > 0) cfRows[breakevenYear - 1].breakeven = true;
+
+  // Add residual recovery in final year (already captured as PV separately;
+  // for IRR, we add nominal residual at horizon end)
+  // Approach: include nominal residual at horizon for IRR cash flow
+  var nominalResidualAtHorizon = 0;
+  for (var jj = 0; jj < newMachines.length; jj++) {
+    nominalResidualAtHorizon += newMachines[jj].residual;
+  }
+  if (cashflows.length > 1) cashflows[cashflows.length - 1] += nominalResidualAtHorizon;
+
+  // NPV (already includes savings cashflows; add PV of nominal residual at horizon)
+  var npv = cumNPV + (nominalResidualAtHorizon / Math.pow(1 + disc, horizon));
+
+  // IRR via Newton-Raphson
+  var irr = computeIRR(cashflows);
+
+  // Annualized ROI: (sum of nominal savings + residual - investment) / investment / horizon
+  var totalNominalReturn = 0;
+  for (var z = 1; z < cashflows.length; z++) totalNominalReturn += cashflows[z];
+  var totalNetReturn = totalNominalReturn - netInvest;
+  var annualizedROI = (netInvest > 0 && horizon > 0) ? (totalNetReturn / netInvest / horizon * 100) : NaN;
+
+  // --- RENDER STAT BOXES ---
+  var paybackEl = document.getElementById('resPayback');
+  var paybackSub = document.getElementById('resPaybackSub');
+  if (!isFinite(paybackYears) || paybackYears < 0) {
+    paybackEl.textContent = 'N/A';
+    paybackEl.className = 'stat-value fail';
+    paybackSub.textContent = 'no positive saving';
+  } else {
+    paybackEl.textContent = paybackYears.toFixed(2);
+    paybackSub.textContent = fmtYM(paybackYears);
+    if (paybackYears <= 3) paybackEl.className = 'stat-value pass';
+    else if (paybackYears <= 5) paybackEl.className = 'stat-value warn';
+    else paybackEl.className = 'stat-value fail';
+  }
+
+  document.getElementById('resAnnualSaving').textContent = fmtCur(netAnnualSave);
+
+  var npvEl = document.getElementById('resNPV');
+  npvEl.textContent = fmtCur(npv);
+  npvEl.className = 'stat-value ' + (npv >= 0 ? 'pass' : 'fail');
+  document.getElementById('resNPVSub').textContent = horizon + ' yr horizon @ ' + (disc * 100).toFixed(1) + '% WACC';
+
+  var irrEl = document.getElementById('resIRR');
+  if (irr === null || !isFinite(irr)) {
+    irrEl.textContent = 'N/A';
+    irrEl.className = 'stat-value warn';
+    document.getElementById('resIRRSub').textContent = 'IRR could not be solved for this cash flow profile.';
+  } else {
+    irrEl.textContent = (irr * 100).toFixed(2) + '%';
+    irrEl.className = 'stat-value ' + (irr >= disc ? 'pass' : 'fail');
+    document.getElementById('resIRRSub').textContent = (irr >= disc) ? 'exceeds discount rate' : 'below discount rate';
+  }
+
+  // --- VERDICT ---
+  var vBox = document.getElementById('verdictBox');
+  var vTitle = document.getElementById('verdictTitle');
+  var vText = document.getElementById('verdictText');
+  vBox.style.display = '';
+  if (!isFinite(paybackYears) || paybackYears < 0) {
+    vBox.className = 'verdict-box fail';
+    vTitle.textContent = 'No positive operating saving';
+    vText.textContent = 'Planned annual operating cost is equal to or higher than the current line. The investment cannot be justified on labor and maintenance savings alone. Build a separate case based on capacity, quality, or revenue uplift, or revisit the operator and maintenance assumptions for the new equipment.';
+  } else if (npv >= 0 && paybackYears <= 3) {
+    vBox.className = 'verdict-box pass';
+    vTitle.textContent = 'Strong business case';
+    vText.textContent = 'Simple payback under 3 years and positive NPV at your discount rate. Labor and maintenance savings alone justify the investment well within a typical capital budget horizon. Capacity gains and quality benefits make the case stronger still.';
+  } else if (npv >= 0 && paybackYears <= 5) {
+    vBox.className = 'verdict-box warn';
+    vTitle.textContent = 'Acceptable business case';
+    vText.textContent = 'Simple payback between 3 and 5 years with positive NPV. Within typical capital investment acceptance criteria. Strengthen the case with quantified capacity utilisation, quality improvement, or documented revenue uplift if applicable.';
+  } else if (npv >= 0) {
+    vBox.className = 'verdict-box warn';
+    vTitle.textContent = 'Marginal case, NPV positive but slow payback';
+    vText.textContent = 'Simple payback exceeds 5 years. The NPV is still positive at your discount rate, so the investment creates value over the analysis horizon, but the cash recovery is slow. Sensitivity-test the labor escalation rate and the discount rate before presenting to finance.';
+  } else {
+    vBox.className = 'verdict-box fail';
+    vTitle.textContent = 'NPV negative at your discount rate';
+    vText.textContent = 'Even though there are nominal savings, the discounted value of those savings does not cover the net investment over the analysis horizon. Check whether the discount rate is realistic, whether the horizon matches useful life, and whether you have undercounted operator reduction or maintenance savings.';
+  }
+
+  // --- RENDER GROUPS ---
+  document.getElementById('rA_curCPH').textContent = fmt(curEffCPH, 0) + ' cph';
+  document.getElementById('rA_planCPH').textContent = fmt(planEffCPH, 0) + ' cph';
+  var cphInc = planEffCPH - curEffCPH;
+  var cphPct = (curEffCPH > 0) ? (cphInc / curEffCPH * 100) : 0;
+  document.getElementById('rA_cphDelta').textContent = (cphInc >= 0 ? '+' : '') + fmt(cphInc, 0) + ' cph (' + (cphInc >= 0 ? '+' : '') + cphPct.toFixed(1) + '%)';
+  document.getElementById('rA_curPlace').textContent = fmt(curAnnualPlc, 0) + ' cmp/yr';
+  document.getElementById('rA_planPlace').textContent = fmt(planAnnualPlc, 0) + ' cmp/yr';
+
+  document.getElementById('rB_curLab').textContent = fmtCur(curLabor);
+  document.getElementById('rB_planLab').textContent = fmtCur(planLabor);
+  document.getElementById('rB_labSave').textContent = fmtCur(laborSave);
+  document.getElementById('rB_curMaint').textContent = fmtCur(curMaint);
+  document.getElementById('rB_planMaint').textContent = fmtCur(planMaint);
+  document.getElementById('rB_maintDelta').textContent = fmtCur(maintDelta);
+  document.getElementById('rB_netSave').textContent = fmtCur(netAnnualSave);
+
+  document.getElementById('rC_purchase').textContent = fmtCur(totalPurchase);
+  document.getElementById('rC_install').textContent = fmtCur(totalInstall);
+  document.getElementById('rC_proceeds').textContent = fmtCur(replacedBookProceeds);
+  document.getElementById('rC_pvResidual').textContent = fmtCur(pvResidual);
+  document.getElementById('rC_netInvest').textContent = fmtCur(netInvest);
+
+  document.getElementById('rD_payback').textContent = fmtYM(paybackYears);
+  document.getElementById('rD_breakeven').textContent = (breakevenYear > 0) ? ('Year ' + breakevenYear) : ('Beyond year ' + horizon);
+  document.getElementById('rD_npv').textContent = fmtCur(npv);
+  document.getElementById('rD_irr').textContent = (irr === null || !isFinite(irr)) ? 'N/A' : (irr * 100).toFixed(2) + '%';
+  document.getElementById('rD_roi').textContent = isFinite(annualizedROI) ? annualizedROI.toFixed(2) + '%/yr' : 'N/A';
+
+  var curCpb = (boardsYear > 0) ? (curOpCost / boardsYear) : 0;
+  var planCpb = (boardsYear > 0) ? (planOpCost / boardsYear) : 0;
+  document.getElementById('rE_curCpb').textContent = fmtCur(curCpb, 2);
+  document.getElementById('rE_planCpb').textContent = fmtCur(planCpb, 2);
+  document.getElementById('rE_cpbDelta').textContent = fmtCur(curCpb - planCpb, 2);
+
+  // Group F (revenue uplift)
+  var gF = document.getElementById('rGroupF');
+  if (uplift === 'on') {
+    gF.style.display = '';
+    document.getElementById('rF_addRev').textContent = fmtCur(addRev);
+    document.getElementById('rF_addProfit').textContent = fmtCur(addProfit);
+    // NPV already includes uplift since cashflows are combined; show explicitly
+    document.getElementById('rF_npvUplift').textContent = fmtCur(npv);
+  } else {
+    gF.style.display = 'none';
+  }
+
+  // --- CASHFLOW TABLE ---
+  var tbody = document.getElementById('cfTableBody');
+  tbody.innerHTML = '';
+  for (var rIdx = 0; rIdx < cfRows.length; rIdx++) {
+    var r = cfRows[rIdx];
+    var tr = document.createElement('tr');
+    if (r.breakeven) tr.className = 'breakeven';
+    tr.innerHTML =
+      '<td>Year ' + r.year + (r.breakeven ? ' (break-even)' : '') + '</td>' +
+      '<td>' + fmtCur(r.total) + '</td>' +
+      '<td>' + fmtCur(r.cumSave) + '</td>' +
+      '<td>' + fmtCur(r.discounted) + '</td>' +
+      '<td>' + fmtCur(r.cumNPV) + '</td>';
+    tbody.appendChild(tr);
+  }
+}
+
+// ----------------------------------------------------------------
+// IRR via Newton-Raphson
+// ----------------------------------------------------------------
+function computeIRR(cashflows) {
+  if (!cashflows || cashflows.length < 2) return null;
+  // Need at least one negative and one positive
+  var pos = false, neg = false;
+  for (var i = 0; i < cashflows.length; i++) {
+    if (cashflows[i] > 0) pos = true;
+    if (cashflows[i] < 0) neg = true;
+  }
+  if (!(pos && neg)) return null;
+
+  function npvAt(rate) {
+    var s = 0;
+    for (var t = 0; t < cashflows.length; t++) {
+      s += cashflows[t] / Math.pow(1 + rate, t);
+    }
+    return s;
+  }
+  function dnpv(rate) {
+    var s = 0;
+    for (var t = 1; t < cashflows.length; t++) {
+      s += -t * cashflows[t] / Math.pow(1 + rate, t + 1);
+    }
+    return s;
+  }
+
+  var rate = 0.1;
+  for (var iter = 0; iter < 100; iter++) {
+    var f = npvAt(rate);
+    var df = dnpv(rate);
+    if (Math.abs(df) < 1e-12) break;
+    var newRate = rate - f / df;
+    if (!isFinite(newRate)) break;
+    if (newRate <= -0.999) newRate = -0.999;
+    if (Math.abs(newRate - rate) < 1e-7) {
+      if (Math.abs(npvAt(newRate)) < 1e-3 || Math.abs(f) < Math.abs(npvAt(rate) - f) * 1e-3) {
+        return newRate;
+      }
+      return newRate;
+    }
+    rate = newRate;
+  }
+  // Final check
+  if (Math.abs(npvAt(rate)) < Math.abs(cashflows[0]) * 0.01) return rate;
+  return null;
+}
+
+// ----------------------------------------------------------------
+// PRINT REPORT
+// ----------------------------------------------------------------
+function printReport() {
+  var title = document.getElementById('reportTitle').value || 'SMT Equipment ROI Analysis';
+  var cur = getCurrencyLabel();
+
+  function txt(id) { return document.getElementById(id).textContent; }
+  function v(id) { return document.getElementById(id).value; }
+
+  var rows = [
+    ['Annual production hours',     v('annualHours') + ' h'],
+    ['OEE',                          v('oee') + '%'],
+    ['Placements per board',         v('placementsPerBoard')],
+    ['Board mix (unique types)',     v('boardMix')],
+    ['Operator labor cost',          cur + ' ' + v('laborRate') + '/h'],
+    ['Boards produced per year',     v('boardsPerYear')],
+    ['Currency',                     cur],
+    ['Investment scope',             scope === 'full' ? 'Full replacement' : 'Partial replacement'],
+    ['Current effective CPH',        txt('curEffectiveCPH')],
+    ['Current annual labor cost',    txt('curLaborCost')],
+    ['Current annual maintenance',   txt('curMaintCost')],
+    ['Current operating cost',       txt('curOpCost')],
+    ['Planned effective CPH',        txt('planEffectiveCPH')],
+    ['Planned annual labor cost',    txt('planLaborCost')],
+    ['Planned annual maintenance',   txt('planMaintCost')],
+    ['Planned operating cost',       txt('planOpCost')],
+    ['Net annual saving (Y1)',       txt('rB_netSave')],
+    ['Total purchase price',         txt('rC_purchase')],
+    ['Total install cost',           txt('rC_install')],
+    ['Proceeds from replaced',       txt('rC_proceeds')],
+    ['Net investment',               txt('rC_netInvest')],
+    ['Analysis horizon',             v('horizon') + ' yr'],
+    ['Discount rate / WACC',         v('discountRate') + '%'],
+    ['Labor escalation',             v('laborEsc') + '%/yr'],
+    ['Simple payback',               txt('rD_payback')],
+    ['Break-even year',              txt('rD_breakeven')],
+    ['NPV over horizon',             txt('rD_npv')],
+    ['IRR',                          txt('rD_irr')],
+    ['Annualized ROI',               txt('rD_roi')],
+    ['Current cost per board',       txt('rE_curCpb')],
+    ['Planned cost per board',       txt('rE_planCpb')],
+    ['Cost reduction per board',     txt('rE_cpbDelta')]
+  ];
+
+  if (uplift === 'on') {
+    rows.push(['Revenue uplift',                'Enabled']);
+    rows.push(['Selling price per board',       cur + ' ' + v('sellingPrice')]);
+    rows.push(['Additional boards / year',      v('extraBoards')]);
+    rows.push(['Additional annual revenue',     txt('rF_addRev')]);
+    rows.push(['Additional annual gross profit',txt('rF_addProfit')]);
+  }
+
+  // Machine inventories
+  var curList = '';
+  for (var i = 0; i < currentMachines.length; i++) {
+    var m = currentMachines[i];
+    curList += '<tr><td colspan="2" style="padding:6px 0; color:#1c2a1f;">'
+            + escapeAttr(m.label) + ': ' + m.cph + ' cph @ ' + m.derate + '%, '
+            + m.ops + ' ops, maint ' + cur + ' ' + m.maint + ', book ' + cur + ' ' + m.book
+            + (scope === 'partial' ? (m.replace ? ' [REPLACED]' : ' [KEPT]') : '')
+            + '</td></tr>';
+  }
+  var newList = '';
+  for (var k = 0; k < newMachines.length; k++) {
+    var nm = newMachines[k];
+    newList += '<tr><td colspan="2" style="padding:6px 0; color:#1c2a1f;">'
+            + escapeAttr(nm.label) + ': ' + nm.cph + ' cph @ ' + nm.derate + '%, '
+            + nm.ops + ' ops, maint ' + cur + ' ' + nm.maint + ', price ' + cur + ' ' + nm.price
+            + ', install ' + cur + ' ' + nm.install + ', life ' + nm.life + ' yr, residual ' + cur + ' ' + nm.residual
+            + '</td></tr>';
+  }
+
+  var rowsHtml = rows.map(function(r) {
+    return '<tr><td style="padding:6px 12px 6px 0; color:#4a5e50; font-size:0.88rem;">' + r[0] + '</td>'
+         + '<td style="padding:6px 0; font-family:monospace; font-size:0.9rem; color:#1c2a1f;">' + r[1] + '</td></tr>';
+  }).join('');
+
+  // Cash flow table
+  var cfTable = document.getElementById('cfTable').outerHTML;
+
+  var verdictClass = (document.getElementById('verdictBox').className.split(' ')[1] || 'warn');
+  var verdictTitle = document.getElementById('verdictTitle').textContent;
+  var verdictText  = document.getElementById('verdictText').textContent;
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>' + escapeAttr(title) + '</title>'
+    + '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    + '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Manrope:wght@800&family=Share+Tech+Mono&display=swap" rel="stylesheet">'
+    + '<style>body{margin:0;padding:40px;background:#fff;color:#1c2a1f;font-family:Inter,sans-serif;font-size:0.95rem;}'
+    + 'h1{font-family:Manrope,sans-serif;font-size:1.85rem;font-weight:800;color:#1c2a1f;margin:0 0 4px;letter-spacing:-0.01em;}'
+    + 'h2{font-family:Inter,sans-serif;font-size:0.95rem;font-weight:800;color:#186640;text-transform:uppercase;letter-spacing:0.12em;margin:1.6rem 0 0.6rem;}'
+    + '.sub{color:#4a5e50;font-size:0.85rem;margin-bottom:1.2rem;}'
+    + 'table{border-collapse:collapse;width:100%;}'
+    + 'tr{border-bottom:1px solid #dbe4dc;}'
+    + 'table.cf-table{font-family:"Share Tech Mono",monospace;font-size:0.82rem;margin-top:0.5rem;}'
+    + 'table.cf-table th{background:#dbe4dc;color:#4a5e50;text-align:right;padding:6px 10px;font-family:Inter,sans-serif;font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;}'
+    + 'table.cf-table th:first-child{text-align:left;}'
+    + 'table.cf-table td{padding:5px 10px;text-align:right;border-bottom:1px solid #e6ece7;}'
+    + 'table.cf-table td:first-child{text-align:left;color:#4a5e50;}'
+    + 'table.cf-table tr.breakeven td{background:rgba(26,158,85,0.13);color:#1a9e55;font-weight:700;}'
+    + '.verdict{margin-top:1.5rem;padding:12px 16px;border-radius:6px;font-size:0.92rem;}'
+    + '.verdict.pass{background:#e8f5ee;border:1px solid #167a40;color:#0f5533;}'
+    + '.verdict.warn{background:#fff3e8;border:1px solid #d4720a;color:#7a4308;}'
+    + '.verdict.fail{background:#fceaea;border:1px solid #c42b08;color:#7a1c0a;}'
+    + '.verdict strong{display:block;margin-bottom:0.3rem;}'
+    + '.footer{margin-top:2.5rem;font-size:0.78rem;color:#4a5e50;}@media print{body{padding:20px;}}</style></head><body>'
+    + '<h1>' + escapeAttr(title) + '</h1>'
+    + '<div class="sub">SMT Equipment ROI Calculator -- smtcalc.com</div>'
+    + '<div class="verdict ' + verdictClass + '">'
+    + '<strong>' + escapeAttr(verdictTitle) + '</strong>'
+    + escapeAttr(verdictText) + '</div>'
+    + '<h2>Inputs and Results Summary</h2>'
+    + '<table>' + rowsHtml + '</table>'
+    + '<h2>Current Line</h2>'
+    + '<table>' + (curList || '<tr><td>No machines defined</td></tr>') + '</table>'
+    + '<h2>Planned New Equipment</h2>'
+    + '<table>' + (newList || '<tr><td>No machines defined</td></tr>') + '</table>'
+    + '<h2>Year-by-Year Cash Flow</h2>'
+    + cfTable
+    + '<div class="footer">Generated by SMTCalc.com -- Free tools for electronics manufacturing professionals</div>'
+    + '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 600);
+}
+
+// ----------------------------------------------------------------
+// ACCORDION
+// ----------------------------------------------------------------
+function toggleAccordion(btn) {
+  var item = btn.parentElement;
+  var content = item.querySelector('.accordion-content');
+  var isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  if (content) content.classList.toggle('open', !isOpen);
+}
+
+// ----------------------------------------------------------------
+// CONTACT
+// ----------------------------------------------------------------
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+// ----------------------------------------------------------------
+// EVENT WIRING
+// ----------------------------------------------------------------
+function updateCurrencyLabels() {
+  var cur = getCurrencyLabel();
+  document.getElementById('laborRateUnit').textContent = cur + '/h';
+  document.getElementById('sellingPriceUnit').textContent = cur;
+}
+
+document.getElementById('addCurrentBtn').addEventListener('click', function() {
+  if (currentMachines.length >= 5) return;
+  var n = currentMachines.length + 1;
+  currentMachines.push(makeCurrentRow('Machine ' + n, 20000, 70, 1.0, 5000, 0));
+  renderCurrentMachines();
+  calculate();
+});
+
+document.getElementById('addNewBtn').addEventListener('click', function() {
+  if (newMachines.length >= 5) return;
+  var n = newMachines.length + 1;
+  newMachines.push(makeNewRow('New Machine ' + n, 50000, 75, 0.5, 8000, 300000, 15000, 10, 0));
+  renderNewMachines();
+  calculate();
+});
+
+// Scope toggle
+var scopeBtns = document.querySelectorAll('#scopeToggle button');
+for (var s = 0; s < scopeBtns.length; s++) {
+  scopeBtns[s].addEventListener('click', function() {
+    for (var x = 0; x < scopeBtns.length; x++) scopeBtns[x].classList.remove('active');
+    this.classList.add('active');
+    scope = this.getAttribute('data-scope');
+    var note = document.getElementById('scopeNote');
+    var partialNote = document.getElementById('partialNote');
+    if (scope === 'full') {
+      note.textContent = 'All current machines will be replaced by the new equipment listed below.';
+      partialNote.style.display = 'none';
+    } else {
+      note.textContent = 'Mark the specific current machines being replaced. Unticked machines stay in service.';
+      partialNote.style.display = '';
+    }
+    renderCurrentMachines();
+    calculate();
+  });
+}
+
+// Uplift toggle
+var upliftBtns = document.querySelectorAll('#upliftToggle button');
+for (var u = 0; u < upliftBtns.length; u++) {
+  upliftBtns[u].addEventListener('click', function() {
+    for (var x = 0; x < upliftBtns.length; x++) upliftBtns[x].classList.remove('active');
+    this.classList.add('active');
+    uplift = this.getAttribute('data-uplift');
+    document.getElementById('sellingPriceField').style.display = (uplift === 'on') ? '' : 'none';
+    document.getElementById('extraBoardsField').style.display = (uplift === 'on') ? '' : 'none';
+    calculate();
+  });
+}
+
+// Top-level number inputs
+var topInputs = document.querySelectorAll('.panel-full > div .field input[type="number"]');
+for (var t = 0; t < topInputs.length; t++) {
+  topInputs[t].addEventListener('input', calculate);
+}
+
+document.getElementById('currencyCode').addEventListener('change', function() {
+  updateCurrencyLabels();
+  calculate();
+});
+
+// ----------------------------------------------------------------
+// DEFAULTS
+// ----------------------------------------------------------------
+currentMachines.push(makeCurrentRow('Machine 1', 20000, 70, 1.0, 5000, 0));
+currentMachines.push(makeCurrentRow('Machine 2', 20000, 70, 1.0, 5000, 0));
+newMachines.push(makeNewRow('New Machine 1', 50000, 75, 0.5, 8000, 300000, 15000, 10, 0));
+
+renderCurrentMachines();
+renderNewMachines();
+updateCurrencyLabels();
+calculate();
+</script>
+
+</body>
+</html>
