@@ -319,7 +319,7 @@
         <label for="laborRateOp">Operator Wage Cost / Hour</label>
         <div class="input-wrap">
           <input type="number" id="laborRateOp" min="0" step="1" value="35">
-          <span class="input-unit">curr/h</span>
+          <span class="input-unit cur-unit-h">curr/h</span>
         </div>
         <div class="field-note">Total cost including social charges and overhead.</div>
       </div>
@@ -328,9 +328,20 @@
         <label for="laborRateProg">Programmer Wage Cost / Hour</label>
         <div class="input-wrap">
           <input type="number" id="laborRateProg" min="0" step="1" value="45">
-          <span class="input-unit">curr/h</span>
+          <span class="input-unit cur-unit-h">curr/h</span>
         </div>
         <div class="field-note">Engineer or technician programming and maintaining the AOI library.</div>
+      </div>
+
+      <div class="field">
+        <label for="currencyCode">Currency</label>
+        <select id="currencyCode" style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; color:var(--text); font-family:var(--mono); font-size:0.95rem; padding:0.55rem 0.75rem; width:100%;">
+          <option value="EUR" selected>EUR (Euro)</option>
+          <option value="USD">USD (US Dollar)</option>
+          <option value="GBP">GBP (Pound Sterling)</option>
+          <option value="OTH">Other / Generic</option>
+        </select>
+        <div class="field-note">Prefix applied to all currency displays in this tool.</div>
       </div>
 
     </div>
@@ -473,7 +484,7 @@
         <label for="maintenanceCost">AOI Annual Maintenance Cost</label>
         <div class="input-wrap">
           <input type="number" id="maintenanceCost" min="0" step="500" value="3000">
-          <span class="input-unit">curr/yr</span>
+          <span class="input-unit cur-unit-yr">curr/yr</span>
         </div>
         <div class="field-note">Service contract or estimated parts + service calls.</div>
       </div>
@@ -501,7 +512,7 @@
       <label for="purchasePrice">Purchase Price (B)</label>
       <div class="input-wrap">
         <input type="number" id="purchasePrice" min="0" step="1000" value="80000">
-        <span class="input-unit">curr</span>
+        <span class="input-unit cur-unit">curr</span>
       </div>
       <div class="field-note">Total installed cost: machine, installation, training, options.</div>
     </div>
@@ -768,6 +779,25 @@ function val(id) {
   return parseFloat(document.getElementById(id).value) || 0;
 }
 
+var CURRENCY_LABELS = { EUR: 'EUR', USD: 'USD', GBP: 'GBP', OTH: 'curr' };
+function getCurrencyLabel() {
+  var el = document.getElementById('currencyCode');
+  return (el && CURRENCY_LABELS[el.value]) || 'curr';
+}
+function fmtCur(n, decimals) {
+  if (!isFinite(n) || isNaN(n)) return '--';
+  return getCurrencyLabel() + ' ' + fmt(n, decimals);
+}
+function updateCurrencyLabels() {
+  var c = getCurrencyLabel();
+  var hUnits = document.querySelectorAll('.cur-unit-h');
+  for (var i = 0; i < hUnits.length; i++) hUnits[i].textContent = c + '/h';
+  var yUnits = document.querySelectorAll('.cur-unit-yr');
+  for (var j = 0; j < yUnits.length; j++) yUnits[j].textContent = c + '/yr';
+  var units = document.querySelectorAll('.cur-unit');
+  for (var k = 0; k < units.length; k++) units[k].textContent = c;
+}
+
 // ----------------------------------------------------------------
 // MAIN CALCULATION
 // ----------------------------------------------------------------
@@ -792,7 +822,7 @@ function calculate() {
   document.getElementById('manTotalTimePcb').textContent  = fmtTime(manTotalSec);
   document.getElementById('manTotalHoursYear').textContent = fmt(manHoursYear, 0) + ' h';
   document.getElementById('manFTE').textContent            = manFTE.toFixed(2) + ' FTE';
-  document.getElementById('manTotalCost').textContent      = fmt(manCostYear, 0);
+  document.getElementById('manTotalCost').textContent      = fmtCur(manCostYear, 0);
 
   // --- AOI inspection ---
   var aoiScanSec   = val('aoiTimePerPcb');       // seconds
@@ -815,17 +845,17 @@ function calculate() {
   document.getElementById('aoiProgHours').textContent     = fmt(aoiProgHours, 0) + ' h';
   document.getElementById('aoiTotalHours').textContent    = fmt(aoiTotalHours, 0) + ' h';
   document.getElementById('aoiFTE').textContent           = aoiFTE.toFixed(2) + ' FTE';
-  document.getElementById('aoiTotalCost').textContent     = fmt(aoiCostYear, 0);
+  document.getElementById('aoiTotalCost').textContent     = fmtCur(aoiCostYear, 0);
 
   // --- Savings ---
   var maintenance  = val('maintenanceCost');
   var grossSavings = manCostYear - aoiCostYear;
   var netSavings   = grossSavings - maintenance;  // annual net savings (a)
 
-  document.getElementById('savManCost').textContent     = fmt(manCostYear, 0);
-  document.getElementById('savAoiCost').textContent     = fmt(aoiCostYear, 0);
-  document.getElementById('savingsPerYear').textContent = fmt(grossSavings, 0);
-  document.getElementById('netSavings').textContent     = fmt(netSavings, 0);
+  document.getElementById('savManCost').textContent     = fmtCur(manCostYear, 0);
+  document.getElementById('savAoiCost').textContent     = fmtCur(aoiCostYear, 0);
+  document.getElementById('savingsPerYear').textContent = fmtCur(grossSavings, 0);
+  document.getElementById('netSavings').textContent     = fmtCur(netSavings, 0);
 
   // --- DCF ---
   var B = val('purchasePrice');
@@ -837,11 +867,11 @@ function calculate() {
   var dcfF = (n > 0 && i >= 0) ? (1 / Math.pow(1 + i, n)) : 1;
   var PV_R = R * dcfF;
 
-  document.getElementById('dcfB').textContent      = fmt(B, 0);
-  document.getElementById('dcfR').textContent      = fmt(R, 0);
+  document.getElementById('dcfB').textContent      = fmtCur(B, 0);
+  document.getElementById('dcfR').textContent      = fmtCur(R, 0);
   document.getElementById('dcfFactor').textContent = dcfF.toFixed(4);
-  document.getElementById('dcfPVR').textContent    = fmt(PV_R, 0);
-  document.getElementById('dcfA').textContent      = fmt(netSavings, 0);
+  document.getElementById('dcfPVR').textContent    = fmtCur(PV_R, 0);
+  document.getElementById('dcfA').textContent      = fmtCur(netSavings, 0);
 
   // --- Payback ---
   var effectiveInvestment = B - PV_R;
@@ -902,8 +932,8 @@ function calculate() {
     }
   }
 
-  document.getElementById('resNetSavings').textContent = fmt(netSavings, 0);
-  document.getElementById('res5yr').textContent        = fmt(fiveYearNet, 0);
+  document.getElementById('resNetSavings').textContent = fmtCur(netSavings, 0);
+  document.getElementById('res5yr').textContent        = fmtCur(fiveYearNet, 0);
   document.getElementById('resFTEReduction').textContent = fteReduction.toFixed(2);
 
   // --- Chart ---
@@ -1026,11 +1056,13 @@ function drawChart(effectiveInvestment, netSavings) {
 // ----------------------------------------------------------------
 function printReport() {
   var title = document.getElementById('reportTitle').value || 'AOI ROI Analysis';
+  var cur = getCurrencyLabel();
   var rows = [
+    ['Currency',                 cur],
     ['PCBs per year',            document.getElementById('pcbYear').value],
     ['Components per PCB',       document.getElementById('compPerPcb').value],
-    ['Operator wage/hour',       document.getElementById('laborRateOp').value],
-    ['Programmer wage/hour',     document.getElementById('laborRateProg').value],
+    ['Operator wage/hour',       cur + ' ' + document.getElementById('laborRateOp').value],
+    ['Programmer wage/hour',     cur + ' ' + document.getElementById('laborRateProg').value],
     ['Manual time/PCB',          document.getElementById('manualTimePerPcb').value + ' s'],
     ['Manual cost/year',         document.getElementById('manTotalCost').textContent],
     ['AOI cycle time/PCB',       document.getElementById('aoiTimePerPcb').value + ' s'],
@@ -1111,6 +1143,12 @@ for (var k = 0; k < inputs.length; k++) {
   inputs[k].addEventListener('input', calculate);
 }
 
+document.getElementById('currencyCode').addEventListener('change', function() {
+  updateCurrencyLabels();
+  calculate();
+});
+
+updateCurrencyLabels();
 calculate();
 </script>
 
