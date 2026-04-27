@@ -35,6 +35,7 @@ available without hunting through spreadsheets or vendor datasheets. It grew fro
 | SMT Defect Diagnostics | Interactive root cause finder for solder bridges, opens, tombstoning, voiding, HiP, and more |
 | Pin-in-Paste Calculator | Solder paste volume and stencil aperture sizing for through-hole reflow (THR) per IPC-7525A |
 | AOI ROI Calculator | Return on investment analysis for automated optical inspection equipment |
+| SMT Equipment ROI Calculator | Business case and NPV/IRR analysis for pick-and-place line upgrades |
 | Solder Paste Volume Calculator | Deposited paste volume from stencil aperture geometry and stencil thickness |
 | SMT Slots | A slot machine with electronic components instead of fruits. Just for fun. |
 
