@@ -1675,12 +1675,18 @@ function calculate() {
     var r = cfRows[rIdx];
     var tr = document.createElement('tr');
     if (r.breakeven) tr.className = 'breakeven';
-    tr.innerHTML =
-      '<td>Year ' + r.year + (r.breakeven ? ' (break-even)' : '') + '</td>' +
-      '<td>' + fmtCur(r.total) + '</td>' +
-      '<td>' + fmtCur(r.cumSave) + '</td>' +
-      '<td>' + fmtCur(r.discounted) + '</td>' +
-      '<td>' + fmtCur(r.cumNPV) + '</td>';
+    var cells = [
+      'Year ' + r.year + (r.breakeven ? ' (break-even)' : ''),
+      fmtCur(r.total),
+      fmtCur(r.cumSave),
+      fmtCur(r.discounted),
+      fmtCur(r.cumNPV)
+    ];
+    for (var ci = 0; ci < cells.length; ci++) {
+      var td = document.createElement('td');
+      td.textContent = cells[ci];
+      tr.appendChild(td);
+    }
     tbody.appendChild(tr);
   }
 }

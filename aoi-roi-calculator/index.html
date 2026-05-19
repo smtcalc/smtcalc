@@ -634,7 +634,7 @@
 <div class="print-bar">
   <label>Report Title</label>
   <input type="text" id="reportTitle" placeholder="e.g. AOI investment evaluation 2025">
-  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+  <button class="print-btn" id="printBtn">&#9113; Print Report</button>
 </div>
 
 <!-- GUIDE ACCORDION -->
@@ -643,7 +643,7 @@
   <div class="accordion">
 
     <div class="accordion-item">
-      <button class="accordion-header" onclick="toggleAccordion(this)">
+      <button class="accordion-header">
         What does this calculator do?
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -661,7 +661,7 @@
     </div>
 
     <div class="accordion-item">
-      <button class="accordion-header" onclick="toggleAccordion(this)">
+      <button class="accordion-header">
         How to use it
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -685,7 +685,7 @@
     </div>
 
     <div class="accordion-item">
-      <button class="accordion-header" onclick="toggleAccordion(this)">
+      <button class="accordion-header">
         Understanding the DCF model
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -706,7 +706,7 @@
     </div>
 
     <div class="accordion-item">
-      <button class="accordion-header" onclick="toggleAccordion(this)">
+      <button class="accordion-header">
         What this model does not capture
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -727,7 +727,7 @@
     </div>
 
     <div class="accordion-item">
-      <button class="accordion-header" onclick="toggleAccordion(this)">
+      <button class="accordion-header">
         Interpreting the payback verdict
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -760,6 +760,19 @@
 // ----------------------------------------------------------------
 var WORKING_HOURS_PER_YEAR = 1720; // net productive hours (2080 - holidays - sick - overhead)
 var FTE_HOURS = 1720;
+
+// Canvas color map -- CSS variables are not accessible in canvas 2D drawing calls.
+// Keep in sync with the design tokens in style.css / STYLE_GUIDE Section 18.
+var CHART_COLORS = {
+  gridLine:   'rgba(28,42,31,0.07)',
+  zeroLine:   'rgba(28,42,31,0.15)',
+  fillFrom:   'rgba(24,102,64,0.25)',
+  fillTo:     'rgba(24,102,64,0.03)',
+  curve:      '#b06a10',
+  dotPass:    '#1fa855',
+  dotFail:    '#cf4444',
+  axisLabel:  '#4a5e50'
+};
 
 // ----------------------------------------------------------------
 // UTILITIES
@@ -979,7 +992,7 @@ function drawChart(effectiveInvestment, netSavings) {
 
   // Zero line
   var y0 = yPos(0);
-  ctx.strokeStyle = 'rgba(28,42,31,0.15)';
+  ctx.strokeStyle = CHART_COLORS.zeroLine;
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -989,7 +1002,7 @@ function drawChart(effectiveInvestment, netSavings) {
   ctx.setLineDash([]);
 
   // Grid lines (horizontal)
-  ctx.strokeStyle = 'rgba(28,42,31,0.07)';
+  ctx.strokeStyle = CHART_COLORS.gridLine;
   ctx.lineWidth = 1;
   for (var g = 0; g <= 4; g++) {
     var gy = padT + (g / 4) * chartH;
@@ -1008,13 +1021,13 @@ function drawChart(effectiveInvestment, netSavings) {
 
   // Gradient fill
   var grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-  grad.addColorStop(0,   'rgba(24,102,64,0.25)');
-  grad.addColorStop(1,   'rgba(24,102,64,0.03)');
+  grad.addColorStop(0, CHART_COLORS.fillFrom);
+  grad.addColorStop(1, CHART_COLORS.fillTo);
   ctx.fillStyle = grad;
   ctx.fill();
 
   // Line
-  ctx.strokeStyle = '#ff9238';
+  ctx.strokeStyle = CHART_COLORS.curve;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(xPos(0), yPos(values[0]));
@@ -1026,15 +1039,14 @@ function drawChart(effectiveInvestment, netSavings) {
   // Dots
   for (var d = 0; d <= years; d++) {
     var v = values[d];
-    var dotColor = v >= 0 ? '#1fa855' : '#cf4444';
     ctx.beginPath();
     ctx.arc(xPos(d), yPos(v), 3.5, 0, 2 * Math.PI);
-    ctx.fillStyle = dotColor;
+    ctx.fillStyle = v >= 0 ? CHART_COLORS.dotPass : CHART_COLORS.dotFail;
     ctx.fill();
   }
 
   // X axis labels
-  ctx.fillStyle = '#c4b3a6';
+  ctx.fillStyle = CHART_COLORS.axisLabel;
   ctx.font = '11px Share Tech Mono, monospace';
   ctx.textAlign = 'center';
   for (var l = 0; l <= years; l++) {
@@ -1054,6 +1066,10 @@ function drawChart(effectiveInvestment, netSavings) {
 // ----------------------------------------------------------------
 // PRINT
 // ----------------------------------------------------------------
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function printReport() {
   var title = document.getElementById('reportTitle').value || 'AOI ROI Analysis';
   var cur = getCurrencyLabel();
@@ -1083,7 +1099,7 @@ function printReport() {
   }).join('');
 
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
-    + '<title>' + title + '</title>'
+    + '<title>' + escHtml(title) + '</title>'
     + '<link rel="preconnect" href="https://fonts.googleapis.com">'
     + '<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">'
     + '<style>body{margin:0;padding:40px;background:#fff;color:#140f0a;font-family:Barlow,sans-serif;font-size:0.97rem;}'
@@ -1096,7 +1112,7 @@ function printReport() {
     + '.verdict.warn{background:#fff3e8;border:1px solid #d4720a;color:#d4720a;}'
     + '.verdict.fail{background:#fceaea;border:1px solid #c42b08;color:#c42b08;}'
     + '.footer{margin-top:3rem;font-size:0.78rem;color:#9c9088;}@media print{body{padding:20px;}}</style></head><body>'
-    + '<h1>' + title + '</h1>'
+    + '<h1>' + escHtml(title) + '</h1>'
     + '<div class="sub">AOI ROI Calculator -- smtcalc.com</div>'
     + '<table>' + rowsHtml + '</table>'
     + '<div class="verdict ' + (document.getElementById('verdictBox').className.split(' ')[1] || 'warn') + '">'
@@ -1146,6 +1162,13 @@ for (var k = 0; k < inputs.length; k++) {
 document.getElementById('currencyCode').addEventListener('change', function() {
   updateCurrencyLabels();
   calculate();
+});
+
+document.getElementById('printBtn').addEventListener('click', printReport);
+
+document.querySelector('.accordion').addEventListener('click', function(e) {
+  var btn = e.target.closest('.accordion-header');
+  if (btn) toggleAccordion(btn);
 });
 
 updateCurrencyLabels();

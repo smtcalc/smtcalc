@@ -413,6 +413,12 @@ Key values from style.css:
 - Input: font-family --mono, 1rem, background transparent
 - Unit badge: --mono 0.85rem, --muted, background --bg4, left border 1px --border
 
+**Event binding note:** The `oninput=` / `onchange=` pattern shown above works and is used
+throughout the existing tools. For new tools with complex interaction logic, prefer
+`addEventListener` in the script block -- it keeps behavior out of markup and is easier to
+test. Simple single-function triggers (`oninput="calculate()"`) on plain input fields are
+acceptable either way.
+
 ### Select Dropdown
 
 ```html
@@ -713,6 +719,27 @@ inside canvas 2D drawing calls or SVG fill/stroke attributes -- use hex values d
 
 **SVG document icons** (guide toggle buttons) use `stroke="#186640"`. Never hardcode the
 old orange `#d4720a` for SVG icons in page content -- that color is print-report only.
+Never use `#ff9238` or other non-system oranges -- the design system amber is `#b06a10`.
+
+**Canvas color constant pattern:** To avoid scattering hex values across drawing code,
+define a local `CHART_COLORS` object at the top of the script block in any page that uses
+a canvas chart. Map each semantic role to its hex value from the table above:
+
+```javascript
+var CHART_COLORS = {
+  gridLine:  'rgba(28,42,31,0.07)',
+  zeroLine:  'rgba(28,42,31,0.15)',
+  fillFrom:  'rgba(24,102,64,0.25)',
+  fillTo:    'rgba(24,102,64,0.03)',
+  curve:     '#b06a10',
+  dotPass:   '#1a9e55',
+  dotFail:   '#b03333',
+  axisLabel: '#4a5e50'
+};
+```
+
+Use `CHART_COLORS.curve` etc. in all `ctx.strokeStyle`/`ctx.fillStyle` assignments instead
+of inline hex literals. This makes design token changes a single-line update per file.
 
 ---
 
