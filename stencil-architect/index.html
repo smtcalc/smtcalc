@@ -1022,11 +1022,11 @@ function syncScale(source) {
 }
 
 const POWDERS = [
-  { type: 3, label: 'Type 3', range: '25?45 ?m', largest: 45, minRect: 225, minSq: 225, minCirc: 360 },
-  { type: 4, label: 'Type 4', range: '20?38 ?m', largest: 38, minRect: 190, minSq: 190, minCirc: 304 },
-  { type: 5, label: 'Type 5', range: '15?25 ?m', largest: 25, minRect: 125, minSq: 125, minCirc: 200 },
-  { type: 6, label: 'Type 6', range: '5?15 ?m',  largest: 15, minRect: 75,  minSq: 75,  minCirc: 120 },
-  { type: 7, label: 'Type 7', range: '2?11 ?m',  largest: 11, minRect: 55,  minSq: 55,  minCirc: 88  },
+  { type: 3, label: 'Type 3', range: '25-45 &#181;m', largest: 45, minRect: 225, minSq: 225, minCirc: 360 },
+  { type: 4, label: 'Type 4', range: '20-38 &#181;m', largest: 38, minRect: 190, minSq: 190, minCirc: 304 },
+  { type: 5, label: 'Type 5', range: '15-25 &#181;m', largest: 25, minRect: 125, minSq: 125, minCirc: 200 },
+  { type: 6, label: 'Type 6', range: '5-15 &#181;m',  largest: 15, minRect: 75,  minSq: 75,  minCirc: 120 },
+  { type: 7, label: 'Type 7', range: '2-11 &#181;m',  largest: 11, minRect: 55,  minSq: 55,  minCirc: 88  },
 ];
 
 function getPowderRecommendation(widthMm, isCircular) {
@@ -1091,7 +1091,7 @@ function calculate() {
   if (AR >= 0.66) {
     arClass = 'ok';
     verdict = 'GOOD';
-    desc = 'Area ratio meets IPC-7525 minimum (?0.66). Expect reliable paste release and consistent transfer efficiency.';
+    desc = 'Area ratio meets IPC-7525 minimum (&#8805;0.66). Expect reliable paste release and consistent transfer efficiency.';
   } else if (AR >= 0.60) {
     arClass = 'warn';
     verdict = 'MARGINAL';
@@ -1125,7 +1125,7 @@ function calculate() {
       <div class="powder-type">${p.label}</div>
       <div class="powder-range">${p.range}</div>
       <div class="powder-min-label">${rule} min</div>
-      <div class="powder-min-val">${minNeeded} ?m <span class="${fits ? 'ok' : 'bad'}">${fits ? '?' : '?'}</span></div>
+      <div class="powder-min-val">${minNeeded} &#181;m <span class="${fits ? 'ok' : 'bad'}">${fits ? '&#10003;' : '&#10007;'}</span></div>
     </div>`;
   }).join('');
 
@@ -1158,18 +1158,18 @@ function calculate() {
       </div>
       <div class="stat-box">
         <div class="stat-label">Aperture Area</div>
-        <div class="stat-value">${apertureArea.toFixed(4)}<span class="stat-unit"> mm?</span></div>
+        <div class="stat-value">${apertureArea.toFixed(4)}<span class="stat-unit"> mm&#178;</span></div>
       </div>
       <div class="stat-box">
         <div class="stat-label">Theor. Volume</div>
-        <div class="stat-value">${volume.toFixed(5)}<span class="stat-unit"> mm?</span></div>
+        <div class="stat-value">${volume.toFixed(5)}<span class="stat-unit"> mm&#178;</span></div>
       </div>
     </div>
     <div class="powder-section">
       <div class="powder-title">Solder Paste Powder Recommendation</div>
       <div class="powder-grid">${powderCards}</div>
       <div class="formula-note">
-        Rect./Sq. apertures: min width = 5? largest particle (5-ball rule) ? Circ. apertures: min diameter = 8? largest particle (8-ball rule)<br>
+        Rect./Sq. apertures: min width = 5x largest particle (5-ball rule) | Circ. apertures: min diameter = 8x largest particle (8-ball rule)<br>
         Formula: ${formulaText}
       </div>
     </div>`;
