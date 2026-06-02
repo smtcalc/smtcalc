@@ -1013,11 +1013,8 @@ function setShape(shape) {
 
 function syncScale(source) {
   const slider = document.getElementById('scale-slider');
-  const input  = document.getElementById('scale-input');
   const display = document.getElementById('scale-display');
-  if (source === 'slider') input.value = slider.value;
-  else { let v = Math.min(120, Math.max(70, parseInt(input.value)||90)); input.value = v; slider.value = v; }
-  const pct = parseInt(input.value);
+  const pct = parseInt(slider.value);
   const diff = pct - 100;
   display.textContent = diff === 0 ? '0%' : (diff > 0 ? '+' + diff + '%' : '-' + Math.abs(diff) + '%');
   display.className = 'scale-val-display ' + (diff < 0 ? 'reduce' : diff > 0 ? 'enlarge' : 'neutral');
