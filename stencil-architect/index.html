@@ -1067,9 +1067,9 @@ function calculate() {
   if (dimsBox) {
     dimsBox.style.display = 'block';
     if (isCircular) {
-      dimsBox.innerHTML = 'Nominal D: <span>' + L_nom.toFixed(3) + ' mm</span> &nbsp;?&nbsp; Scaled D: <span>' + L.toFixed(3) + ' mm</span>';
+      dimsBox.innerHTML = 'Nominal D: <span>' + L_nom.toFixed(3) + ' mm</span> &nbsp;&#8594;&nbsp; Scaled D: <span>' + L.toFixed(3) + ' mm</span>';
     } else {
-      dimsBox.innerHTML = 'Nominal: <span>' + L_nom.toFixed(3) + ' ? ' + W_nom.toFixed(3) + ' mm</span> &nbsp;?&nbsp; Scaled: <span>' + L.toFixed(3) + ' ? ' + W.toFixed(3) + ' mm</span>';
+      dimsBox.innerHTML = 'Nominal: <span>' + L_nom.toFixed(3) + ' x ' + W_nom.toFixed(3) + ' mm</span> &nbsp;&#8594;&nbsp; Scaled: <span>' + L.toFixed(3) + ' x ' + W.toFixed(3) + ' mm</span>';
     }
   }
 
@@ -1109,7 +1109,7 @@ function calculate() {
   const barPct = Math.min(AR / 1.0 * 100, 100);
   const barColor = arClass === 'ok' ? 'var(--green)' : arClass === 'warn' ? 'var(--yellow)' : 'var(--red)';
   const shapeLabel = isCircular ? 'Circular' : isSquare ? 'Square' : 'Rectangular';
-  const formulaText = isCircular ? 'AR = D / (4 ? T)' : 'AR = (L ? W) / (2 ? (L + W) ? T)';
+  const formulaText = isCircular ? 'AR = D / (4 x T)' : 'AR = (L x W) / (2 x (L + W) x T)';
   const aspColor = aspectOk ? 'var(--green)' : 'var(--red)';
 
   const powderCards = POWDERS.map(p => {
@@ -1140,7 +1140,7 @@ function calculate() {
     </div>
     <div class="bar-labels">
       <span>0</span>
-      <span style="color:var(--yellow)">? 0.66 threshold</span>
+      <span style="color:var(--yellow)">&#8805; 0.66 threshold</span>
       <span>1.0</span>
     </div>
     <div class="bar-track">
@@ -1154,7 +1154,7 @@ function calculate() {
       </div>
       <div class="stat-box">
         <div class="stat-label">Aspect Ratio</div>
-        <div class="stat-value" style="color:${aspColor}">${aspectRatio.toFixed(2)}<span class="stat-unit">${aspectOk ? ' ?' : ' ? <1.5'}</span></div>
+        <div class="stat-value" style="color:${aspColor}">${aspectRatio.toFixed(2)}<span class="stat-unit">${aspectOk ? ' &#10003;' : ' &#10007; <1.5'}</span></div>
       </div>
       <div class="stat-box">
         <div class="stat-label">Aperture Area</div>
@@ -1281,7 +1281,7 @@ function printReport() {
     '<div class="section-label">Area Ratio Result</div>' +
     '<div class="ar-row"><div class="ar-num">' + arVal + '</div><div class="ar-verdict-wrap"><div class="ar-verdict-label">' + verdictTxt + '</div><div class="ar-verdict-desc">' + descTxt + '</div></div></div>' +
     '<div class="bar-track"><div class="bar-fill" style="width:' + barWidth + '"></div></div>' +
-    '<div class="bar-labels"><span>0</span><span>? 0.66 threshold</span><span>1.0</span></div>' +
+    '<div class="bar-labels"><span>0</span><span>&#8805; 0.66 threshold</span><span>1.0</span></div>' +
     '<div class="section-label">Calculated Values</div>' +
     '<div class="pgrid">' + statsHtml + '</div>' +
     '<div class="section-label">Solder Paste Powder Recommendation</div>' +
