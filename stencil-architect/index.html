@@ -1057,7 +1057,7 @@ function calculate() {
     L_nom = D; W_nom = D; isCircular = true;
   }
 
-  const scalePct = parseInt(document.getElementById('scale-input').value) || 90;
+  const scalePct = parseInt(document.getElementById('scale-slider').value) || 90;
   const scaleFactor = scalePct / 100;
   const L = L_nom * scaleFactor;
   const W = W_nom * scaleFactor;
@@ -1195,7 +1195,7 @@ function printReport() {
   var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', {hour:'2-digit', minute:'2-digit'});
   var thickness = document.getElementById('thickness').value || '--';
   var shape     = (currentShape === 'circle') ? 'Circular' : 'Rectangular / Square';
-  var scaleVal  = document.getElementById('scale-input').value || '90';
+  var scaleVal  = document.getElementById('scale-slider').value || '90';
   var dimText   = '';
   if (currentShape === 'circle') {
     var d = document.getElementById('diameter').value;
