@@ -294,7 +294,7 @@ nav a:hover { color: #3ecf7a; }
   gap: 1rem;
   flex-wrap: wrap;
   max-width: 960px;
-  margin: 0 auto;
+  margin: 0 auto 3rem;
 }
 .print-bar label {
   font-size: 0.85rem;
