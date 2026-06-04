@@ -15,27 +15,30 @@
   <meta property="og:description" content="About SMTCalc - free, practical tools for electronics manufacturing professionals, built by an industry veteran with nearly 30 years of SMT experience.">
   <link rel="stylesheet" href="/style.css">
   <style>
-    /* PCB PORTRAIT BACKGROUND */
-    .pcb-bg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 640px;
-      pointer-events: none;
-      filter: invert(1) sepia(1) saturate(6) hue-rotate(80deg) brightness(0.85) opacity(0.13);
-      z-index: 0;
+    /* AUTHOR HEADER (photo + intro) */
+    .author-header {
+      display: flex;
+      gap: 1.75rem;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
     }
 
-    @media (max-width: 768px) {
-      .pcb-bg {
-        width: 100vw;
-        filter: invert(1) sepia(1) saturate(3) hue-rotate(80deg) brightness(0.6) opacity(0.13);
+    .author-photo {
+      flex-shrink: 0;
+      width: 135px;
+      height: 180px;
+      display: block;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    @media (max-width: 540px) {
+      .author-header {
+        flex-direction: column;
+        gap: 1.25rem;
       }
-    }
-
-    @media print {
-      .pcb-bg { display: none; }
     }
 
     /* PAGE WRAPPER */
@@ -246,9 +249,6 @@
 </head>
 <body>
 
-  <!-- PCB PORTRAIT BACKGROUND -->
-  <img src="/pcb-portrait.webp" alt="" class="pcb-bg" aria-hidden="true" />
-
   <!-- HEADER -->
   <header>
     <a href="/" class="logo">SMT<span>Calc</span></a>
@@ -268,7 +268,8 @@
     <!-- ABOUT THE AUTHOR -->
     <div class="content-block">
       <div class="section-label">About the Author</div>
-      <div class="author-intro">
+      <div class="author-header">
+        <img src="/profpic.webp" alt="Kimmo Palosaari" class="author-photo" width="135" height="180" />
         <div class="body-text">
           <p>
             SMTCalc is built and maintained by Kimmo Palosaari, who has been working in electronics manufacturing since 1997, with close to 30 years of hands-on experience in SMT process engineering, IPC standards compliance, quality inspection, and PCB cleaning and coating processes.
