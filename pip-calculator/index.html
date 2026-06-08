@@ -437,7 +437,7 @@
       <div class="guide-body">
         <strong style="color:var(--text)">Fillet volume</strong> uses the Pappus-Guldin centroid theorem applied to the curved meniscus cross-section of the solder fillet. C is the fillet reach -- the radial distance from the edge of the pin to the edge of the pad.
       </div>
-      <div class="guide-formula">V<sub>fillet</sub> = 0.215 &times; C&sup2; &times; (0.2334 &times; C + r) &times; 2&pi;<br>C = (D<sub>pad</sub> - D<sub>pin effective</sub>) / 2</div>
+      <div class="guide-formula">V<sub>fillet</sub> = 0.215 &times; C&sup2; &times; (0.2234 &times; C + r) &times; 2&pi;<br>C = (D<sub>pad</sub> - D<sub>pin effective</sub>) / 2</div>
       <div class="guide-body">
         Because solder paste is approximately 50% metal by volume (the flux vehicle evaporates during reflow), the required paste volume is larger than the required solder volume:
       </div>
@@ -670,7 +670,7 @@ function calculate() {
   /* Volumes */
   var Vhole   = Math.PI * Math.pow(Dh / 2, 2) * Tb;
   var C       = (Dsp - pinDiam) / 2;
-  var Vfillet = 0.215 * C * C * (0.2334 * C + pinRadius) * 2 * Math.PI;
+  var Vfillet = 0.215 * C * C * (0.2234 * C + pinRadius) * 2 * Math.PI;
   var Vtotal  = 2 * Vfillet + Vhole - Vpin;
 
   if (Vtotal <= 0) {
