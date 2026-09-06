@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fume Extraction Capture Zone Visualizer - SMTCalc</title>
+  <meta name="description" content="Visualize the effective capture zone of a soldering fume extraction nozzle. Dalla Valle capture-velocity model for open pipe, flanged pipe, and slot hoods, with a live isovelocity contour diagram.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smtcalc.com/extraction-zone-visualizer/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SMTCalc">
+  <meta property="og:url" content="https://smtcalc.com/extraction-zone-visualizer/">
+  <meta property="og:title" content="Fume Extraction Capture Zone Visualizer - SMTCalc">
+  <meta property="og:description" content="Visualize the effective capture zone of a soldering fume extraction nozzle. Dalla Valle capture-velocity model for open pipe, flanged pipe, and slot hoods, with a live isovelocity contour diagram.">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .tool-main {
+      max-width: 1040px;
+      margin: 2rem auto;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 680px) {
+      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
+    }
+    .panel {
+      background: var(--bg2);
+      padding: 1.75rem;
+      border: none;
+      border-radius: 0;
+    }
+    .panel-full {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      padding: 1.75rem;
+    }
+    .panel-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .panel-label::before {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    /* Slider + number combo */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .slider-row input[type=range] {
+      flex: 1.4;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .slider-row .input-wrap { flex: 1; min-width: 0; }
+    .slider-row .input-wrap input {
+      text-align: right;
+      -moz-appearance: textfield;
+    }
+    .slider-row .input-wrap input::-webkit-outer-spin-button,
+    .slider-row .input-wrap input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    #dim-pipe { display: none; }
+    #dim-pipe.visible { display: block; }
+    #dim-slot { display: none; }
+    #dim-slot.visible { display: block; }
+
+    /* Visualization */
+    .viz-canvas-wrap {
+      background: #0f1c14;
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      line-height: 0;
+    }
+    #viz-canvas { display: block; width: 100%; height: auto; }
+    .viz-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-top: 0.9rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .viz-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .legend-swatch {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Result headline */
+    .result-headline {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .result-headline .rh-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-basis: 100%;
+    }
+    .result-headline .rh-value {
+      font-family: var(--mono);
+      font-size: 2.4rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .result-headline .rh-unit {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+    .result-headline .rh-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      flex-basis: 100%;
+      margin-top: 0.2rem;
+      line-height: 1.5;
+    }
+
+    .note-box {
+      background: rgba(24,102,64,0.08);
+      border: 1px solid rgba(24,102,64,0.25);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 0.75rem;
+    }
+    .note-box.warn {
+      background: rgba(176,106,16,0.09);
+      border-color: rgba(176,106,16,0.3);
+    }
+    .note-box strong { color: var(--text); }
+
+    /* Inline guide (shared pattern) */
+    .inline-guide { max-width: 1040px; margin: 2rem auto 2rem; }
+    .guide-toggle-btn {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: background 0.2s;
+    }
+    .guide-toggle-btn:hover { background: var(--bg3); }
+    .guide-toggle-label { display: flex; align-items: center; gap: 0.75rem; }
+    .guide-toggle-label svg { flex-shrink: 0; }
+    .guide-toggle-arrow {
+      font-size: 1rem;
+      color: var(--accent);
+      transition: transform 0.25s;
+      display: inline-block;
+    }
+    .guide-toggle-arrow.open { transform: rotate(180deg); }
+    .guide-content {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-left: 3px solid var(--accent);
+    }
+    .guide-content.open { display: block; }
+    .guide-section { padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border); }
+    .guide-section:last-child { border-bottom: none; }
+    .guide-section-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .guide-section-title::before { content: ''; display: block; width: 16px; height: 2px; background: var(--accent); }
+    .guide-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .guide-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+    @media (max-width: 680px) {
+      .guide-two-col, .guide-three-col { grid-template-columns: 1fr; }
+    }
+    .guide-card { background: var(--bg3); border: 1px solid var(--border2); padding: 1rem 1.1rem; }
+    .guide-card-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--text); margin-bottom: 0.4rem; }
+    .guide-formula {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      padding: 0.6rem 0.9rem;
+      color: var(--accent);
+      margin: 0.5rem 0;
+      line-height: 1.7;
+      display: inline-block;
+      width: 100%;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .guide-card-body { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+    .guide-step { display: flex; gap: 1rem; margin-bottom: 0.85rem; align-items: flex-start; }
+    .guide-step-num {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .guide-step-text { flex: 1; }
+    .guide-step-text h4 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 0.25rem; }
+    .guide-step-text p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+    @media print {
+      :root {
+        --bg: #fff; --bg2: #f5f5f5; --bg3: #efefef; --bg4: #e8e8e8;
+        --text: #111; --muted: #555; --border: #ccc; --border2: #bbb;
+        --accent: #c07000;
+      }
+      .inline-guide, .print-bar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">SMT<span>Calc</span></a>
+  <div class="tool-badge">Extraction Zone Visualizer</div>
+</header>
+
+<div class="tool-hero">
+  <div class="tool-hero-inner">
+    <div class="hero-eyebrow">Process &amp; Quality / Local Exhaust Ventilation</div>
+    <h1>Fume Extraction Capture Zone Visualizer</h1>
+    <p>See how far a soldering fume extraction nozzle actually reaches. Enter airflow, target capture velocity, and nozzle geometry to draw the isovelocity capture-zone contour, based on the Dalla Valle capture-velocity equations used throughout industrial ventilation design.</p>
+  </div>
+</div>
+
+<div class="inline-guide">
+  <button class="guide-toggle-btn" onclick="toggleGuide(this)" aria-expanded="false">
+    <span class="guide-toggle-label">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="14" height="14" rx="1" stroke="#186640" stroke-width="1.2"/><line x1="4" y1="5" x2="12" y2="5" stroke="#186640" stroke-width="1.2"/><line x1="4" y1="8" x2="10" y2="8" stroke="#186640" stroke-width="1.2"/><line x1="4" y1="11" x2="8" y2="11" stroke="#186640" stroke-width="1.2"/></svg>
+      Quick Guide -- How This Visualizer Works
+    </span>
+    <span class="guide-toggle-arrow" aria-hidden="true">&#9660;</span>
+  </button>
+  <div class="guide-content" role="region">
+
+    <div class="guide-section">
+      <div class="guide-section-title">01 -- The Capture Velocity Model</div>
+      <p style="font-size:0.9rem;color:var(--muted);line-height:1.6;margin-bottom:1.1rem;">A fume extraction nozzle does not create a wall of suction. Velocity drops off very fast with distance from the face -- roughly with the square of distance for a round nozzle. The Dalla Valle equations (used throughout ACGIH's <em>Industrial Ventilation</em> manual) model this falloff and let you solve for X: the maximum distance at which the air is still moving at your required capture velocity.</p>
+      <div class="guide-three-col">
+        <div class="guide-card">
+          <div class="guide-card-title">Open Pipe</div>
+          <div class="guide-formula">Q = V(10X&sup2; + A)
+X = &radic;((Q/V - A) / 10)</div>
+          <div class="guide-card-body">A free-hanging duct end. Suction is pulled in fairly evenly from all directions around the tip, including partly from behind it -- so it is the least efficient shape per m&sup3;/h of airflow.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-title">Flanged Pipe</div>
+          <div class="guide-formula">Q = 0.75V(10X&sup2; + A)
+X = &radic;((Q/0.75V - A) / 10)</div>
+          <div class="guide-card-body">A flat plate around the duct mouth blocks flow from behind, forcing all the air to come from in front. For the same airflow, a flanged nozzle reaches noticeably farther than an open pipe.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-title">Slot Hood</div>
+          <div class="guide-formula">Q = 3.7 L V X
+X = Q / (3.7 L V)</div>
+          <div class="guide-card-body">A narrow, elongated opening (aspect ratio W/L below ~0.2). Reach depends on slot length L rather than face area, and the model is only valid once X exceeds about 1.5x the slot width W.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-section">
+      <div class="guide-section-title">02 -- How To Use It</div>
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-text">
+          <h4>Pick your nozzle geometry</h4>
+          <p>Open pipe for a bare flex-arm hose end, flanged pipe if it has a disc or cone around the tip, or slot hood for a narrow rectangular extraction slot (common on bench-mounted rail extractors).</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-text">
+          <h4>Enter nozzle size and required capture velocity</h4>
+          <p>0.5 m/s is the commonly cited minimum capture velocity for low-toxicity soldering flux fumes with low momentum release (ACGIH-style guidance). Raise it toward 0.75-1.0 m/s for more aggressive fluxes, hotter irons, or when the source is farther from the hood.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-text">
+          <h4>Set the airflow your extractor actually delivers</h4>
+          <p>Use the measured or rated volume flow at the nozzle, not the fan's free-air rating -- hose length, filters, and bends all reduce real delivered airflow.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-text">
+          <h4>Read the capture distance and position the nozzle inside it</h4>
+          <p>The shaded contour is the outer boundary where air is still moving at your required velocity. The soldering point needs to sit inside that boundary, not at its edge, to allow a safety margin for cross-drafts.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-section">
+      <div class="guide-section-title">03 -- Limitations</div>
+      <div class="guide-card">
+        <div class="guide-card-body">
+          The Dalla Valle equations describe still-air, free-jet suction along the nozzle's centerline and are an empirical fit, not a full CFD solution. They lose accuracy very close to the face (within roughly one nozzle diameter, or within 1.5x the slot width for slot hoods) and assume the nozzle is not obstructed or working against cross-drafts, operator breathing, or reflow/rework airflow disturbances. Real capture zones are also not perfectly circular -- room drafts and the shape of nearby surfaces distort them. Treat the contour shown here as a first-pass sizing and placement check, not a substitute for a face-velocity measurement with an anemometer at the actual workstation.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.guide-content -->
+</div><!-- /.inline-guide -->
+
+<div class="tool-main">
+
+  <!-- LEFT COLUMN: INPUTS -->
+
+  <div class="panel">
+    <div class="panel-label">Airflow &amp; Target Velocity</div>
+
+    <div class="field">
+      <label for="q-slider">Airflow Volume (Q)</label>
+      <div class="slider-row">
+        <input type="range" id="q-slider" min="50" max="500" step="5" value="150">
+        <div class="input-wrap">
+          <input type="number" id="q-input" min="50" max="500" step="5" value="150">
+          <span class="input-unit">m&sup3;/h</span>
+        </div>
+      </div>
+      <div class="field-note">Delivered airflow at the nozzle. Typical single-station fume extractor arm: 80-250 m&sup3;/h.</div>
+    </div>
+
+    <div class="field">
+      <label for="v-slider">Required Capture Velocity (V)</label>
+      <div class="slider-row">
+        <input type="range" id="v-slider" min="0.5" max="1.5" step="0.05" value="0.5">
+        <div class="input-wrap">
+          <input type="number" id="v-input" min="0.5" max="1.5" step="0.05" value="0.5">
+          <span class="input-unit">m/s</span>
+        </div>
+      </div>
+      <div class="field-note">Minimum air velocity needed at the source to capture the fume. 0.5 m/s default for low-momentum soldering flux fumes.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-label">Nozzle Geometry</div>
+
+    <div class="field">
+      <label for="nozzle-type">Nozzle Type</label>
+      <select id="nozzle-type">
+        <option value="open" selected>Open Pipe (unflanged duct end)</option>
+        <option value="flanged">Flanged Pipe (with flange plate)</option>
+        <option value="slot">Slot Hood (narrow rectangular slot)</option>
+      </select>
+    </div>
+
+    <div id="dim-pipe" class="visible">
+      <div class="field">
+        <label for="d-slider">Nozzle Diameter</label>
+        <div class="slider-row">
+          <input type="range" id="d-slider" min="10" max="150" step="1" value="40">
+          <div class="input-wrap">
+            <input type="number" id="d-input" min="10" max="150" step="1" value="40">
+            <span class="input-unit">mm</span>
+          </div>
+        </div>
+        <div class="field-note">Common soldering fume nozzles: 30-50 mm. Face area is calculated automatically.</div>
+      </div>
+    </div>
+
+    <div id="dim-slot">
+      <div class="field">
+        <label for="l-slider">Slot Length (L)</label>
+        <div class="slider-row">
+          <input type="range" id="l-slider" min="50" max="600" step="5" value="300">
+          <div class="input-wrap">
+            <input type="number" id="l-input" min="50" max="600" step="5" value="300">
+            <span class="input-unit">mm</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="w-slider">Slot Width (W)</label>
+        <div class="slider-row">
+          <input type="range" id="w-slider" min="5" max="50" step="1" value="20">
+          <div class="input-wrap">
+            <input type="number" id="w-input" min="5" max="50" step="1" value="20">
+            <span class="input-unit">mm</span>
+          </div>
+        </div>
+        <div class="field-note">Slot length runs perpendicular to this side view. Width is used to check the model's near-field validity.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUALIZATION -->
+
+  <div class="panel panel-full">
+    <div class="panel-label">Capture Zone Diagram</div>
+    <div class="viz-canvas-wrap">
+      <canvas id="viz-canvas" width="1000" height="420"></canvas>
+    </div>
+    <div class="viz-legend">
+      <span><span class="legend-swatch" style="background:#3ecf7a"></span>Isovelocity boundary (V reached at contour edge)</span>
+      <span><span class="legend-swatch" style="background:#b03333"></span>Airflow direction (into nozzle)</span>
+      <span><span class="legend-swatch" style="background:#8aad96"></span>Scale grid, 1 division = <span id="legend-grid-step">--</span> cm</span>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+
+  <div class="panel panel-full" id="results-panel">
+    <div class="panel-label">Results</div>
+
+    <div class="result-headline">
+      <span class="rh-label">Max Effective Capture Distance</span>
+      <span class="rh-value" id="r-xcm">--</span>
+      <span class="rh-unit">cm</span>
+      <span class="rh-sub" id="r-summary">--</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Airflow (Q)</div>
+        <div class="stat-value" id="r-q">--<span class="stat-unit"> m&sup3;/s</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Face Area (A)</div>
+        <div class="stat-value" id="r-area">--<span class="stat-unit"> cm&sup2;</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Face Velocity</div>
+        <div class="stat-value" id="r-facevel">--<span class="stat-unit"> m/s</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Nozzle Type</div>
+        <div class="stat-value" id="r-type" style="font-size:1.1rem">--</div>
+      </div>
+    </div>
+
+    <div class="note-box" id="r-notes"></div>
+
+  </div>
+
+</div><!-- /.tool-main -->
+
+<div class="print-bar">
+  <label>Report Title</label>
+  <input type="text" id="reportTitle" placeholder="e.g. Bench 4 rework station extraction check">
+  <button class="print-btn" onclick="printReport()">&#9113; Print Report</button>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">
+      &copy; 2026 <a href="/">SMTCalc.com</a> -- Free tools for electronics manufacturing professionals.
+      <span class="footer-sep">|</span>
+      <a id="contact-link" href="#" onclick="showContact(); return false;">Contact the author</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+var canvas = document.getElementById('viz-canvas');
+var ctx = canvas.getContext('2d');
+var CW = canvas.width, CH = canvas.height;
+
+function $(id) { return document.getElementById(id); }
+
+function bindPair(sliderId, inputId, min, max, step, onChange) {
+  var slider = $(sliderId), input = $(inputId);
+  slider.addEventListener('input', function () {
+    input.value = slider.value;
+    onChange();
+  });
+  input.addEventListener('input', function () {
+    var v = parseFloat(input.value);
+    if (isNaN(v)) return;
+    v = Math.min(max, Math.max(min, v));
+    slider.value = v;
+    onChange();
+  });
+}
+
+bindPair('q-slider', 'q-input', 50, 500, 5, calculate);
+bindPair('v-slider', 'v-input', 0.5, 1.5, 0.05, calculate);
+bindPair('d-slider', 'd-input', 10, 150, 1, calculate);
+bindPair('l-slider', 'l-input', 50, 600, 5, calculate);
+bindPair('w-slider', 'w-input', 5, 50, 1, calculate);
+
+$('nozzle-type').addEventListener('change', function () {
+  var t = $('nozzle-type').value;
+  $('dim-pipe').classList.toggle('visible', t === 'open' || t === 'flanged');
+  $('dim-slot').classList.toggle('visible', t === 'slot');
+  calculate();
+});
+
+function fmt(v, dec) {
+  if (isNaN(v) || !isFinite(v)) return '--';
+  return v.toFixed(dec);
+}
+
+function niceGridStep(spanCm) {
+  var steps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000];
+  for (var i = 0; i < steps.length; i++) {
+    if (spanCm / steps[i] <= 8) return steps[i];
+  }
+  return 1000;
+}
+
+function computeCapture() {
+  var type = $('nozzle-type').value;
+  var Qh = parseFloat($('q-input').value);
+  var V = parseFloat($('v-input').value);
+  var Q = Qh / 3600; // m3/s
+
+  var result = { type: type, Q: Q, V: V, X_m: 0, A_m2: 0, faceVel: 0, valid: true, note: '' };
+
+  if (type === 'open' || type === 'flanged') {
+    var d_mm = parseFloat($('d-input').value);
+    var d_m = d_mm / 1000;
+    var A = Math.PI / 4 * d_m * d_m;
+    result.A_m2 = A;
+    result.faceVel = A > 0 ? Q / A : 0;
+
+    var term;
+    if (type === 'open') {
+      term = Q / V - A;
+    } else {
+      term = Q / (0.75 * V) - A;
+    }
+    if (term > 0) {
+      result.X_m = Math.sqrt(term / 10);
+    } else {
+      result.X_m = 0;
+      result.valid = false;
+      result.note = 'The required capture velocity exceeds what this nozzle face can sustain at any real distance -- effective capture distance is essentially zero. Increase airflow, reduce the target capture velocity, or use a larger nozzle.';
+    }
+    var Xcm = result.X_m * 100;
+    if (result.valid && Xcm > 0 && result.X_m < d_m) {
+      result.note = 'Computed distance is smaller than the nozzle diameter. This close to the face, the Dalla Valle model is less reliable -- treat the number as approximate and expect the real capture zone to be somewhat different in shape close in.';
+    }
+  } else {
+    var L_mm = parseFloat($('l-input').value);
+    var W_mm = parseFloat($('w-input').value);
+    var L_m = L_mm / 1000;
+    var W_m = W_mm / 1000;
+    result.A_m2 = L_m * W_m;
+    result.faceVel = result.A_m2 > 0 ? Q / result.A_m2 : 0;
+    result.X_m = (L_m > 0 && V > 0) ? Q / (3.7 * L_m * V) : 0;
+
+    var minValidX = 1.5 * W_m;
+    if (result.X_m < minValidX) {
+      result.note = 'Computed distance is within 1.5x the slot width of the face. The slot capture-velocity formula is only valid beyond that point -- treat this result as an optimistic upper-bound estimate for close-in placement.';
+    }
+  }
+
+  return result;
+}
+
+function calculate() {
+  var r = computeCapture();
+  var Xcm = r.X_m * 100;
+
+  $('r-xcm').textContent = fmt(Xcm, 1);
+  $('r-q').innerHTML = fmt(r.Q, 4) + '<span class="stat-unit"> m&sup3;/s</span>';
+  $('r-area').innerHTML = fmt(r.A_m2 * 10000, 1) + '<span class="stat-unit"> cm&sup2;</span>';
+  $('r-facevel').innerHTML = fmt(r.faceVel, 2) + '<span class="stat-unit"> m/s</span>';
+
+  var typeLabel = r.type === 'open' ? 'Open Pipe' : (r.type === 'flanged' ? 'Flanged Pipe' : 'Slot Hood');
+  $('r-type').textContent = typeLabel;
+
+  var summary;
+  if (Xcm <= 0.05) {
+    summary = 'At these settings, this ' + typeLabel.toLowerCase() + ' does not reliably reach the required capture velocity at any usable distance from the face.';
+  } else {
+    summary = 'At ' + fmt(r.V, 2) + ' m/s required capture velocity and ' + fmt(r.Q * 3600, 0) + ' m³/h airflow, this ' + typeLabel.toLowerCase() + ' captures fume up to ' + fmt(Xcm, 1) + ' cm from the nozzle face.';
+  }
+  $('r-summary').textContent = summary;
+
+  var notesEl = $('r-notes');
+  if (r.note) {
+    notesEl.textContent = r.note;
+    notesEl.className = 'note-box warn';
+    notesEl.style.display = '';
+  } else {
+    notesEl.textContent = 'Position the fume source inside the shaded contour with margin for cross-drafts -- do not rely on the very edge of the boundary.';
+    notesEl.className = 'note-box';
+    notesEl.style.display = '';
+  }
+
+  drawViz(r);
+}
+
+/* ---------------- Visualization ---------------- */
+
+function drawArrowChevron(x, y, size, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x + size, y - size);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + size, y + size);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawViz(r) {
+  ctx.clearRect(0, 0, CW, CH);
+
+  // background
+  ctx.fillStyle = '#0f1c14';
+  ctx.fillRect(0, 0, CW, CH);
+
+  var ox = 110;              // nozzle mouth x (px)
+  var oy = CH / 2;           // vertical center
+
+  var Xcm = Math.max(r.X_m * 100, 0);
+  var spanCm = Math.max(Xcm * 1.45, 15);
+  var gridStep = niceGridStep(spanCm);
+  var rightMargin = 40;
+  var drawWidth = CW - ox - rightMargin;
+  var pxPerCm = drawWidth / (Math.ceil(spanCm / gridStep) * gridStep);
+
+  $('legend-grid-step').textContent = gridStep;
+
+  // grid lines (vertical, cm scale)
+  ctx.font = '11px "Share Tech Mono", monospace';
+  ctx.fillStyle = 'rgba(138,173,150,0.55)';
+  ctx.strokeStyle = 'rgba(138,173,150,0.14)';
+  ctx.lineWidth = 1;
+  var maxGridCm = Math.ceil(spanCm / gridStep) * gridStep;
+  for (var cm = 0; cm <= maxGridCm; cm += gridStep) {
+    var gx = ox + cm * pxPerCm;
+    ctx.beginPath();
+    ctx.moveTo(gx, 24);
+    ctx.lineTo(gx, CH - 34);
+    ctx.stroke();
+    ctx.fillText(cm + ' cm', gx + 4, CH - 16);
+  }
+  // baseline axis
+  ctx.strokeStyle = 'rgba(138,173,150,0.35)';
+  ctx.beginPath();
+  ctx.moveTo(ox, CH - 34);
+  ctx.lineTo(CW - rightMargin + 10, CH - 34);
+  ctx.stroke();
+
+  var Xpx = Xcm * pxPerCm;
+
+  // ---- capture zone fill + boundary ----
+  var grad = ctx.createRadialGradient(ox, oy, 4, ox, oy, Math.max(Xpx, 1));
+  grad.addColorStop(0, 'rgba(62,207,122,0.38)');
+  grad.addColorStop(1, 'rgba(62,207,122,0.03)');
+
+  ctx.beginPath();
+  if (r.type === 'open') {
+    ctx.arc(ox, oy, Xpx, 0, Math.PI * 2);
+  } else if (r.type === 'flanged') {
+    ctx.moveTo(ox, oy);
+    ctx.arc(ox, oy, Xpx, -Math.PI / 2, Math.PI / 2);
+    ctx.closePath();
+  } else {
+    ctx.moveTo(ox, oy);
+    ctx.ellipse(ox, oy, Xpx, Xpx * 0.42, 0, -Math.PI / 2, Math.PI / 2);
+    ctx.closePath();
+  }
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#3ecf7a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // suction direction chevrons (pointing into the nozzle)
+  if (Xpx > 24) {
+    var positions = [0.25, 0.5, 0.75];
+    for (var pi = 0; pi < positions.length; pi++) {
+      var cx = ox + Xpx * positions[pi];
+      drawArrowChevron(cx, oy, 7, '#b03333', 0.55);
+      if (r.type !== 'slot') {
+        drawArrowChevron(cx, oy - Xpx * positions[pi] * 0.32, 6, '#b03333', 0.35);
+        drawArrowChevron(cx, oy + Xpx * positions[pi] * 0.32, 6, '#b03333', 0.35);
+      }
+    }
+  }
+
+  // ---- nozzle geometry (drawn on top so it occludes the zone behind it) ----
+  var ductHalf = Math.max(pxPerCm * 1.2, 9);
+  ctx.fillStyle = '#c8d8cc';
+  ctx.strokeStyle = '#8aad96';
+  ctx.lineWidth = 1.5;
+
+  if (r.type === 'open') {
+    ctx.fillRect(0, oy - ductHalf, ox, ductHalf * 2);
+    ctx.strokeRect(0, oy - ductHalf, ox, ductHalf * 2);
+  } else if (r.type === 'flanged') {
+    ctx.fillRect(0, oy - ductHalf, ox - 6, ductHalf * 2);
+    ctx.strokeRect(0, oy - ductHalf, ox - 6, ductHalf * 2);
+    var flangeHalf = Math.max(ductHalf * 2.6, 40);
+    ctx.fillStyle = '#dbe4dc';
+    ctx.fillRect(ox - 6, oy - flangeHalf, 7, flangeHalf * 2);
+    ctx.strokeRect(ox - 6, oy - flangeHalf, 7, flangeHalf * 2);
+  } else {
+    var plateHalf = Math.max(ductHalf * 3.2, 44);
+    var slotHalf = Math.max(pxPerCm * (parseFloat($('w-input').value) / 10) * 0.5, 4);
+    ctx.fillStyle = '#dbe4dc';
+    ctx.fillRect(ox - 6, oy - plateHalf, 7, plateHalf - slotHalf);
+    ctx.strokeRect(ox - 6, oy - plateHalf, 7, plateHalf - slotHalf);
+    ctx.fillRect(ox - 6, oy + slotHalf, 7, plateHalf - slotHalf);
+    ctx.strokeRect(ox - 6, oy + slotHalf, 7, plateHalf - slotHalf);
+    ctx.fillRect(0, oy - Math.max(ductHalf, slotHalf), ox - 6, Math.max(ductHalf, slotHalf) * 2);
+  }
+
+  // ---- dimension line for X ----
+  if (Xpx > 6) {
+    var dimY = Math.min(oy + Math.max(Xpx * 0.5, 40), CH - 56);
+    ctx.strokeStyle = '#f0f4f0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ox, dimY);
+    ctx.lineTo(ox + Xpx, dimY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ox, dimY - 5); ctx.lineTo(ox, dimY + 5);
+    ctx.moveTo(ox + Xpx, dimY - 5); ctx.lineTo(ox + Xpx, dimY + 5);
+    ctx.stroke();
+
+    ctx.fillStyle = '#f0f4f0';
+    ctx.font = 'bold 13px "Share Tech Mono", monospace';
+    var label = 'X = ' + Xcm.toFixed(1) + ' cm';
+    var tw = ctx.measureText(label).width;
+    ctx.fillText(label, ox + Xpx / 2 - tw / 2, dimY - 10);
+  }
+
+  // nozzle mouth marker
+  ctx.fillStyle = '#3ecf7a';
+  ctx.beginPath();
+  ctx.arc(ox, oy, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function resizeCanvas() {
+  var dpr = window.devicePixelRatio || 1;
+  var wrapWidth = canvas.parentElement.clientWidth;
+  CW = 1000;
+  CH = 420;
+  canvas.width = CW * dpr;
+  canvas.height = CH * dpr;
+  canvas.style.width = '100%';
+  canvas.style.height = 'auto';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  calculate();
+}
+
+window.addEventListener('resize', function () {
+  clearTimeout(window._rzTimer);
+  window._rzTimer = setTimeout(resizeCanvas, 120);
+});
+
+function toggleGuide(btn) {
+  var content = btn.nextElementSibling;
+  var arrow = btn.querySelector('.guide-toggle-arrow');
+  var isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+function showContact() {
+  var u = 'contact';
+  var d = 'smtcalc.com';
+  var a = document.getElementById('contact-link');
+  a.href = 'mailto:' + u + '@' + d;
+  a.textContent = u + '@' + d;
+  a.onclick = null;
+}
+
+function printReport() {
+  var title = $('reportTitle').value.trim();
+  var r = computeCapture();
+  var Xcm = r.X_m * 100;
+
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fi-FI') + '  ' + now.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
+
+  var typeLabel = r.type === 'open' ? 'Open Pipe' : (r.type === 'flanged' ? 'Flanged Pipe' : 'Slot Hood');
+  var dimStr;
+  if (r.type === 'slot') {
+    dimStr = $('l-input').value + ' x ' + $('w-input').value + ' mm (L x W)';
+  } else {
+    dimStr = $('d-input').value + ' mm diameter';
+  }
+
+  var canvasImg = canvas.toDataURL('image/png');
+  var notes = $('r-notes').textContent;
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Extraction Zone Visualizer' + (title ? ' - ' + title : '') + '</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">' +
+    '<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: Barlow, sans-serif; font-size: 13px; color: #222; background: #fff; padding: 20mm 15mm; }' +
+    '.ph { border-bottom: 3px solid #186640; padding-bottom: 12px; margin-bottom: 20px; }' +
+    '.ph-tool { font-family: "Barlow Condensed", sans-serif; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }' +
+    '.ph-title { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 900; color: #222; margin-bottom: 6px; }' +
+    '.ph-meta { font-family: "Share Tech Mono", monospace; font-size: 10px; color: #888; line-height: 1.8; }' +
+    '.section-label { font-family: "Share Tech Mono", monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #186640; border-bottom: 1px solid #eee; padding-bottom: 6px; margin: 18px 0 12px; }' +
+    '.inputs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }' +
+    '.ibox { border: 1px solid #eee; padding: 10px 14px; }' +
+    '.ibox-label { font-family: "Share Tech Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 4px; }' +
+    '.ibox-value { font-family: "Barlow Condensed", sans-serif; font-size: 16px; font-weight: 700; color: #222; }' +
+    '.result-num { font-family: "Barlow Condensed", sans-serif; font-size: 52px; font-weight: 900; color: #186640; line-height: 1; }' +
+    '.result-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 6px; }' +
+    '.diagram-img { width: 100%; border: 1px solid #eee; margin-bottom: 16px; }' +
+    '.notes-box { border: 1px solid #eee; border-left: 4px solid #186640; padding: 10px 14px; font-size: 11px; color: #555; line-height: 1.5; }' +
+    '@media print { @page { size: A4 landscape; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
+    '</style></head><body>' +
+    '<div class="ph"><div class="ph-tool">Extraction Zone Visualizer -- SMTCalc.com</div>' +
+    (title ? '<div class="ph-title">' + title + '</div>' : '') +
+    '<div class="ph-meta">Printed: ' + dateStr + '</div></div>' +
+    '<div class="section-label">Input Parameters</div>' +
+    '<div class="inputs-grid">' +
+    '<div class="ibox"><div class="ibox-label">Airflow (Q)</div><div class="ibox-value">' + $('q-input').value + ' m&sup3;/h</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Required Capture Velocity</div><div class="ibox-value">' + $('v-input').value + ' m/s</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Nozzle Type</div><div class="ibox-value">' + typeLabel + '</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Nozzle Dimensions</div><div class="ibox-value">' + dimStr + '</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Face Area</div><div class="ibox-value">' + (r.A_m2 * 10000).toFixed(1) + ' cm&sup2;</div></div>' +
+    '<div class="ibox"><div class="ibox-label">Face Velocity</div><div class="ibox-value">' + r.faceVel.toFixed(2) + ' m/s</div></div>' +
+    '</div>' +
+    '<div class="section-label">Capture Zone Diagram</div>' +
+    '<img class="diagram-img" src="' + canvasImg + '">' +
+    '<div class="section-label">Result</div>' +
+    '<div class="result-num">' + Xcm.toFixed(1) + ' cm</div>' +
+    '<div class="result-desc">Maximum effective capture distance from the nozzle face at ' + $('v-input').value + ' m/s required capture velocity.</div>' +
+    '<div class="notes-box" style="margin-top:14px">' + notes + '</div>' +
+    '</body></html>';
+
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(html);
+  win.document.close();
+  win.onload = function () { win.focus(); win.print(); };
+}
+
+resizeCanvas();
+</script>
+</body>
+</html>
