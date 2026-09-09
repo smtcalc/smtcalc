@@ -903,7 +903,7 @@
           </div>
           <div class="guide-card guide-card-border-accent" style="margin-bottom:0.75rem;">
             <div class="guide-card-title">5. Exposure Condition</div>
-            <div class="guide-card-body">Standard = up to 30&deg;C / 60% RH. If factory humidity exceeded 60% RH at any point, select Elevated. This triggers a note to track desorption data instead of relying purely on the timed bake.</div>
+            <div class="guide-card-body">Standard = up to 30&deg;C / 60% RH. If factory humidity exceeded 60% RH at any point, select Elevated. J-STD-033D has no separate bake-time table for this case, so the numbers below are unchanged -- selecting Elevated only surfaces a warning telling you to confirm dryness with periodic desorption weighing instead of trusting the timed bake alone.</div>
           </div>
           <div class="guide-card" style="background:var(--bg4); border:1px solid var(--border2);">
             <div class="guide-section-title" style="margin-bottom:0.4rem; font-size:0.75rem;">Auto-Classification</div>
@@ -963,7 +963,7 @@
         </div>
         <div class="guide-card guide-card-border-accent">
           <div class="guide-card-title">Elevated Humidity Exposure</div>
-          <div class="guide-card-body">If the component was exposed above 60% RH, the tabled times may be insufficient. Track desorption by periodic weighing rather than relying solely on the time value.</div>
+          <div class="guide-card-body">If the component was exposed above 60% RH, the tabled times may be insufficient -- but J-STD-033D gives no alternate numbers, so the calculator's bake times do not change. Track desorption by periodic weighing rather than relying solely on the time value.</div>
         </div>
         <div class="guide-card guide-card-border-muted">
           <div class="guide-card-title">The 72-Hour Threshold</div>
@@ -1100,12 +1100,12 @@
       </label>
 
       <div class="field">
-        <label>Exposure Condition</label>
+        <label>Exposure Condition <span style="font-weight:400; color:var(--muted); font-size:0.75rem;">(warning only, does not change bake time)</span></label>
         <select id="exposureRH" onchange="calculate()">
           <option value="standard" selected>Standard -- up to 30&deg;C / 60% RH</option>
           <option value="elevated">Elevated -- above 60% RH</option>
         </select>
-        <div class="field-note">If factory humidity has exceeded 60% RH at any point during exposure, select Elevated. This may require longer bake times per Table 4-1 Note 1.</div>
+        <div class="field-note">If factory humidity has exceeded 60% RH at any point during exposure, select Elevated. J-STD-033D has no separate table for this case, so the bake times below do not change -- instead a warning is shown telling you to confirm dryness by periodic desorption weighing rather than trusting the tabled time alone.</div>
       </div>
 
       <div class="field" style="margin-top:1.5rem;">
