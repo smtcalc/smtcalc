@@ -22,6 +22,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1.5px;
+      align-items: stretch;
       background: var(--border);
       border: 1px solid var(--border);
     }
@@ -86,6 +87,28 @@
     #dim-slot { display: none; }
     #dim-slot.visible { display: block; }
 
+    /* Nozzle 3D sketch */
+    .nozzle-fig {
+      margin: 1.5rem 0 0;
+      padding: 1rem 1rem 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    #nozzle-svg { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
+    #nozzle-svg text { font-family: var(--mono); }
+    @media (max-width: 480px) {
+      .nozzle-fig { padding: 0.75rem 0.5rem; }
+      #nozzle-svg text[font-size="13"] { font-size: 16px; }
+      #nozzle-svg text[font-size="11"] { font-size: 14px; }
+    }
+    .nozzle-fig figcaption {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 0.6rem;
+    }
+
     /* Visualization */
     .viz-canvas-wrap {
       background: #0f1c14;
@@ -96,6 +119,7 @@
       line-height: 0;
     }
     #viz-canvas { display: block; width: 100%; height: auto; }
+    .viz-caption { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.75rem; }
     .viz-legend {
       display: flex;
       flex-wrap: wrap;
@@ -313,7 +337,7 @@ X = &radic;((Q/0.75V - A) / 10)</div>
           <div class="guide-card-body">A flat plate around the duct mouth blocks flow from behind, forcing all the air to come from in front. For the same airflow, a flanged nozzle reaches noticeably farther than an open pipe.</div>
         </div>
         <div class="guide-card">
-          <div class="guide-card-title">Slot Hood</div>
+          <div class="guide-card-title">Slot Hood (no flange)</div>
           <div class="guide-formula">Q = 3.7 L V X
 X = Q / (3.7 L V)</div>
           <div class="guide-card-body">A narrow, elongated opening (aspect ratio W/L below ~0.2). Reach depends on slot length L rather than face area, and the model is only valid once X exceeds about 1.5x the slot width W.</div>
@@ -405,7 +429,7 @@ X = Q / (3.7 L V)</div>
       <select id="nozzle-type">
         <option value="open" selected>Open Pipe (unflanged duct end)</option>
         <option value="flanged">Flanged Pipe (with flange plate)</option>
-        <option value="slot">Slot Hood (narrow rectangular slot)</option>
+        <option value="slot">Slot Hood (narrow slot, no flange)</option>
       </select>
     </div>
 
@@ -443,21 +467,27 @@ X = Q / (3.7 L V)</div>
             <span class="input-unit">mm</span>
           </div>
         </div>
-        <div class="field-note">Slot length runs perpendicular to this side view. Width is used to check the model's near-field validity.</div>
+        <div class="field-note">Slot length runs into the page in the diagram below. Width is used to check the model's near-field validity.</div>
       </div>
     </div>
+
+    <figure class="nozzle-fig">
+      <svg id="nozzle-svg" viewBox="0 0 340 240" role="img" aria-labelledby="nozzle-cap"></svg>
+      <figcaption id="nozzle-cap"></figcaption>
+    </figure>
   </div>
 
   <!-- VISUALIZATION -->
 
   <div class="panel panel-full">
     <div class="panel-label">Capture Zone Diagram</div>
+    <div class="viz-caption" id="viz-caption"></div>
     <div class="viz-canvas-wrap">
       <canvas id="viz-canvas" width="1000" height="420"></canvas>
     </div>
     <div class="viz-legend">
       <span><span class="legend-swatch" style="background:#3ecf7a"></span>Isovelocity boundary (V reached at contour edge)</span>
-      <span><span class="legend-swatch" style="background:#b03333"></span>Airflow direction (into nozzle)</span>
+      <span><span class="legend-swatch" style="background:#d04848"></span>Airflow direction (into nozzle)</span>
       <span><span class="legend-swatch" style="background:#8aad96"></span>Scale grid, 1 division = <span id="legend-grid-step">--</span> cm</span>
     </div>
   </div>
@@ -555,10 +585,10 @@ function fmt(v, dec) {
   return v.toFixed(dec);
 }
 
-function niceGridStep(spanCm) {
-  var steps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000];
+function niceGridStep(spanCm, maxDiv) {
+  var steps = [1, 2, 4, 5, 10, 20, 25, 50, 100, 200, 500, 1000];
   for (var i = 0; i < steps.length; i++) {
-    if (spanCm / steps[i] <= 8) return steps[i];
+    if (spanCm / steps[i] <= maxDiv) return steps[i];
   }
   return 1000;
 }
@@ -605,9 +635,14 @@ function computeCapture() {
     result.X_m = (L_m > 0 && V > 0) ? Q / (3.7 * L_m * V) : 0;
 
     var minValidX = 1.5 * W_m;
-    if (result.X_m < minValidX) {
-      result.note = 'Computed distance is within 1.5x the slot width of the face. The slot capture-velocity formula is only valid beyond that point -- treat this result as an optimistic upper-bound estimate for close-in placement.';
+    var slotNotes = [];
+    if (L_m > 0 && W_m / L_m > 0.2) {
+      slotNotes.push('Slot aspect ratio W/L is ' + fmt(W_m / L_m, 2) + '. The slot formula assumes 0.2 or less -- this opening behaves more like a rectangular hood, so the result is only a rough guide.');
     }
+    if (result.X_m < minValidX) {
+      slotNotes.push('Computed distance is within 1.5x the slot width of the face. The slot capture-velocity formula is only valid beyond that point -- treat this result as an optimistic upper-bound estimate for close-in placement.');
+    }
+    result.note = slotNotes.join(' ');
   }
 
   return result;
@@ -629,7 +664,7 @@ function calculate() {
   if (Xcm <= 0.05) {
     summary = 'At these settings, this ' + typeLabel.toLowerCase() + ' does not reliably reach the required capture velocity at any usable distance from the face.';
   } else {
-    summary = 'At ' + fmt(r.V, 2) + ' m/s required capture velocity and ' + fmt(r.Q * 3600, 0) + ' m³/h airflow, this ' + typeLabel.toLowerCase() + ' captures fume up to ' + fmt(Xcm, 1) + ' cm from the nozzle face.';
+    summary = 'At ' + fmt(r.V, 2) + ' m/s required capture velocity and ' + fmt(r.Q * 3600, 0) + ' m\u00b3/h airflow, this ' + typeLabel.toLowerCase() + ' captures fume up to ' + fmt(Xcm, 1) + ' cm from the nozzle face.';
   }
   $('r-summary').textContent = summary;
 
@@ -645,6 +680,118 @@ function calculate() {
   }
 
   drawViz(r);
+  drawNozzleFigure(r);
+}
+
+/* ---------------- Nozzle 3D sketch ---------------- */
+
+var FIG = {
+  line: '#4a5e50',
+  body: '#e6ece7',
+  plate: '#cfd9d1',
+  face: 'rgba(62,207,122,0.30)',
+  faceLine: '#186640',
+  air: '#b03333',
+  text: '#1c2a1f'
+};
+
+function P(x, y) { return { x: x, y: y }; }
+function add(a, b, k) { return P(a.x + b.x * k, a.y + b.y * k); }
+function xy(a) { return a.x.toFixed(1) + ' ' + a.y.toFixed(1); }
+function poly(pts, fill, stroke, extra) {
+  return '<path d="M ' + pts.map(xy).join(' L ') + ' Z" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.4" stroke-linejoin="round"' + (extra || '') + '/>';
+}
+function seg(a, b, stroke, w, extra) {
+  return '<line x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '" stroke="' + stroke + '" stroke-width="' + (w || 1.4) + '"' + (extra || '') + '/>';
+}
+function ell(c, rx, ry, rot, fill, stroke) {
+  return '<ellipse cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" rx="' + rx + '" ry="' + ry + '" transform="rotate(' + rot + ' ' + xy(c) + ')" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.4"/>';
+}
+function txt(a, str, size, anchor, color, weight) {
+  return '<text x="' + a.x.toFixed(1) + '" y="' + a.y.toFixed(1) + '" font-size="' + size + '" text-anchor="' + (anchor || 'start') + '" fill="' + (color || FIG.text) + '"' + (weight ? ' font-weight="' + weight + '"' : '') + '>' + str + '</text>';
+}
+// Arrow from a to b with the head at b
+function arrow(a, b, color) {
+  var dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy);
+  var ux = dx / len, uy = dy / len, h = 9, w = 5;
+  var base = P(b.x - ux * h, b.y - uy * h);
+  return seg(a, base, color, 2.2) +
+    '<path d="M ' + xy(b) + ' L ' + xy(P(base.x - uy * w, base.y + ux * w)) + ' L ' + xy(P(base.x + uy * w, base.y - ux * w)) + ' Z" fill="' + color + '"/>';
+}
+
+// X arrow from the capture point to the centre of the face, with labels
+function captureArrow(face, dir, r) {
+  var start = add(face, dir, 92);
+  var Xcm = Math.max(r.X_m * 100, 0);
+  return arrow(start, add(face, dir, 6), FIG.air) +
+    '<circle cx="' + start.x.toFixed(1) + '" cy="' + start.y.toFixed(1) + '" r="4" fill="' + FIG.air + '"/>' +
+    txt(add(start, P(-2, 18), 1), 'X = ' + fmt(Xcm, 1) + ' cm', 13, 'start', FIG.air, 700) +
+    txt(add(start, P(-2, 33), 1), 'V = ' + fmt(r.V, 2) + ' m/s here', 11, 'start', FIG.line);
+}
+
+function drawNozzleFigure(r) {
+  var svg = '', cap;
+
+  if (r.type === 'open' || r.type === 'flanged') {
+    // Pipe axis points up-right into the duct; the mouth faces down-left.
+    var u = P(0.91, -0.41), p = P(0.41, 0.91), rot = 65.8;
+    var M = P(150, 132), R = 34, RY = 13, len = 140;
+    var t1 = add(M, p, -R), b1 = add(M, p, R);
+    var t2 = add(t1, u, len), b2 = add(b1, u, len), far = add(M, u, len);
+
+    svg += poly([t1, t2, b2, b1], FIG.body, 'none');
+    svg += seg(t1, t2, FIG.line) + seg(b1, b2, FIG.line);
+    svg += '<path d="M ' + xy(t2) + ' A ' + R + ' ' + RY + ' ' + rot + ' 0 1 ' + xy(b2) + '" fill="' + FIG.body + '" stroke="' + FIG.line + '" stroke-width="1.4"/>';
+    svg += arrow(add(far, u, 20), add(far, u, 62), FIG.air);
+
+    if (r.type === 'flanged') {
+      svg += ell(add(M, u, 6), 70, 27, rot, FIG.plate, FIG.line);
+      svg += ell(M, 70, 27, rot, FIG.plate, FIG.line);
+      svg += txt(P(214, 230), 'flange plate', 11, 'start', FIG.line);
+      svg += seg(P(220, 219), add(M, p, 66), FIG.line, 1, ' stroke-dasharray="2,2"');
+    }
+    svg += ell(M, R, RY, rot, FIG.face, FIG.faceLine);
+
+    // Diameter across the mouth
+    svg += seg(t1, b1, FIG.text, 1.2, ' stroke-dasharray="3,2"');
+    svg += seg(P(84, 46), t1, FIG.text, 1, ' stroke-dasharray="2,2"');
+    svg += txt(P(14, 40), 'D = ' + $('d-input').value + ' mm', 13, 'start', FIG.text, 700);
+
+    svg += captureArrow(M, P(-0.91, 0.41), r);
+
+    cap = r.type === 'open'
+      ? 'Green = the nozzle opening. Open pipe: the bare end of a duct or extraction arm. It also pulls air from the sides and from behind the tip, so it has the shortest reach for a given airflow.'
+      : 'Green = the nozzle opening. Flanged pipe: a flat plate around the mouth stops the nozzle pulling air from behind, so all the suction works in front of it. Same airflow, roughly 15% more reach than an open pipe.';
+  } else {
+    // Slot face: short edge W, long edge L. Hood tapers back up-right into a round duct.
+    var dx = 46;
+    var W = 24, l = P(150, 45);
+    var P1 = P(14 + dx, 104), P2 = P(14 + dx, 104 + W), P4 = add(P1, l, 1), P3 = add(P2, l, 1);
+    var Fc = P((P1.x + P3.x) / 2, (P1.y + P3.y) / 2);
+    var h = P(0.76, -0.65), C = add(Fc, h, 118), hp = P(0.65, 0.76), DR = 24;
+    var E1 = add(C, hp, -DR), E2 = add(C, hp, DR);
+    var C2 = add(C, h, 34), E1b = add(E1, h, 34), E2b = add(E2, h, 34);
+
+    svg += poly([P1, E1, E2, P3, P2], FIG.body, FIG.line);
+    svg += seg(P4, E1, FIG.line, 1.1) + seg(P4, E2, FIG.line, 1.1);
+    svg += poly([E1, E1b, E2b, E2], FIG.body, FIG.line);
+    svg += ell(C2, DR, 9, 49.5, FIG.body, FIG.line);
+    svg += arrow(add(C2, h, 12), add(C2, h, 48), FIG.air);
+    svg += poly([P1, P4, P3, P2], FIG.face, FIG.faceLine);
+
+    svg += txt(add(P1, P(-8, 17), 1), 'W', 13, 'end', FIG.text, 700);
+    svg += txt(add(P1, P(-8, 32), 1), $('w-input').value + ' mm', 11, 'end', FIG.line);
+    var Ld1 = add(P2, P(0, 1), 12), Ld2 = add(P3, P(0, 1), 12);
+    svg += seg(Ld1, Ld2, FIG.text, 1) + seg(add(Ld1, P(0, 1), -5), add(Ld1, P(0, 1), 5), FIG.text, 1) + seg(add(Ld2, P(0, 1), -5), add(Ld2, P(0, 1), 5), FIG.text, 1);
+    svg += txt(add(P3, P(6, 20), 1), 'L = ' + $('l-input').value + ' mm', 13, 'start', FIG.text, 700);
+
+    svg += captureArrow(Fc, P(-0.76, 0.65), r);
+
+    cap = 'Green = the nozzle opening. Slot hood without flange: a long, narrow opening. Suction is spread along the whole length L, so the capture zone is a long tunnel in front of the slot. The diagram below is a cut through the middle of the slot.';
+  }
+
+  $('nozzle-svg').innerHTML = svg;
+  $('nozzle-cap').textContent = cap;
 }
 
 /* ---------------- Visualization ---------------- */
@@ -653,7 +800,7 @@ function drawArrowChevron(x, y, size, color, alpha) {
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = Math.max(2.5, size / 2.8);
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(x + size, y - size);
@@ -663,6 +810,8 @@ function drawArrowChevron(x, y, size, color, alpha) {
   ctx.restore();
 }
 
+var UI = 1; // canvas text/marker scale, larger on narrow screens so labels stay legible
+
 function drawViz(r) {
   ctx.clearRect(0, 0, CW, CH);
 
@@ -671,11 +820,11 @@ function drawViz(r) {
   ctx.fillRect(0, 0, CW, CH);
 
   var ox = 110;              // nozzle mouth x (px)
-  var oy = CH / 2;           // vertical center
+  var oy = (CH - 30 * UI) / 2; // vertical center, above the scale
 
   var Xcm = Math.max(r.X_m * 100, 0);
   var spanCm = Math.max(Xcm * 1.45, 15);
-  var gridStep = niceGridStep(spanCm);
+  var gridStep = niceGridStep(spanCm, CW < 800 ? 5 : 8);
   var rightMargin = 40;
   var drawWidth = CW - ox - rightMargin;
   var pxPerCm = drawWidth / (Math.ceil(spanCm / gridStep) * gridStep);
@@ -683,8 +832,10 @@ function drawViz(r) {
   $('legend-grid-step').textContent = gridStep;
 
   // grid lines (vertical, cm scale)
-  ctx.font = '11px "Share Tech Mono", monospace';
-  ctx.fillStyle = 'rgba(138,173,150,0.55)';
+  var labelY = CH - 10 * UI;
+  var axisY = labelY - 16 * UI;
+  ctx.font = Math.round(11 * UI) + 'px "Share Tech Mono", monospace';
+  ctx.fillStyle = 'rgba(138,173,150,0.75)';
   ctx.strokeStyle = 'rgba(138,173,150,0.14)';
   ctx.lineWidth = 1;
   var maxGridCm = Math.ceil(spanCm / gridStep) * gridStep;
@@ -692,35 +843,34 @@ function drawViz(r) {
     var gx = ox + cm * pxPerCm;
     ctx.beginPath();
     ctx.moveTo(gx, 24);
-    ctx.lineTo(gx, CH - 34);
+    ctx.lineTo(gx, axisY);
     ctx.stroke();
-    ctx.fillText(cm + ' cm', gx + 4, CH - 16);
+    var gl = cm + ' cm';
+    ctx.fillText(gl, Math.min(gx + 4, CW - ctx.measureText(gl).width - 4), labelY);
   }
   // baseline axis
   ctx.strokeStyle = 'rgba(138,173,150,0.35)';
   ctx.beginPath();
-  ctx.moveTo(ox, CH - 34);
-  ctx.lineTo(CW - rightMargin + 10, CH - 34);
+  ctx.moveTo(ox, axisY);
+  ctx.lineTo(CW - rightMargin + 10, axisY);
   ctx.stroke();
 
   var Xpx = Xcm * pxPerCm;
 
   // ---- capture zone fill + boundary ----
+  // Open pipe and slot (cut through the slot) also draw air from behind the face:
+  // full contour. A flange blocks the rear, so only the front half remains.
   var grad = ctx.createRadialGradient(ox, oy, 4, ox, oy, Math.max(Xpx, 1));
   grad.addColorStop(0, 'rgba(62,207,122,0.38)');
   grad.addColorStop(1, 'rgba(62,207,122,0.03)');
 
   ctx.beginPath();
-  if (r.type === 'open') {
-    ctx.arc(ox, oy, Xpx, 0, Math.PI * 2);
-  } else if (r.type === 'flanged') {
+  if (r.type === 'flanged') {
     ctx.moveTo(ox, oy);
     ctx.arc(ox, oy, Xpx, -Math.PI / 2, Math.PI / 2);
     ctx.closePath();
   } else {
-    ctx.moveTo(ox, oy);
-    ctx.ellipse(ox, oy, Xpx, Xpx * 0.42, 0, -Math.PI / 2, Math.PI / 2);
-    ctx.closePath();
+    ctx.arc(ox, oy, Xpx, 0, Math.PI * 2);
   }
   ctx.fillStyle = grad;
   ctx.fill();
@@ -733,44 +883,84 @@ function drawViz(r) {
     var positions = [0.25, 0.5, 0.75];
     for (var pi = 0; pi < positions.length; pi++) {
       var cx = ox + Xpx * positions[pi];
-      drawArrowChevron(cx, oy, 7, '#b03333', 0.55);
-      if (r.type !== 'slot') {
-        drawArrowChevron(cx, oy - Xpx * positions[pi] * 0.32, 6, '#b03333', 0.35);
-        drawArrowChevron(cx, oy + Xpx * positions[pi] * 0.32, 6, '#b03333', 0.35);
-      }
+      drawArrowChevron(cx, oy, 7 * UI, '#d04848', 0.7);
+      drawArrowChevron(cx, oy - Xpx * positions[pi] * 0.32, 6 * UI, '#d04848', 0.45);
+      drawArrowChevron(cx, oy + Xpx * positions[pi] * 0.32, 6 * UI, '#d04848', 0.45);
     }
   }
 
-  // ---- nozzle geometry (drawn on top so it occludes the zone behind it) ----
-  var ductHalf = Math.max(pxPerCm * 1.2, 9);
-  ctx.fillStyle = '#c8d8cc';
-  ctx.strokeStyle = '#8aad96';
-  ctx.lineWidth = 1.5;
+  // ---- nozzle geometry, true to scale (drawn on top so it hides the zone behind it) ----
+  var wall = 5;
+  var maxHalf = oy - 18;
+  var wallFill = '#c8d8cc', wallLine = '#8aad96', hollow = '#1a2e21';
+  var openHalf, outerTop, dimLabel;
 
-  if (r.type === 'open') {
-    ctx.fillRect(0, oy - ductHalf, ox, ductHalf * 2);
-    ctx.strokeRect(0, oy - ductHalf, ox, ductHalf * 2);
-  } else if (r.type === 'flanged') {
-    ctx.fillRect(0, oy - ductHalf, ox - 6, ductHalf * 2);
-    ctx.strokeRect(0, oy - ductHalf, ox - 6, ductHalf * 2);
-    var flangeHalf = Math.max(ductHalf * 2.6, 40);
-    ctx.fillStyle = '#dbe4dc';
-    ctx.fillRect(ox - 6, oy - flangeHalf, 7, flangeHalf * 2);
-    ctx.strokeRect(ox - 6, oy - flangeHalf, 7, flangeHalf * 2);
+  function shape(pts, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (var k = 1; k < pts.length; k++) ctx.lineTo(pts[k][0], pts[k][1]);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); }
+  }
+
+  if (r.type === 'open' || r.type === 'flanged') {
+    openHalf = Math.min(Math.max(parseFloat($('d-input').value) / 20 * pxPerCm, 6), maxHalf - wall);
+    // pipe wall with hollow bore
+    shape([[0, oy - openHalf - wall], [ox, oy - openHalf - wall], [ox, oy + openHalf + wall], [0, oy + openHalf + wall]], wallFill, wallLine);
+    shape([[0, oy - openHalf], [ox, oy - openHalf], [ox, oy + openHalf], [0, oy + openHalf]], hollow);
+    outerTop = oy - openHalf - wall;
+    dimLabel = 'D = ' + $('d-input').value + ' mm';
+
+    if (r.type === 'flanged') {
+      var flangeHalf = Math.min(Math.max(openHalf * 2, openHalf + 36), maxHalf + 10);
+      ctx.fillStyle = '#dbe4dc';
+      ctx.strokeStyle = wallLine;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(ox - 7, oy - flangeHalf, 8, flangeHalf - openHalf);
+      ctx.strokeRect(ox - 7, oy - flangeHalf, 8, flangeHalf - openHalf);
+      ctx.fillRect(ox - 7, oy + openHalf, 8, flangeHalf - openHalf);
+      ctx.strokeRect(ox - 7, oy + openHalf, 8, flangeHalf - openHalf);
+      outerTop = oy - flangeHalf;
+    }
   } else {
-    var plateHalf = Math.max(ductHalf * 3.2, 44);
-    var slotHalf = Math.max(pxPerCm * (parseFloat($('w-input').value) / 10) * 0.5, 4);
-    ctx.fillStyle = '#dbe4dc';
-    ctx.fillRect(ox - 6, oy - plateHalf, 7, plateHalf - slotHalf);
-    ctx.strokeRect(ox - 6, oy - plateHalf, 7, plateHalf - slotHalf);
-    ctx.fillRect(ox - 6, oy + slotHalf, 7, plateHalf - slotHalf);
-    ctx.strokeRect(ox - 6, oy + slotHalf, 7, plateHalf - slotHalf);
-    ctx.fillRect(0, oy - Math.max(ductHalf, slotHalf), ox - 6, Math.max(ductHalf, slotHalf) * 2);
+    // slot hood without flange: duct tapering down to the slot width W
+    openHalf = Math.min(Math.max(parseFloat($('w-input').value) / 20 * pxPerCm, 3), maxHalf - 30);
+    var ductHalf = Math.min(Math.max(openHalf * 1.8, 30), maxHalf - wall);
+    var tx = ox - 70;
+    shape([[0, oy - ductHalf - wall], [tx, oy - ductHalf - wall], [ox, oy - openHalf - wall],
+           [ox, oy + openHalf + wall], [tx, oy + ductHalf + wall], [0, oy + ductHalf + wall]], wallFill, wallLine);
+    shape([[0, oy - ductHalf], [tx, oy - ductHalf], [ox, oy - openHalf],
+           [ox, oy + openHalf], [tx, oy + ductHalf], [0, oy + ductHalf]], hollow);
+    outerTop = oy - ductHalf - wall;
+    dimLabel = 'W = ' + $('w-input').value + ' mm';
+  }
+
+  // the opening itself
+  ctx.strokeStyle = '#3ecf7a';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(ox, oy - openHalf);
+  ctx.lineTo(ox, oy + openHalf);
+  ctx.stroke();
+
+  // nozzle size label: inside the bore when it fits, otherwise above the nozzle
+  var fontPx = Math.round(12 * UI);
+  ctx.font = fontPx + 'px "Share Tech Mono", monospace';
+  ctx.fillStyle = '#c8d8cc';
+  var dw = ctx.measureText(dimLabel).width;
+  if (openHalf * 2 > fontPx * 2.2 && dw < ox - 14) {
+    ctx.fillText(dimLabel, ox - dw - 10, oy - openHalf + fontPx + 6);
+  } else if (dw < ox - 14 && outerTop - 8 > fontPx + 4) {
+    ctx.fillText(dimLabel, ox - dw - 8, outerTop - 8);
+  } else {
+    ctx.fillText(dimLabel, ox + 12, fontPx + 6);
   }
 
   // ---- dimension line for X ----
   if (Xpx > 6) {
-    var dimY = Math.min(oy + Math.max(Xpx * 0.5, 40), CH - 56);
+    var dimY = Math.min(oy + Math.max(Xpx * 0.5, 40), axisY - 24 * UI);
     ctx.strokeStyle = '#f0f4f0';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -783,24 +973,30 @@ function drawViz(r) {
     ctx.stroke();
 
     ctx.fillStyle = '#f0f4f0';
-    ctx.font = 'bold 13px "Share Tech Mono", monospace';
+    ctx.font = 'bold ' + Math.round(13 * UI) + 'px "Share Tech Mono", monospace';
     var label = 'X = ' + Xcm.toFixed(1) + ' cm';
     var tw = ctx.measureText(label).width;
-    ctx.fillText(label, ox + Xpx / 2 - tw / 2, dimY - 10);
+    ctx.fillText(label, Math.max(ox + Xpx / 2 - tw / 2, ox + 4), dimY - 10);
   }
 
   // nozzle mouth marker
   ctx.fillStyle = '#3ecf7a';
   ctx.beginPath();
-  ctx.arc(ox, oy, 3.5, 0, Math.PI * 2);
+  ctx.arc(ox, oy, 3.5 * UI, 0, Math.PI * 2);
   ctx.fill();
+
+  $('viz-caption').textContent = r.type === 'slot'
+    ? 'Cut through the middle of the slot. The slot length L runs into the page, so the zone is a long tunnel of this cross-section.'
+    : 'Side view of the nozzle. The zone is round, so this outline is the same from any side.';
 }
 
 function resizeCanvas() {
   var dpr = window.devicePixelRatio || 1;
   var wrapWidth = canvas.parentElement.clientWidth;
-  CW = 1000;
+  var narrow = wrapWidth < 600;
+  CW = narrow ? 600 : 1000;
   CH = 420;
+  UI = Math.min(Math.max(CW * 0.85 / Math.max(wrapWidth, 1), 1), 2.4);
   canvas.width = CW * dpr;
   canvas.height = CH * dpr;
   canvas.style.width = '100%';
@@ -865,6 +1061,7 @@ function printReport() {
     '.ibox-value { font-family: "Barlow Condensed", sans-serif; font-size: 16px; font-weight: 700; color: #222; }' +
     '.result-num { font-family: "Barlow Condensed", sans-serif; font-size: 52px; font-weight: 900; color: #186640; line-height: 1; }' +
     '.result-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 6px; }' +
+    '.nozzle-print { display: flex; gap: 16px; align-items: center; } .nozzle-print svg { width: 300px; flex-shrink: 0; font-family: "Share Tech Mono", monospace; } .nozzle-print p { font-size: 12px; color: #555; line-height: 1.5; }' +
     '.diagram-img { width: 100%; border: 1px solid #eee; margin-bottom: 16px; }' +
     '.notes-box { border: 1px solid #eee; border-left: 4px solid #186640; padding: 10px 14px; font-size: 11px; color: #555; line-height: 1.5; }' +
     '@media print { @page { size: A4 landscape; margin: 0; } body { padding: 14mm 12mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }' +
@@ -881,7 +1078,10 @@ function printReport() {
     '<div class="ibox"><div class="ibox-label">Face Area</div><div class="ibox-value">' + (r.A_m2 * 10000).toFixed(1) + ' cm&sup2;</div></div>' +
     '<div class="ibox"><div class="ibox-label">Face Velocity</div><div class="ibox-value">' + r.faceVel.toFixed(2) + ' m/s</div></div>' +
     '</div>' +
+    '<div class="section-label">Nozzle</div>' +
+    '<div class="nozzle-print">' + $('nozzle-svg').outerHTML.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ') + '<p>' + $('nozzle-cap').textContent + '</p></div>' +
     '<div class="section-label">Capture Zone Diagram</div>' +
+    '<p class="result-desc" style="margin:0 0 8px">' + $('viz-caption').textContent + '</p>' +
     '<img class="diagram-img" src="' + canvasImg + '">' +
     '<div class="section-label">Result</div>' +
     '<div class="result-num">' + Xcm.toFixed(1) + ' cm</div>' +
