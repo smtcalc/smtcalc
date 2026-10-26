@@ -52,7 +52,7 @@
       align-items: center;
       gap: 0.6rem;
       background: var(--accent);
-      color: var(--text);
+      color: #fff;
       font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1rem;
@@ -64,7 +64,7 @@
       transition: background 0.2s, transform 0.15s;
       align-self: flex-start;
     }
-    .btn-download:hover { background: #ffb940; transform: translateY(-2px); }
+    .btn-download:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
     .req-note {
       font-size: 0.9rem;
@@ -106,9 +106,9 @@
       margin-bottom: 1rem;
     }
 
-    .sheet-tab.green  { background: rgba(112,173,71,0.2);  color: #70AD47; border: 1px solid rgba(112,173,71,0.3); }
-    .sheet-tab.blue   { background: rgba(46,117,182,0.2);  color: #5BA3E0; border: 1px solid rgba(46,117,182,0.3); }
-    .sheet-tab.orange { background: rgba(237,125,49,0.2);  color: #ED7D31; border: 1px solid rgba(237,125,49,0.3); }
+    .sheet-tab.green  { background: rgba(112,173,71,0.2);  color: #3d6e22; border: 1px solid rgba(112,173,71,0.3); }
+    .sheet-tab.blue   { background: rgba(46,117,182,0.2);  color: #1f5d99; border: 1px solid rgba(46,117,182,0.3); }
+    .sheet-tab.orange { background: rgba(237,125,49,0.2);  color: #8f410a; border: 1px solid rgba(237,125,49,0.3); }
     .sheet-tab.grey   { background: rgba(150,150,150,0.15); color: var(--muted);   border: 1px solid rgba(150,150,150,0.2); }
 
     .sheet-name {
@@ -220,7 +220,7 @@
       font-weight: 900;
       font-size: 2.5rem;
       line-height: 1;
-      color: rgba(24,102,64,0.35);
+      color: rgba(24,102,64,0.65);
       flex-shrink: 0;
       width: 48px;
       text-align: right;
@@ -494,10 +494,10 @@
     <!-- CUSTOMIZE -->
     <div class="section-label">Make It Yours</div>
     <h2>Customize for Your Workflow</h2>
-    <p style="font-size:0.92rem;color:#aaa;line-height:1.75;max-width:720px;margin-bottom:1.5rem;">
+    <p style="font-size:0.92rem;color:var(--muted);line-height:1.75;max-width:720px;margin-bottom:1.5rem;">
       The workbook is fully unlocked. Every shop tracks slightly different information, and there is no reason to work around a fixed template. Common additions people make include a component description or MPN column, a storage location or shelf number, a supplier or lot code field, and a responsible operator name on the Reel Log. If your process requires it, add it.
     </p>
-    <p style="font-size:0.92rem;color:#aaa;line-height:1.75;max-width:720px;margin-bottom:2rem;">
+    <p style="font-size:0.92rem;color:var(--muted);line-height:1.75;max-width:720px;margin-bottom:2rem;">
       The only columns that must stay in place are <strong style="color:var(--text)">Reel ID (A)</strong>, <strong style="color:var(--text)">MSL Level (B)</strong>, and <strong style="color:var(--text)">Opened Date &amp; Time (C)</strong> in the Reel Log, and <strong style="color:var(--text)">Reel ID (A)</strong> in the Bake Log. All formulas and cross-sheet lookups depend on these positions. Add new columns to the right of the existing ones, or insert them between input columns before the formula columns start at E. Do not insert columns between the formula columns or shift them left of their current positions.
     </p>
 

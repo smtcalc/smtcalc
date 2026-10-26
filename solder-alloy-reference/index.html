@@ -148,7 +148,7 @@
       margin: 2rem 0;
     }
     @media (max-width: 680px) {
-      .tool-main { grid-template-columns: 1fr; margin: 1rem 0; }
+      .tool-main { grid-template-columns: minmax(0, 1fr); margin: 1rem 0; }
     }
     .panel-full {
       grid-column: 1 / -1;
@@ -281,10 +281,10 @@
       text-transform: uppercase;
       padding: 0.12rem 0.4rem;
     }
-    .cat-standard   { border: 1px solid #2a4530; color: #5a9060; background: rgba(46,180,80,0.05); }
-    .cat-low-silver { border: 1px solid #253040; color: #5a7fa0; background: rgba(70,120,180,0.06); }
-    .cat-low-temp   { border: 1px solid #3a3010; color: #b89030; background: rgba(190,150,30,0.07); }
-    .cat-high-rel   { border: 1px solid #35203a; color: #9060a0; background: rgba(140,80,160,0.07); }
+    .cat-standard   { border: 1px solid rgba(46,125,60,0.35);  color: #2e6b38; background: rgba(46,180,80,0.06); }
+    .cat-low-silver { border: 1px solid rgba(50,95,145,0.35);  color: #2f5a85; background: rgba(70,120,180,0.07); }
+    .cat-low-temp   { border: 1px solid rgba(140,100,10,0.4);  color: #7a5608; background: rgba(190,150,30,0.08); }
+    .cat-high-rel   { border: 1px solid rgba(110,60,130,0.35); color: #6b3d7d; background: rgba(140,80,160,0.07); }
 
     .mono-comp {
       font-family: var(--mono);
@@ -309,8 +309,8 @@
       color: var(--muted);
     }
     .proc-chip.reflow   { border-color: rgba(24,102,64,0.42); color: var(--accent); }
-    .proc-chip.wave     { border-color: rgba(80,140,220,0.35); color: #6a9ad0; }
-    .proc-chip.selective { border-color: rgba(80,190,100,0.35); color: #60b870; }
+    .proc-chip.wave     { border-color: rgba(50,95,145,0.35); color: #2f5a85; }
+    .proc-chip.selective { border-color: rgba(46,125,60,0.35); color: #2e6b38; }
 
     .col-compare { width: 44px; }
     .compare-check { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
@@ -739,7 +739,7 @@
     <div class="panel-full">
       <div class="panel-label">
         Alloy Data
-        <span id="alloy-count" style="font-weight:400; color:var(--muted); margin-left:0.4rem; font-size:0.6rem;"></span>
+        <span id="alloy-count" style="font-weight:400; color:var(--muted); margin-left:0.4rem; font-size: 0.72rem;"></span>
       </div>
       <div class="table-wrap">
         <table class="alloy-table">
