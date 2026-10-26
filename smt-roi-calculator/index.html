@@ -28,7 +28,7 @@
       border: 1px solid var(--border);
     }
     @media (max-width: 760px) {
-      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
+      .tool-main { grid-template-columns: minmax(0, 1fr); margin: 1rem; }
     }
     .panel {
       background: var(--bg2);
@@ -69,10 +69,9 @@
     .field label {
       display: flex;
       align-items: flex-end;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
       color: var(--muted);
       margin-bottom: 0.4rem;
       min-height: 2.4em;
@@ -192,16 +191,17 @@
       align-items: center;
     }
     .machine-row.row-header > div { padding: 0; }
+    .machine-row-new { grid-template-columns: 1.2fr 0.85fr 0.7fr 0.7fr 0.85fr 0.85fr 0.85fr 0.7fr 0.85fr auto; }
     @media (max-width: 900px) {
-      .machine-row { grid-template-columns: 1fr 1fr; }
+      .machine-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
       .machine-row.row-header { display: none; }
       .machine-row .cell::before {
         content: attr(data-label);
         display: block;
         font-family: 'Inter', sans-serif;
         font-weight: 700;
-        font-size: 0.65rem;
-        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        letter-spacing: 0.03em;
         text-transform: uppercase;
         color: var(--muted);
         margin-bottom: 0.25rem;
@@ -674,7 +674,7 @@
       <div style="font-family:'Inter',sans-serif; font-weight:700; font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:0.85rem;">New Equipment</div>
 
       <div class="machine-grid" id="newMachineGrid">
-        <div class="machine-row row-header" style="grid-template-columns:1.2fr 0.85fr 0.7fr 0.7fr 0.85fr 0.85fr 0.85fr 0.7fr 0.85fr auto;">
+        <div class="machine-row machine-row-new row-header">
           <div>Machine Label</div>
           <div>Nameplate CPH</div>
           <div>Derate %</div>
@@ -1280,8 +1280,7 @@ function renderNewMachines() {
   for (var k = 0; k < newMachines.length; k++) {
     var m = newMachines[k];
     var row = document.createElement('div');
-    row.className = 'machine-row';
-    row.style.gridTemplateColumns = '1.2fr 0.85fr 0.7fr 0.7fr 0.85fr 0.85fr 0.85fr 0.7fr 0.85fr auto';
+    row.className = 'machine-row machine-row-new';
     row.setAttribute('data-id', m.id);
     row.innerHTML =
       '<div class="cell" data-label="Machine"><input type="text" data-field="label" value="' + escapeAttr(m.label) + '"></div>' +
@@ -1840,7 +1839,7 @@ function printReport() {
     + 'table.cf-table th:first-child{text-align:left;}'
     + 'table.cf-table td{padding:5px 10px;text-align:right;border-bottom:1px solid #e6ece7;}'
     + 'table.cf-table td:first-child{text-align:left;color:#4a5e50;}'
-    + 'table.cf-table tr.breakeven td{background:rgba(26,158,85,0.13);color:#1a9e55;font-weight:700;}'
+    + 'table.cf-table tr.breakeven td{background:rgba(26,158,85,0.13);color:#13703d;font-weight:700;}'
     + '.verdict{margin-top:1.5rem;padding:12px 16px;border-radius:6px;font-size:0.92rem;}'
     + '.verdict.pass{background:#e8f5ee;border:1px solid #167a40;color:#0f5533;}'
     + '.verdict.warn{background:#fff3e8;border:1px solid #d4720a;color:#7a4308;}'

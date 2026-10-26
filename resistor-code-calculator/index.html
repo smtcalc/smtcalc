@@ -51,7 +51,7 @@
     .mode-tab:last-child { border-right: none; }
     .mode-tab.active {
       background: var(--accent);
-      color: var(--text);
+      color: #fff;
     }
     .mode-tab:not(.active):hover {
       background: var(--bg3);
@@ -92,10 +92,9 @@
     }
 
     label {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
       color: var(--muted);
     }
 
@@ -126,7 +125,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       background: var(--accent);
-      color: var(--text);
+      color: #fff;
       border: none;
       padding: 0.72rem 2rem;
       min-height: 44px;
@@ -134,7 +133,7 @@
       transition: background 0.2s, transform 0.1s;
       white-space: nowrap;
     }
-    .btn-calc:hover { background: #e09618; }
+    .btn-calc:hover { background: var(--accent-hover); }
     .btn-calc:active { transform: scale(0.98); }
 
     /* CODE INPUT STYLING */

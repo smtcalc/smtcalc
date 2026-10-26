@@ -16,8 +16,8 @@
   --muted:        #4a5e50;
   --border:       rgba(28,42,31,0.12);
   --border2:      rgba(28,42,31,0.22);
-  --green:        #1a9e55;
-  --yellow:       #b06a10;
+  --green:        #13703d;
+  --yellow:       #8a560c;
   --red:          #b03333;
   --mono:         'Share Tech Mono', monospace;
 }
@@ -406,6 +406,10 @@ footer {
   .panel-full { grid-column: 1; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
+/* The page h1 already names the tool; on phones the badge only crowds the logo. */
+@media (max-width: 600px) {
+  .tool-badge { display: none; }
+}
 @media (max-width: 480px) {
   header { padding: 0 1rem; }
   .tool-hero { padding: 88px 1rem 32px; }
@@ -419,3 +423,11 @@ footer {
   header, .guide-banner, .print-bar, nav { display: none !important; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* READING MEASURE: keep explanatory prose near 70 characters per line */
+.accordion-content p, .accordion-content li,
+.accordion-body p, .accordion-body li,
+.guide-body p, .guide-body li,
+.guide-section > p, .guide-step-text p,
+.assumption-note p, .step-content p, .standards-note p,
+.customize-body, .panel-full > p, .field-note { max-width: 68ch; }

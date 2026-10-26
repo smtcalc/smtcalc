@@ -35,7 +35,7 @@
       border: 1px solid var(--border);
     }
     @media (max-width: 680px) {
-      .tool-main { grid-template-columns: 1fr; margin: 1rem; }
+      .tool-main { grid-template-columns: minmax(0, 1fr); margin: 1rem; }
     }
 
     .panel {
@@ -75,10 +75,9 @@
 
     .field label {
       display: block;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
       color: var(--muted);
       margin-bottom: 0.4rem;
     }
@@ -172,7 +171,7 @@
 
     .product-table thead th {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -282,7 +281,10 @@
     }
 
     @media (max-width: 600px) {
-      .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 420px) {
+      .results-grid { grid-template-columns: minmax(0, 1fr); }
     }
 
     .result-box {
@@ -296,7 +298,7 @@
 
     .result-label {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
@@ -388,7 +390,7 @@
       top: -18px;
       transform: translateX(-50%);
       font-family: var(--mono);
-      font-size: 0.55rem;
+      font-size: 0.68rem;
       color: var(--muted);
       white-space: nowrap;
     }
@@ -416,7 +418,7 @@
 
     .breakdown-table thead th {
       font-family: var(--mono);
-      font-size: 0.58rem;
+      font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
